@@ -1,0 +1,9 @@
+build
+config
+node_modules
+data
+migrations
+seeders
+.env
+package-lock.json
+tsconfig.json
