@@ -1,8 +1,9 @@
 'use strict';
+
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class DividedMember extends Model {
+  class BirthdayForMillionMember extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,16 +14,19 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
-  DividedMember.init({
-    user_id: DataTypes.STRING
+  BirthdayForMillionMember.init({
+    name: DataTypes.STRING,
+    month: DataTypes.INTEGER,
+    date: DataTypes.INTEGER,
+    img: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'DividedMember',
-    timestamps: false,
-    underscored: true
+    modelName: 'BirthdayForMillionMember',
+    underscored: true,
+    timestamps: false
   });
 
-  DividedMember.removeAttribute('id');
+  BirthdayForMillionMember.removeAttribute('id');
 
-  return DividedMember;
+  return BirthdayForMillionMember;
 };

@@ -2,7 +2,7 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class DividedMember extends Model {
+  class CommandUsedLog extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,16 +13,18 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
-  DividedMember.init({
+  CommandUsedLog.init({
+    command_name: DataTypes.STRING,
     user_id: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'DividedMember',
-    timestamps: false,
-    underscored: true
+    modelName: 'CommandUsedLog',
+    underscored: true,
+    createdAt: 'used_datetime',
+    updatedAt: false
   });
 
-  DividedMember.removeAttribute('id');
+  CommandUsedLog.removeAttribute('id');
 
-  return DividedMember;
+  return CommandUsedLog;
 };

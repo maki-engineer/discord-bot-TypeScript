@@ -2,7 +2,7 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class DividedMember extends Model {
+  class EmojiForBirthday235Data extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,16 +13,16 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
-  DividedMember.init({
-    user_id: DataTypes.STRING
+  EmojiForBirthday235Data.init({
+    count: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'DividedMember',
-    timestamps: false,
-    underscored: true
+    modelName: 'EmojiForBirthday235Data',
+    tableName: 'emoji_for_birthday_235_data',
+    timestamps: false
   });
 
-  DividedMember.removeAttribute('id');
+  EmojiForBirthday235Data.removeAttribute('id');
 
-  return DividedMember;
+  return EmojiForBirthday235Data;
 };
