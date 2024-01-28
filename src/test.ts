@@ -1,4 +1,5 @@
 const DB = require('../models/index');
+const func = require('./function');
 const fs = require('fs');
 
 
@@ -24,3 +25,8 @@ DB.BirthdayFor235Member.findAll({
     fs.writeFileSync(csvPath, text);
   });
 });
+
+const musicType: string[] = ['All', 'Princess', 'Fairy', 'Angel'];
+const target: string = 'All';
+
+console.log(musicType.some((el: string) => target.includes(el)));
