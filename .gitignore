@@ -4,6 +4,7 @@ node_modules
 data
 migrations
 seeders
+test_coverage_dir
 .env
 package-lock.json
 tsconfig.json
