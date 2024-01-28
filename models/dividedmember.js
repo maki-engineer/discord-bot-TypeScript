@@ -1,7 +1,6 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class DividedMember extends Model {
     /**
@@ -13,11 +12,17 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
+
   DividedMember.init({
     user_id: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'DividedMember',
+    timestamps: false,
+    underscored: true
   });
+
+  DividedMember.removeAttribute('id');
+
   return DividedMember;
 };
