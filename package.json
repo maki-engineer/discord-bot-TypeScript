@@ -6,7 +6,9 @@
   "scripts": {
     "test": "jest",
     "start": "node build/main.js",
-    "compile": "tsc -p ."
+    "compile": "tsc -p .",
+    "migrate": "sequelize db:migrate",
+    "seed": "sequelize db:seed:all"
   },
   "keywords": [],
   "author": "",
