@@ -22,8 +22,8 @@ describe('正常系（Command.getCommandList）', (): void => {
 
   test('commandsテーブルにデータが入っていた場合は、配列で一覧が返ること', async (): Promise < void > => {
     const targetData: { name: string; description: string; }[] = [
-      {name: '235ap', description: 'これはこういうことするコマンドです。'},
-      {name: '235apall', description: 'これは特別なコマンドです。'},
+      {name: '235test', description: 'これはこういうことするコマンドです。'},
+      {name: '235testtest', description: 'これは特別なコマンドです。'},
     ];
 
     await Command.bulkCreate(targetData, {transaction: transaction});

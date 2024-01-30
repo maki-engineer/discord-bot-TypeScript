@@ -21,8 +21,8 @@ describe('正常系（Command.insertNewCommand）', (): void => {
     });
 
     test('指定されたコマンド名とコマンド名の詳細が正常に commands テーブルに追加された場合は、オブジェクトが返ること', async (): Promise < void > => {
-      const newCommandName: string = '235ap';
-      const newDescription: string = 'このコマンドは指定された曲をAP曲リストに追加するためのコマンドです。';
+      const newCommandName: string = '235test';
+      const newDescription: string = 'これはこういうことをするコマンドです。';
 
       let commandData: [] | { name: string; description: string }[] = await Command.findAll({
         raw: true,

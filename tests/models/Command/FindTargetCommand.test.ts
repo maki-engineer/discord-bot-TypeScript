@@ -21,11 +21,11 @@ describe('正常系（Command.findTargetCommand）', (): void => {
   });
 
   test('指定されたコマンドが見つかった場合はオブジェクトが返ること', async (): Promise < void > => {
-    const commnadExists = '235apsearch';
+    const commnadExists = '235test';
 
     await Command.create({
       name: commnadExists,
-      description: 'これは指定された曲がAP出来ているか確認するためのコマンドです。'
+      description: 'これはこういうことをするコマンドです。'
     }, {transaction: transaction});
 
     const result: { name: string; description: string } = await Command.findTargetCommand(commnadExists, transaction);
@@ -35,7 +35,7 @@ describe('正常系（Command.findTargetCommand）', (): void => {
   });
 
   test('指定されたコマンドが見つからなかった場合は null が返ること', async (): Promise < void > => {
-    const commandNotExists: string = '235ap';
+    const commandNotExists: string = '235test';
 
     const result: null = await Command.findTargetCommand(commandNotExists, transaction);
 

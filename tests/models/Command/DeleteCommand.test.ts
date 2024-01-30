@@ -21,8 +21,8 @@ describe('正常系（Command.deleteCommand）', (): void => {
     });
 
     test('指定されたコマンドが commands テーブルから正常に削除された場合、削除された数が返ること', async (): Promise < void > => {
-      const deleteCommandName: string = '235apremove';
-      const deleteDescription: string = 'これは指定された曲をAPリストから削除するためのコマンドです。';
+      const deleteCommandName: string = '235test';
+      const deleteDescription: string = 'これはこういうことをするコマンドです。';
 
       await Command.create({
         name: deleteCommandName,
