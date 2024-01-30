@@ -6,6 +6,8 @@ migrations
 seeders
 src/test.ts
 test_coverage_dir
-.env
+.env.development
+.env.production
+.env.unittest
 package-lock.json
 tsconfig.json
