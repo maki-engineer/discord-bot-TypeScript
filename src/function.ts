@@ -6,7 +6,7 @@
  * @return {string}
  */
 exports.zenkakuToHankaku = (str: string): string => {
-  return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+  return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, s => {
     return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
   });
 }
@@ -83,7 +83,7 @@ exports.sliceByNumber = (array: any, sliceNumber: number): any => {
 
 // ひらがなをカタカナに変換
 exports.hiraToKana = (str: string): string => {
-  return str.replace(/[\u3041-\u3096]/g, function(match) {
+  return str.replace(/[\u3041-\u3096]/g, (match) => {
       const chr = match.charCodeAt(0) + 0x60;
       return String.fromCharCode(chr);
   });
