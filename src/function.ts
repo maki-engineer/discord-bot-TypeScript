@@ -17,7 +17,7 @@ exports.existsSameValue = function(a: string[]): boolean
 {
   const s = new Set(a);
 
-  return s.size != a.length;
+  return s.size !== a.length;
 }
 
 /**
@@ -39,26 +39,26 @@ exports.compareFunc = (a: number, b: number): number => a - b;
  * @return {number}
  */
 exports.levenshteinDistance = function(str1: string, str2: string): number
-{ 
-  const x: number = str1.length; 
-  const y: number = str2.length; 
+{
+  const x: number = str1.length;
+  const y: number = str2.length;
 
-  var d: any = [];
+  let d: any = [];
 
-  for (var i: number = 0; i <= x; i++ ) {
+  for (let i: number = 0; i <= x; i++ ) {
       d[i] = [];
       d[i][0] = i;
   }
 
-  for (var i: number = 0; i <= y; i++ ) {
+  for (let i: number = 0; i <= y; i++ ) {
       d[0][i] = i;
   }
 
-  var cost: number = 0;
+  let cost: number = 0;
 
-  for (var i: number = 1; i <= x; i++ ) {
-    for (var j: number = 1; j <= y; j++ ) {
-      cost = str1[i - 1] == str2[j - 1] ? 0 : 1;
+  for (let i: number = 1; i <= x; i++ ) {
+    for (let j: number = 1; j <= y; j++ ) {
+      cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
 
       d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
     }
@@ -75,13 +75,13 @@ exports.levenshteinDistance = function(str1: string, str2: string): number
  *
  * @return {any}
  */
-exports.sliceByNumber = function(array: any, number: number): any
+exports.sliceByNumber = function(array: any, sliceNumber: number): any
 {
-  const length: number = Math.ceil(array.length / number)
+  const length: number = Math.ceil(array.length / sliceNumber)
   const initial: undefined = undefined;
 
   return new Array(length).fill(initial).map((_, i) =>
-    array.slice(i * number, (i + 1) * number)
+    array.slice(i * sliceNumber, (i + 1) * sliceNumber)
   )
 }
 
