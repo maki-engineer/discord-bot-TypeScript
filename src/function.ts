@@ -5,16 +5,14 @@
  *
  * @return {string}
  */
-exports.zenkakuToHankaku = function(str: string): string
-{
+exports.zenkakuToHankaku = (str: string): string => {
   return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
     return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
   });
 }
 
 // 配列の重複チェック
-exports.existsSameValue = function(a: string[]): boolean
-{
+exports.existsSameValue = (a: string[]): boolean => {
   const s = new Set(a);
 
   return s.size !== a.length;
@@ -38,8 +36,7 @@ exports.compareFunc = (a: number, b: number): number => a - b;
  *
  * @return {number}
  */
-exports.levenshteinDistance = function(str1: string, str2: string): number
-{
+exports.levenshteinDistance = (str1: string, str2: string): number => {
   const x: number = str1.length;
   const y: number = str2.length;
 
@@ -75,8 +72,7 @@ exports.levenshteinDistance = function(str1: string, str2: string): number
  *
  * @return {any}
  */
-exports.sliceByNumber = function(array: any, sliceNumber: number): any
-{
+exports.sliceByNumber = (array: any, sliceNumber: number): any => {
   const length: number = Math.ceil(array.length / sliceNumber)
   const initial: undefined = undefined;
 
@@ -86,8 +82,7 @@ exports.sliceByNumber = function(array: any, sliceNumber: number): any
 }
 
 // ひらがなをカタカナに変換
-exports.hiraToKana = function(str: string): string
-{
+exports.hiraToKana = (str: string): string => {
   return str.replace(/[\u3041-\u3096]/g, function(match) {
       const chr = match.charCodeAt(0) + 0x60;
       return String.fromCharCode(chr);
@@ -95,8 +90,7 @@ exports.hiraToKana = function(str: string): string
 }
 
 // 配列シャッフル
-exports.shuffle = function([...array])
-{
+exports.shuffle = ([...array]) => {
   for (let i: number = array.length - 1; i >= 0; i--) {
     const j: number = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
