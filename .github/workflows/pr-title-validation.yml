@@ -1,0 +1,35 @@
+name: PR Title Validation
+
+on:
+    pull_request:
+        types:
+            - opened
+            - edited
+
+jobs:
+    validate:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Validate PR title
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                title='${{ github.event.pull_request.title }}' # 自動生成されるPRタイトルにダブルクォーテーションが含まれる場合があるためシングルクォーテーションで囲む
+
+                pr_number=${{ github.event.pull_request.number }}
+                repo_name=${{ github.repository }}
+                api_url="https://api.github.com/repos/$repo_name/issues/$pr_number/comments"
+
+                # Revertの場合はバリデーションをスキップ
+                if [[ "$title" =~ ^Revert[[:space:]].+ ]]; then
+                    echo "Revert PR title, skipping validation: $title"
+                    exit 0
+                fi
+
+                # 通常のPRタイトルのバリデーション
+                if [[ ! "$title" =~ ^[A-Za-z0-9_]+-[0-9]+[[:space:]].+ ]]; then
+                    echo "Invalid PR title: $title"
+                    comment="# PRタイトルが無効です。\n以下のフォーマットに修正してください。\n\n_**[英数字またはアンダーバー][ハイフン][数字][任意の空白文字][任意の文字列]**_\n（チケット番号＋チケットタイトル）\n\n例）\n- 通常\n  - ENGAGE-123 求人フォーム修正\n- 補足事項がある場合\n  - ENGAGE-123 求人フォーム修正｜補足事項\n- チケット番号がない場合（ブランチ名や日付などで代替）\n  - UNITTEST-20230913 求人フォーム修正"
+                    curl -s -H "Authorization: token $GITHUB_TOKEN" -X POST --data "{\"body\": \"$comment\"}" $api_url
+                    exit 1
+                fi
