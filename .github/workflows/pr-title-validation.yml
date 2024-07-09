@@ -29,7 +29,7 @@ jobs:
                 # 通常のPRタイトルのバリデーション
                 if [[ ! "$title" =~ ^[A-Za-z0-9_]+-[0-9]+[[:space:]].+ ]]; then
                     echo "Invalid PR title: $title"
-                    comment="# PRタイトルが無効です。\n以下のフォーマットに修正してください。\n\n_**[英数字またはアンダーバー][ハイフン][数字][任意の空白文字][任意の文字列]**_\n例）\n PR-123 APコマンド修正"
+                    comment="# PRタイトルが無効です。\n以下のフォーマットに修正してください。\n\n_**[英数字またはアンダーバー][ハイフン][数字][任意の空白文字][任意の文字列]**_\n例） PR-123 APコマンド修正"
                     curl -s -H "Authorization: token $GITHUB_TOKEN" -X POST --data "{\"body\": \"$comment\"}" $api_url
                     exit 1
                 fi
