@@ -40,7 +40,7 @@ exports.levenshteinDistance = (str1: string, str2: string): number => {
   const x: number = str1.length;
   const y: number = str2.length;
 
-  let d: any = [];
+  const d: any = [];
 
   for (let i: number = 0; i <= x; i++ ) {
       d[i] = [];
