@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build": "node build/src/main.js",
+    "build": "npx tsc",
+    "build:watch": "npx tsc --watch",
+    "start": "node build/src/main.js",
     "compile": "tsc -p .",
     "migrate": "sequelize db:migrate",
     "seed": "sequelize db:seed:all"
