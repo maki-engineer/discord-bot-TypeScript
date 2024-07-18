@@ -5,17 +5,17 @@ var { Command, sequelize } = require('../../../models/index');
 
 describe('正常系（Command.deleteCommand）', (): void => {
     let transaction: any;
-  
+
     beforeEach(async (): Promise < void > => {
       transaction = await sequelize.transaction();
     });
-  
+
     afterEach(async (): Promise < void > => {
       if (transaction) {
         await transaction.rollback();
       }
     });
-  
+
     afterAll(async (): Promise < void > => {
       await sequelize.close();
     });
@@ -27,11 +27,11 @@ describe('正常系（Command.deleteCommand）', (): void => {
       await Command.create({
         name: deleteCommandName,
         description: deleteDescription
-      }, {transaction: transaction});
-      
+      }, {transaction});
+
       let commandData: { name: string; description: string }[] | [] = await Command.findAll({
         raw: true,
-        transaction: transaction
+        transaction
       });
 
       const deleteDataExists: { name: string; description: string } = await Command.findOne({
@@ -40,7 +40,7 @@ describe('正常系（Command.deleteCommand）', (): void => {
           description: deleteDescription
         },
         raw: true,
-        transaction: transaction
+        transaction
       });
 
       expect(commandData).toHaveLength(1);
@@ -55,7 +55,7 @@ describe('正常系（Command.deleteCommand）', (): void => {
 
       commandData = await Command.findAll({
         raw: true,
-        transaction: transaction
+        transaction
       });
 
       const deleteDataNotExists: null = await Command.findOne({
@@ -64,7 +64,7 @@ describe('正常系（Command.deleteCommand）', (): void => {
           description: deleteDescription
         },
         raw: true,
-        transaction: transaction
+        transaction
       });
 
       expect(commandData).toHaveLength(0);

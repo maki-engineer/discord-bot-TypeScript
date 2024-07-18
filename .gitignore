@@ -10,4 +10,3 @@ test_coverage_dir
 .env.production
 .env.unittest
 package-lock.json
-tsconfig.json
