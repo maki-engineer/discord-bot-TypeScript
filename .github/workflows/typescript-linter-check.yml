@@ -11,5 +11,7 @@ jobs:
             - name: Prepare
               run: npm install
             - name: TypeScript Linter Check
-              id: linter
-              uses: AntonKornus/TypeScript-Linter@1.0.0
+              uses: mooyoul/tslint-actions@v1.1.1
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  pattern: '*.ts'
