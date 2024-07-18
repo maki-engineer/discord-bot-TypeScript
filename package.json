@@ -1,11 +1,11 @@
 {
-  "name": "re-discord-bot",
+  "name": "discord-bot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "node build/main.js",
+    "build": "node build/src/main.js",
     "compile": "tsc -p .",
     "migrate": "sequelize db:migrate",
     "seed": "sequelize db:seed:all"
