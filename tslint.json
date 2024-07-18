@@ -5,7 +5,6 @@
     ],
     "jsRules": {},
     "rules": {
-        "no-var-requires": false,
         "no-var-keyword": false
     },
     "rulesDirectory": []
