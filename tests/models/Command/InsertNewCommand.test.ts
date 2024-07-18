@@ -5,17 +5,17 @@ var { Command, sequelize } = require('../../../models/index');
 
 describe('正常系（Command.insertNewCommand）', (): void => {
     let transaction: any;
-  
+
     beforeEach(async (): Promise < void > => {
       transaction = await sequelize.transaction();
     });
-  
+
     afterEach(async (): Promise < void > => {
       if (transaction) {
         await transaction.rollback();
       }
     });
-  
+
     afterAll(async (): Promise < void > => {
       await sequelize.close();
     });
