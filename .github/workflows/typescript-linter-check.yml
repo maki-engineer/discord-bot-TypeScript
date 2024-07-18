@@ -7,7 +7,7 @@ jobs:
         runs-on: ubuntu-latest
         name: TypeScript Linter Check
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v1
             - name: Prepare
               run: npm install
             - name: TypeScript Linter Check
