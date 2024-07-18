@@ -26,7 +26,7 @@ describe('正常系（Command.findTargetCommand）', (): void => {
     await Command.create({
       name: commnadExists,
       description: 'これはこういうことをするコマンドです。'
-    }, {transaction: transaction});
+    }, {transaction});
 
     const result: { name: string; description: string } = await Command.findTargetCommand(commnadExists, transaction);
 

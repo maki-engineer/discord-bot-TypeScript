@@ -26,7 +26,7 @@ describe('正常系（Command.insertNewCommand）', (): void => {
 
       let commandData: [] | { name: string; description: string }[] = await Command.findAll({
         raw: true,
-        transaction: transaction
+        transaction
       });
 
       expect(commandData).toHaveLength(0);
@@ -39,7 +39,7 @@ describe('正常系（Command.insertNewCommand）', (): void => {
 
       commandData = await Command.findAll({
         raw: true,
-        transaction: transaction
+        transaction
       });
 
       expect(commandData).toHaveLength(1);

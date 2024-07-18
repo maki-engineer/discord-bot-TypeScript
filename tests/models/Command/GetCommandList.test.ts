@@ -26,7 +26,7 @@ describe('正常系（Command.getCommandList）', (): void => {
       {name: '235testtest', description: 'これは特別なコマンドです。'},
     ];
 
-    await Command.bulkCreate(targetData, {transaction: transaction});
+    await Command.bulkCreate(targetData, {transaction});
 
     const result: { name: string; description: string }[] = await Command.getCommandList(transaction);
 
