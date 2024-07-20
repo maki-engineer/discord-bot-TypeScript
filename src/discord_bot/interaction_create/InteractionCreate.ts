@@ -7,12 +7,13 @@ require('dotenv').config({ path: '.env.development' });
 /**
  * スラッシュコマンドが使われた時に行う処理クラス
  */
-export class InteractionCreate extends DiscordBot {
+export class InteractionCreate {
+  private discordBot: typeof DiscordBot;
   private readonly setTimeoutSec: number = 180_000;
   private readonly userIdForUtatane = process.env.USER_ID_FOR_UTATANE;
 
-  constructor(discordToken: string) {
-    super(discordToken);
+  constructor(discordBot: typeof DiscordBot) {
+    this.discordBot = discordBot;
   }
 
   /**
@@ -21,8 +22,8 @@ export class InteractionCreate extends DiscordBot {
    * @return {void}
    */
   public interactionCreateEvent(): void {
-    this.on('interactionCreate', (interaction: typeof Interaction) => {
-      if (!this.interaction.isCommand()) return;
+    this.discordBot.on('interactionCreate', (interaction: typeof Interaction) => {
+      if (!interaction.isCommand()) return;
 
       this.registAllPerfectMusicInteraction(interaction);
       this.deleteAllPerfectMusicInteraction(interaction);
