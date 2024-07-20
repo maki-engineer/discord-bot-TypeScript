@@ -1,16 +1,33 @@
-const db = require('../models/index');
-const func = require('./function');
-const information = require('../data/information/informationData.json');
-const express = require('express');
-const dotenv = require('dotenv');
-const app = express();
-const PORT = process.env.PORT || 3000;
+// 別ファイルで同じ変数名を設定できるように
+export{}
 
-// AtCoder用
-const https = require("https");
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
-const url = "https://atcoder.jp/contests/?lang=ja";
+require('dotenv').config({ path: '.env.development' });
+
+const information = require('../data/information/informationData.json');
+
+const {
+  zenkakuToHankaku,
+  existsSameValue,
+  compareFunc,
+  levenshteinDistance,
+  sliceByNumber,
+  hiraToKana,
+  shuffle
+} = require('./function');
+
+const {
+  AnniversaryData,
+  BirthdayFor235Member,
+  BirthdayForMillionMember,
+  Command,
+  CommandUsedLog,
+  DeleteMessage,
+  DividedMember,
+  EmojiDataForMillionMemberToUseBirthday,
+  EmojiForBirthday235Data,
+  EmojiForBirthdayMillionIdolData,
+  EmojiForMenDateData
+} = require('../models/index');
 
 // Discord bot設定
 const { Client, GatewayIntentBits } = require("discord.js");
@@ -35,13 +52,6 @@ const client = new Client({
     GatewayIntentBits.GuildScheduledEvents
   ]
 });
-
-
-dotenv.config();
-
-app.get('/', (req: any, res: any): void => res.send('Hello, world.'));
-
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 
 
 client.on('ready', () => {
