@@ -4,7 +4,7 @@ node_modules
 data
 migrations
 seeders
-src/test.ts
+src/run_test/test.ts
 test_coverage_dir
 .env.development
 .env.production
