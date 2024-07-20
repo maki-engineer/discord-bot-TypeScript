@@ -1,4 +1,4 @@
-const { zenkakuToHankaku } = require('../../src/function');
+const { zenkakuToHankaku } = require('../../src/functions/functions');
 
 describe('正常系（hankakuToZenkaku）', (): void => {
   test('全角英数字が半角英数字に変換されること', (): void => {
