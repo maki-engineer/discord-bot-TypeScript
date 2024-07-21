@@ -1,8 +1,6 @@
 const { Interaction } = require('discord.js');
 const { DiscordBot } = require('../DiscordBot');
 
-require('dotenv').config();
-
 
 /**
  * スラッシュコマンドが使われた時に行う処理クラス
@@ -10,7 +8,6 @@ require('dotenv').config();
 export class InteractionCreate {
   private discordBot: typeof DiscordBot;
   private readonly setTimeoutSec: number = 180_000;
-  private readonly userIdForUtatane = process.env.USER_ID_FOR_UTATANE;
 
   constructor(discordBot: typeof DiscordBot) {
     this.discordBot = discordBot;
@@ -122,7 +119,7 @@ export class InteractionCreate {
     if (interaction.commandName !== '235birthday') return;
 
     switch (interaction.user.id) {
-      case this.userIdForUtatane:
+      case this.discordBot.userIdForUtatane:
         interaction.reply('235birthdayコマンドを使用することで、毎月開催されるオンライン飲み会の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい月、日程、時間の**3つ**を**半角数字のみ**、**半角スペースで区切って**入力してください。\n\n235birthday 12 14 21');
 
         setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
@@ -146,7 +143,7 @@ export class InteractionCreate {
     if (interaction.commandName !== '235men') return;
 
     switch (interaction.user.id) {
-      case this.userIdForUtatane:
+      case this.discordBot.userIdForUtatane:
         interaction.reply('235menコマンドを使用することで、毎月開催される235士官学校🌹の日程を決める文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**2～10個**、**半角数字のみ**で入力してください。\n\n235men 12 14 16 17');
 
         setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);

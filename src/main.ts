@@ -1,14 +1,12 @@
 // 別ファイルで同じ変数名を設定できるように
 export{}
 
-require('dotenv').config();
-
 const { DiscordBot } = require('./discord_bot/DiscordBot');
 const { Ready } = require('./discord_bot/ready/Ready');
 const { InteractionCreate } = require('./discord_bot/interaction_create/InteractionCreate');
 const { MessageCreate } = require('./discord_bot/message_create/MessageCreate');
 const { GuildMemberRemove } = require('./discord_bot/guild_member_remove/GuildMemberRemove');
-const discordBot = new DiscordBot(process.env.DISCORD_TOKEN);
+const discordBot = new DiscordBot();
 const ready = new Ready(discordBot);
 const interactionCreate = new InteractionCreate(discordBot);
 const messageCreate = new MessageCreate(discordBot);

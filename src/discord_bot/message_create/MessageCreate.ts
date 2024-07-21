@@ -2,8 +2,6 @@ const { Message, Client } = require('discord.js');
 const { DiscordBot } = require('../DiscordBot');
 const { BirthdayFor235Member } = require('../../../models/index');
 
-require('dotenv').config();
-
 
 /**
  * メッセージが送信された時に行う処理クラス
@@ -12,9 +10,6 @@ export class MessageCreate {
   private discordBot: typeof DiscordBot;
   private readonly prefix: string = '235';
   private readonly setTimeoutSec: number = 15_000;
-  private readonly channelIdFor235Introduction = process.env.CHANNEL_ID_FOR_235_INTRODUCTION;
-  private readonly userIdForUtatane = process.env.USER_ID_FOR_UTATANE;
-  private readonly userIdForMaki = process.env.USER_ID_FOR_MAKI;
 
   constructor(discordBot: typeof DiscordBot) {
     this.discordBot = discordBot;
@@ -46,7 +41,7 @@ export class MessageCreate {
       // chatgpt用
 
       // 自己紹介チャンネルから新しく入ったメンバーの誕生日を登録する＆挨拶をする
-      if ((this.discordBot.channels.cache.get(this.channelIdFor235Introduction) !== undefined) && (message.channelId === this.channelIdFor235Introduction)) {
+      if ((this.discordBot.channels.cache.get(this.discordBot.channelIdFor235Introduction) !== undefined) && (message.channelId === this.discordBot.channelIdFor235Introduction)) {
         // 誕生日を登録
         this.registNew235MemberBirthday(message, this.discordBot);
 
@@ -103,11 +98,11 @@ export class MessageCreate {
       month: number,
       date: number
     }[]) => {
-      client.users.cache.get(this.userIdForMaki).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`);
-      client.users.cache.get(this.userIdForUtatane).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`);
+      client.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`);
+      client.users.cache.get(this.discordBot.userIdForUtatane).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`);
     })
     .catch((error: unknown) => {
-      client.users.cache.get(this.userIdForMaki).send(`${message.author.username}さんの誕生日を登録できませんでした。`);
+      client.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.username}さんの誕生日を登録できませんでした。`);
     });
   }
 
@@ -120,7 +115,7 @@ export class MessageCreate {
    * @return {void}
    */
   private testCommand(message: typeof Message, commandName: string): void {
-    if ((commandName !== 'test') || (message.author.id !== this.userIdForMaki)) return;
+    if ((commandName !== 'test') || (message.author.id !== this.discordBot.userIdForMaki)) return;
 
     message.reply('テスト用コマンド');
 
