@@ -1,7 +1,7 @@
 // 別ファイルで同じ変数名を設定できるように
 export{}
 
-require('dotenv').config({ path: '.env.development' });
+require('dotenv').config();
 
 const { DiscordBot } = require('./discord_bot/DiscordBot');
 const { Ready } = require('./discord_bot/ready/Ready');

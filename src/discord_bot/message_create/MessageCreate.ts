@@ -2,7 +2,7 @@ const { Message, Client } = require('discord.js');
 const { DiscordBot } = require('../DiscordBot');
 const { BirthdayForMillionMember } = require('../../../models/index');
 
-require('dotenv').config({ path: '.env.development' });
+require('dotenv').config();
 
 
 /**

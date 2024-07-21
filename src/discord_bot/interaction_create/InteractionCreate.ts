@@ -1,7 +1,7 @@
 const { Interaction } = require('discord.js');
 const { DiscordBot } = require('../DiscordBot');
 
-require('dotenv').config({ path: '.env.development' });
+require('dotenv').config();
 
 
 /**
