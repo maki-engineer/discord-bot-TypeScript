@@ -57,7 +57,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static async registNew235MemberBirthday(userName, userId, month, date, transaction = null)
     {
-      const insertData = {};
+      const insertData = {
+        name: userName,
+        user_id: userId,
+        month,
+        date
+      };
 
       if (transaction !== null) {
         return await this.create(insertData, {transaction});
