@@ -20,6 +20,20 @@ export class Ready {
   private readonly serverIdFor235 = process.env.SERVER_ID_FOR_235;
   private readonly channelIdFor235ChatPlace = process.env.CHANNEL_ID_FOR_235_CHAT_PLACE;
   private readonly userIdForMaki = process.env.USER_ID_FOR_MAKI;
+  private readonly anniversaryDataFor235Production: {name: string, year: number, month: number, date: number} = {
+    name: '『アイドルマスター ミリオンライブ！ シアターデイズ』',
+    year: 2017,
+    month: 6,
+    date: 29
+  };
+
+  private readonly anniversaryDataForMillionLive: {name: string, year: number, month: number, date: number} = {
+    name: '235プロダクション',
+    year: 2020,
+    month: 12,
+    date: 24
+  };
+
   private readonly commandList: {name: string, description: string}[] = [
     {name: '235ap', description: 'APすることが出来た曲を登録するときに使用するコマンドです。'},
     {name: '235apremove', description: '間違ってAP曲データに登録してしまった曲を取り消すときに使用するコマンドです。'},
@@ -66,11 +80,14 @@ export class Ready {
    * @return {void}
    */
   public readyEvent(): void {
+    if (this.discordBot.channels.cache.get(this.channelIdFor235ChatPlace) === undefined) return;
+
     this.deleteOldMessageFrom235ChatPlaceChannel(this.discordBot);
     this.celebrate235Member(this.discordBot);
     this.celebrateMillionMember(this.discordBot);
     this.celebrate235ProductionAnniversary(this.discordBot);
     this.celebrateMillionLiveAnniversary(this.discordBot);
+    this.stop();
   }
 
   /**
@@ -81,8 +98,6 @@ export class Ready {
    * @return {void}
    */
   private deleteOldMessageFrom235ChatPlaceChannel(client: typeof Client): void {
-    if (client.channels.cache.get(this.channelIdFor235ChatPlace) === undefined) return;
-
     const setTime = new Date();
     setTime.setDate(setTime.getDate() - 7);
     const dateSevenDaysAgo = setTime.getDate();
@@ -146,7 +161,10 @@ export class Ready {
    * @return {void}
    */
   private celebrate235ProductionAnniversary(client: typeof Client): void {
-    //
+    if ((this.todayHour !== 10) || (this.todayMin !== 0)) return;
+    if ((this.todayMonth !== this.anniversaryDataFor235Production.month) || (this.todayDate !== this.anniversaryDataFor235Production.date)) return;
+
+    client.channels.cache.get(this.channelIdFor235ChatPlace).send(`本日${this.todayMonth}月${this.todayDate}日で**${this.anniversaryDataFor235Production.name}**が設立されて**${Number(this.todayYear - this.anniversaryDataFor235Production.year)}年**が経ちました！！\nHappy Birthday♪　これからも235プロがずっと続きますように♪`);
   }
 
   /**
@@ -157,6 +175,20 @@ export class Ready {
    * @return {void}
    */
   private celebrateMillionLiveAnniversary(client: typeof Client): void {
-    //
+    if ((this.todayHour !== 10) || (this.todayMin !== 0)) return;
+    if ((this.todayMonth !== this.anniversaryDataForMillionLive.month) || (this.todayDate !== this.anniversaryDataForMillionLive.date)) return;
+
+    client.channels.cache.get(this.channelIdFor235ChatPlace).send(`本日${this.todayMonth}月${this.todayDate}日で**${this.anniversaryDataForMillionLive.name}**は**${Number(this.todayYear - this.anniversaryDataForMillionLive.year)}周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！`);
+  }
+
+  /**
+   * 特定の時間に235botを停止させる
+   *
+   * @return {void}
+   */
+  private stop(): void {
+    if ((this.todayHour !== 23) || (this.todayMin !== 0)) return;
+
+    process.exit();
   }
 }
