@@ -37,7 +37,6 @@ export class GuildMemberRemove {
     .then((deleteData: {name: string, user_id: string, month: number, date: number}[]) => {
       client.users.cache.get(this.discordBot.userIdForMaki).send(`${member.nickname}さんがサーバーから退出されたため、${member.nickname}さんの誕生日を削除しました！`);
       client.users.cache.get(this.discordBot.userIdForUtatane).send(`${member.nickname}さんがサーバーから退出されたため、${member.nickname}さんの誕生日を削除しました！\nもし間違いがあった場合は報告をお願いします！`);
-    })
-    .catch((error: unknown) => error);
+    });
   }
 }

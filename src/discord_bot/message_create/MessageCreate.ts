@@ -119,10 +119,8 @@ export class MessageCreate {
 
     message.reply('テスト用コマンド');
 
-    setTimeout(() => {
-      message.delete()
-      .then((deletedMessage: typeof Message) => deletedMessage)
-      .catch((error: unknown) => error);
+    setTimeout(async () => {
+      await message.delete();
     }, this.setTimeoutSec);
   }
 }

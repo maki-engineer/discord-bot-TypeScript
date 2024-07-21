@@ -179,19 +179,17 @@ export class Ready {
             .then((message: typeof Message) => {
               message.delete();
               DeleteMessage.deleteMessage(foundData[deleteIndex].message_id)
-              .then((deletedData: {message_id: string, date: number}[]) => deletedData)
-              .catch((error: unknown) => error);
+              .then((deletedData: {message_id: string, date: number}[]) => deletedData);
 
               deleteIndex++;
             })
-            .catch((error: unknown)  => {
+            .catch((error: unknown) => {
               client.users.cache.get(this.discordBot.userIdForMaki).send('メッセージを削除できませんでした。');
             });
             break;
         }
       }, 5_000);
-    })
-    .catch((error: unknown) => error);
+    });
   }
 
   /**
@@ -239,8 +237,7 @@ export class Ready {
           }, 4_000);
           break;
       }
-    })
-    .error((error: unknown) => error);
+    });
   }
 
   /**
@@ -305,8 +302,7 @@ export class Ready {
           }, 4_000);
           break;
       }
-    })
-    .catch((error: unknown) => error);
+    });
   }
 
   /**
