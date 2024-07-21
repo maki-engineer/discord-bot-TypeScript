@@ -28,7 +28,9 @@ module.exports = (sequelize, DataTypes) => {
     {
       let options = {
         where: {
-          user_id: userId,
+          user_id: {
+            [Op.ne]: userId
+          },
           month,
           date
         },
