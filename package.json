@@ -7,7 +7,7 @@
     "test": "jest",
     "build": "npx tsc",
     "build:watch": "npx tsc --watch",
-    "start": "node build/src/main.js",
+    "start": "npx ts-node src/main.ts",
     "start:dev": "nodemon build/src/main.js",
     "compile": "tsc -p .",
     "migrate": "sequelize db:migrate",

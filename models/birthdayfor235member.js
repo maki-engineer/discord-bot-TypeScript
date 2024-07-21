@@ -1,6 +1,8 @@
 'use strict';
 
 const { Model } = require('sequelize');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 module.exports = (sequelize, DataTypes) => {
   class BirthdayFor235Member extends Model {
@@ -9,8 +11,87 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
+    static associate(models)
+    {
       // define association here
+    }
+
+    /**
+     * 235プロダクションメンバーの中で当日誕生日の人を取得
+     *
+     * @param {string} userId ユーザーID
+     * @param {number} month 月
+     * @param {number} date 日
+     * @param {any} transaction ユニットテストをする時に指定
+     *
+     * @return {object}
+     */
+    static async get235MemberBirthdayList(userId, month, date, transaction = null)
+    {
+      let options = {
+        where: {
+          user_id: {
+            [Op.ne]: userId
+          },
+          month,
+          date
+        },
+        raw: true
+      };
+
+      if (transaction !== null) {
+        options.transaction = transaction;
+      }
+
+      return await this.findAll(options);
+    }
+
+    /**
+     * 新しく235プロダクションに入ってきたメンバーの誕生日を登録
+     *
+     * @param {string} userName ユーザー名
+     * @param {string} userId ユーザーID
+     * @param {number} month 月
+     * @param {number} date 日
+     * @param {any} transaction ユニットテストをする時に指定
+     */
+    static async registNew235MemberBirthday(userName, userId, month, date, transaction = null)
+    {
+      const insertData = {
+        name: userName,
+        user_id: userId,
+        month,
+        date
+      };
+
+      if (transaction !== null) {
+        return await this.create(insertData, {transaction});
+      }
+
+      return await this.create(insertData);
+    }
+
+    /**
+     * 指定された235プロダクションメンバーの誕生日を削除
+     *
+     * @param {string} userId メンバーのユーザーID
+     * @param {any} transaction ユニットテストをする時に指定
+     *
+     * @return {object}
+     */
+    static async delete235MemberBirthday(userId, transaction = null)
+    {
+      const deleteData = {
+        where: {
+          user_id: userId
+        }
+      };
+
+      if (transaction !== null) {
+        deleteData.transaction = transaction;
+      }
+
+      return await this.destroy(deleteData);
     }
   }
 
