@@ -1,6 +1,6 @@
 const { Message, Client } = require('discord.js');
 const { DiscordBot } = require('../DiscordBot');
-const { BirthdayForMillionMember } = require('../../../models/index');
+const { BirthdayFor235Member } = require('../../../models/index');
 
 require('dotenv').config();
 
@@ -48,7 +48,7 @@ export class MessageCreate {
       // 自己紹介チャンネルから新しく入ったメンバーの誕生日を登録する＆挨拶をする
       if ((this.discordBot.channels.cache.get(this.channelIdFor235Introduction) !== undefined) && (message.channelId === this.channelIdFor235Introduction)) {
         // 誕生日を登録
-        this.registNewMemberBirthday(message, this.discordBot);
+        this.registNew235MemberBirthday(message, this.discordBot);
 
         // 挨拶
         message.reply(`${message.author.username}さん、235プロダクションへようこそ！\nこれからもよろしくおねがいします♪`);
@@ -79,7 +79,7 @@ export class MessageCreate {
    *
    * @return {void}
    */
-  private registNewMemberBirthday(message: typeof Message, client: typeof Client): void {
+  private registNew235MemberBirthday(message: typeof Message, client: typeof Client): void {
     const messageList: string[] = message.content.replace(/\r?\n/g, '').split(/：|・/);
     const foundIndex: number = messageList.indexOf('生年月日');
 
@@ -91,10 +91,24 @@ export class MessageCreate {
       birthdayList.shift();
     }
 
-    // db.run("insert into birthday_for_235_members(name, user_id, month, date) values(?, ?, ?, ?)", message.author.username, message.author.id, birthday[0], birthday[1]);
-
-    client.users.cache.get(this.userIdForMaki).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`);
-    client.users.cache.get(this.userIdForUtatane).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`);
+    BirthdayFor235Member.registNew235MemberBirthday(
+      message.author.username,
+      message.author.id,
+      birthdayList[0],
+      birthdayList[1]
+    )
+    .then((newData: {
+      name: string,
+      user_id: string,
+      month: number,
+      date: number
+    }[]) => {
+      client.users.cache.get(this.userIdForMaki).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`);
+      client.users.cache.get(this.userIdForUtatane).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`);
+    })
+    .catch((error: unknown) => {
+      client.users.cache.get(this.userIdForMaki).send(`${message.author.username}さんの誕生日を登録できませんでした。`);
+    });
   }
 
   /**
