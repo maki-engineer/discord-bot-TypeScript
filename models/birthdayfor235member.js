@@ -15,6 +15,34 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     /**
+     * 235プロダクションメンバーの中で当日誕生日の人を取得
+     *
+     * @param {string} userId ユーザーID
+     * @param {number} month 月
+     * @param {number} date 日
+     * @param {any} transaction ユニットテストをする時に指定
+     *
+     * @return {object}
+     */
+    static async get235MemberBirthdayList(userId, month, date, transaction = null)
+    {
+      let options = {
+        where: {
+          user_id: userId,
+          month,
+          date
+        },
+        raw: true
+      };
+
+      if (transaction !== null) {
+        options.transaction = transaction;
+      }
+
+      return await this.findAll(options);
+    }
+
+    /**
      * 新しく235プロダクションに入ってきたメンバーの誕生日を登録
      *
      * @param {string} userName ユーザー名
