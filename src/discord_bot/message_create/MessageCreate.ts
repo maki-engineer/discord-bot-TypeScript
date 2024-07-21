@@ -29,9 +29,9 @@ export class MessageCreate {
     this.discordBot.on('messageCreate', (message: typeof Message) => {
       // イベント企画の文章作成機能でアクションを付ける必要がある235botのメッセージだけは反応する
 
-      // 235メンバーの誕生日をお祝い
+      // 235メンバーの誕生日をお祝いしてるメッセージにアクション
 
-      // ミリオンメンバーの誕生日をお祝い
+      // ミリオンメンバーの誕生日をお祝いしてるメッセージにアクション
 
       // 235botのメッセージがリプライだった場合、1分後に削除
       if ((message.author.bot) && (message.mentions.repliedUser)) {
