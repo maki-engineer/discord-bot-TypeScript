@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
         options.transaction = transaction;
       }
 
-      return this.findAll(options);
+      return await this.findAll(options);
     }
 
     /**
