@@ -83,7 +83,7 @@ export class Ready {
   private deleteOldMessageFrom235ChatPlaceChannel(client: typeof Client): void {
     if (client.channels.cache.get(this.channelIdFor235ChatPlace) === undefined) return;
 
-    let setTime = new Date();
+    const setTime = new Date();
     setTime.setDate(setTime.getDate() - 7);
     const dateSevenDaysAgo = setTime.getDate();
 
@@ -93,7 +93,7 @@ export class Ready {
 
       let deleteIndex: number = 0;
 
-      let deleteTimer = setInterval(() => {
+      const deleteTimer = setInterval(() => {
         switch (deleteIndex) {
           case foundData.length:
             clearInterval(deleteTimer);

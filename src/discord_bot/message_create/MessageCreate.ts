@@ -85,7 +85,7 @@ export class MessageCreate {
 
     if (foundIndex === -1) return;
 
-    let birthdayList: string[] = messageList[foundIndex + 1].split(/年|月|\//).map(data => data.match(/\d+/g)![0].replace(/^0+/, ''));
+    const birthdayList: string[] = messageList[foundIndex + 1].split(/年|月|\//).map(data => data.match(/\d+/g)![0].replace(/^0+/, ''));
 
     if (birthdayList.length === 3) {
       birthdayList.shift();
@@ -126,7 +126,7 @@ export class MessageCreate {
 
     setTimeout(() => {
       message.delete()
-      .then((message: typeof Message) => message)
+      .then((deletedMessage: typeof Message) => deletedMessage)
       .catch((error: unknown) => error);
     }, this.setTimeoutSec);
   }
