@@ -17,18 +17,7 @@ const guildMemberRemove = new GuildMemberRemove(discordBot);
 discordBot.start();
 
 // 常時行う処理
-discordBot.on('ready', () => {
-  // 235botのコマンドを設定
-  ready.setCommand();
-
-  // 235botのステータスを設定
-  ready.setStatus();
-
-  // 1分ごとに処理
-  setInterval(() => {
-    ready.readyEvent();
-  }, 60_000);
-});
+ready.readyEvent();
 
 // スラッシュコマンドが使われた時に行う処理
 interactionCreate.interactionCreateEvent();
