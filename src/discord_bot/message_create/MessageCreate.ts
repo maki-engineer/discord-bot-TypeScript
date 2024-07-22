@@ -11,6 +11,11 @@ export class MessageCreate {
   private readonly prefix: string = '235';
   private readonly setTimeoutSec: number = 15_000;
 
+  private readonly birthday235MemberEmojiList: string[] = [
+    '<:__:794969172630044674>',
+    '<:__:794969688982552607>',
+  ];
+
   constructor(discordBot: typeof DiscordBot) {
     this.discordBot = discordBot;
   }
@@ -24,7 +29,7 @@ export class MessageCreate {
     this.discordBot.on('messageCreate', (message: typeof Message) => {
       // イベント企画で作成した文章にアクション
 
-      // 235メンバーの誕生日をお祝いしてるメッセージにアクション
+      this.reactToBirthday235MemberMessage(message);
 
       // ミリオンメンバーの誕生日をお祝いしてるメッセージにアクション
 
@@ -64,6 +69,21 @@ export class MessageCreate {
 
       this.testCommand(message, commandName);
     });
+  }
+
+  /**
+   * 235メンバーの誕生日をお祝いしてるメッセージにアクション
+   *
+   * @param message Messageクラス
+   *
+   * @return {void}
+   */
+  private reactToBirthday235MemberMessage(message: typeof Message): void {
+    if (this.discordBot.isReactionCelebrate235MemberMessage) return;
+
+    this.birthday235MemberEmojiList.forEach((emoji: string) => message.react(emoji));
+
+    this.discordBot.isReactionCelebrate235MemberMessage = true;
   }
 
   /**
