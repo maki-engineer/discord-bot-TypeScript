@@ -12,7 +12,7 @@ require('dotenv').config();
  * ここには主に235botを動かすための基本的な初期設定や起動させるためのメソッドなどが書いてある。
  */
 export class DiscordBot extends Client {
-  private _celebrateMillionMemberReactionList: string[] = [];
+  private _celebrateMillionMemberReactionEmoji: string = '';
   private _isReactionCelebrate235MemberMessage: boolean = true;
   private _usedMaleEventCommandReactionCount: number = 0;
   private readonly discordToken = process.env.DISCORD_TOKEN;
@@ -46,12 +46,12 @@ export class DiscordBot extends Client {
     });
   }
 
-  get celebrateMillionMemberReactionList(): string[] {
-    return this._celebrateMillionMemberReactionList;
+  get celebrateMillionMemberReactionEmoji(): string {
+    return this._celebrateMillionMemberReactionEmoji;
   }
 
-  set celebrateMillionMemberReactionList(celebrateMillionMemberReactionList: string[]) {
-    this._celebrateMillionMemberReactionList = celebrateMillionMemberReactionList;
+  set celebrateMillionMemberReactionEmoji(celebrateMillionMemberReactionEmoji: string) {
+    this._celebrateMillionMemberReactionEmoji = celebrateMillionMemberReactionEmoji;
   }
 
   get isReactionCelebrate235MemberMessage(): boolean {
