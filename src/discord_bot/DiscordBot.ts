@@ -1,4 +1,8 @@
 const { Client, GatewayIntentBits } = require('discord.js');
+const { Ready } = require('./ready/Ready');
+const { InteractionCreate } = require('./interaction_create/InteractionCreate');
+const { MessageCreate } = require('./message_create/MessageCreate');
+const { GuildMemberRemove } = require('./guild_member_remove/GuildMemberRemove');
 
 require('dotenv').config();
 
@@ -93,5 +97,17 @@ export class DiscordBot extends Client {
    */
   public start(): void {
     this.login(this.discordToken);
+
+    // 常時行う処理
+    new Ready(this).readyEvent();
+
+    // スラッシュコマンドが使われた時に行う処理
+    new InteractionCreate(this).interactionCreateEvent();
+
+    // メッセージが送信された時に行う処理
+    new MessageCreate(this).messageCreateEvent();
+
+    // サーバーから誰かが退出した時に行う処理
+    new GuildMemberRemove(this).guildMemberRemoveEvent();
   }
 }
