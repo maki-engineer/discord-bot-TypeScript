@@ -178,9 +178,9 @@ export class Ready {
 
           default:
             client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).messages.fetch(foundData[deleteIndex].message_id)
-            .then((message: typeof Message) => {
-              message.delete()
-              .then((message: typeof Message) => client.users.cache.get(this.discordBot.userIdForMaki).send('以下のメッセージを削除しました！\n\n' + message.content))
+            .then((foundMessage: typeof Message) => {
+              foundMessage.delete()
+              .then((deletedMessage: typeof Message) => client.users.cache.get(this.discordBot.userIdForMaki).send('以下のメッセージを削除しました！\n\n' + deletedMessage.content))
               .catch((error: unknown) => client.users.cache.get(this.discordBot.userIdForMaki).send('メッセージを削除できませんでした。'));
               DeleteMessage.deleteMessage(foundData[deleteIndex].message_id)
               .then((deletedData: {message_id: string, date: number}[]) => deletedData);
