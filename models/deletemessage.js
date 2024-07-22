@@ -33,6 +33,29 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     /**
+     * 削除対象のメッセージを保存
+     *
+     * @param {string} messageId 対象のメッセージID
+     * @param {number} date 投稿された日
+     * @param {any} transaction ユニットテストをする時に指定
+     *
+     * @return {object}
+     */
+    static async storeMessage(messageId, date, transaction = null)
+    {
+      const insertData = {
+        message_id: messageId,
+        date
+      };
+
+      if (transaction !== null) {
+        return await this.create(insertData, {transaction: transaction});
+      }
+
+      return await this.create(insertData);
+    }
+
+    /**
      * 削除対象のメッセージを削除
      *
      * @param {string} messageId 対象のメッセージID

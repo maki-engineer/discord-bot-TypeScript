@@ -1,6 +1,6 @@
 const { Message, Client } = require('discord.js');
 const { DiscordBot } = require('../DiscordBot');
-const { BirthdayFor235Member } = require('../../../models/index');
+const { BirthdayFor235Member, DeleteMessage } = require('../../../models/index');
 
 
 /**
@@ -40,7 +40,7 @@ export class MessageCreate {
         setTimeout(() => message.delete(), 60_000);
       }
 
-      // 雑談場（通話外）の235botのリプライじゃないメッセージを保存（１週間後に消すため）
+      this.storeMessage(message, this.discordBot);
 
       // botからのメッセージは無視
       if (message.author.bot) return;
@@ -118,6 +118,25 @@ export class MessageCreate {
     message.react(this.discordBot.celebrateMillionMemberReactionEmoji);
 
     this.discordBot.celebrateMillionMemberReactionEmoji = '';
+  }
+
+  /**
+   * 雑談場（通話外）の235botのリプライじゃないメッセージを保存（１週間後に消すため）
+   *
+   * @param message Messageクラス
+   * @param client Clientクラス
+   *
+   * @return {void}
+   */
+  private storeMessage(message: typeof Message, client: typeof Client): void {
+    if (client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace) === undefined) return;
+    if ((message.channelId !== this.discordBot.channelIdFor235ChatPlace) || (message.author.bot === false) || (message.mentions.repliedUser !== null)) return;
+
+    const today = new Date();
+    const storeDate = today.getDate();
+
+    DeleteMessage.storeMessage(message.id, storeDate)
+    .then((newData: {message_id: string, date: number}) => client.users.cache.get(this.discordBot.userIdForMaki).send('新しいメッセージを delete_messages テーブルに登録しました！'));
   }
 
   /**
