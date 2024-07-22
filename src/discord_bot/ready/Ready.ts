@@ -121,9 +121,6 @@ export class Ready {
       cron.schedule('0 30 9 * * *', () => this.celebrateMillionMember(this.discordBot));
       cron.schedule('0 0 10 * * *', () => this.celebrate235ProductionAnniversary(this.discordBot));
       cron.schedule('0 0 10 * * *', () => this.celebrateMillionLiveAnniversary(this.discordBot));
-
-      // 特定の時間に235botを停止させる
-      cron.schedule('0 0 23 * *', () => process.exit());
     });
   }
 
