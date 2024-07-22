@@ -1,6 +1,7 @@
 const { Client, Message } = require('discord.js');
 const { DiscordBot } = require('../DiscordBot');
 const { BirthdayFor235Member, BirthdayForMillionMember, DeleteMessage } = require('../../../models/index');
+const cron = require('node-cron');
 
 
 /**
@@ -347,5 +348,22 @@ export class Ready {
     if ((this.todayHour !== 23) || (this.todayMin !== 0)) return;
 
     process.exit();
+  }
+
+  /**
+   * 現在日時を取得
+   *
+   * @return {object}
+   */
+  private getTodayDateList(): object {
+    const today = new Date();
+
+    return {
+      todayYear: today.getFullYear(),
+      todayMonth: today.getMonth() + 1,
+      todayDate: today.getDate(),
+      todayHour: today.getHours(),
+      todayMin: today.getMinutes()
+    };
   }
 }
