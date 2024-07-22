@@ -33,7 +33,7 @@ export class MessageCreate {
 
       this.reactToBirthday235MemberMessage(message);
 
-      // ミリオンメンバーの誕生日をお祝いしてるメッセージにアクション
+      this.reactToBirthdayMillionMemberMessage(message);
 
       // 235botのメッセージがリプライだった場合、1分後に削除
       if ((message.author.bot) && (message.mentions.repliedUser)) {
@@ -103,6 +103,21 @@ export class MessageCreate {
     this.birthday235MemberEmojiList.forEach((emoji: string) => message.react(emoji));
 
     this.discordBot.isReactionCelebrate235MemberMessage = true;
+  }
+
+  /**
+   * ミリオンメンバーの誕生日をお祝いしてるメッセージにアクション
+   *
+   * @param message Messageクラス
+   *
+   * @return {void}
+   */
+  private reactToBirthdayMillionMemberMessage(message: typeof Message): void {
+    if (this.discordBot.celebrateMillionMemberReactionList.length === 0) return;
+
+    this.discordBot.celebrateMillionMemberReactionList.forEach((emoji: string) => message.react(emoji));
+
+    this.discordBot.celebrateMillionMemberReactionList = [];
   }
 
   /**
