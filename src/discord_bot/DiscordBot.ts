@@ -13,7 +13,7 @@ require('dotenv').config();
  */
 export class DiscordBot extends Client {
   private _celebrateMillionMemberReactionList: string[] = [];
-  private _celebrate235MemberReactionCount: number = 0;
+  private _isReactionCelebrate235MemberMessage: boolean = true;
   private _usedMaleEventCommandReactionCount: number = 0;
   private readonly discordToken = process.env.DISCORD_TOKEN;
   private readonly _serverIdFor235 = process.env.SERVER_ID_FOR_235;
@@ -54,12 +54,12 @@ export class DiscordBot extends Client {
     this._celebrateMillionMemberReactionList = celebrateMillionMemberReactionList;
   }
 
-  get celebrate235MemberReactionCount(): number {
-    return this._celebrate235MemberReactionCount;
+  get isReactionCelebrate235MemberMessage(): boolean {
+    return this._isReactionCelebrate235MemberMessage;
   }
 
-  set celebrate235MemberReactionCount(celebrate235MemberReactionCount: number) {
-    this._celebrate235MemberReactionCount = celebrate235MemberReactionCount;
+  set isReactionCelebrate235MemberMessage(isReactionCelebrate235MemberMessage: boolean) {
+    this._isReactionCelebrate235MemberMessage = isReactionCelebrate235MemberMessage;
   }
 
   get usedMaleEventCommandReactionCount(): number {

@@ -208,7 +208,7 @@ export class Ready {
         case 1:
           client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).send(`本日${todayDateList.todayMonth}月${todayDateList.todayDate}日は**${birthdayData[0].name}さん**のお誕生日です！！\n${birthdayData[0].name}さん、お誕生日おめでとうございます♪`);
 
-          this.discordBot.celebrate235MemberReactionCount = 2;
+          this.discordBot.isReactionCelebrate235MemberMessage = false;
           break;
 
         default:
@@ -223,14 +223,14 @@ export class Ready {
               case 0:
                 client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).send(`本日${todayDateList.todayMonth}月${todayDateList.todayDate}日は**${birthdayData[birthdayIndex]}さん**のお誕生日です！！\n${birthdayData[birthdayIndex]}さん、お誕生日おめでとうございます♪`);
 
-                this.discordBot.celebrate235MemberReactionCount = 2;
+                this.discordBot.isReactionCelebrate235MemberMessage = false;
                 birthdayIndex++;
                 break;
 
               default:
                 client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).send(`さらに！！　本日は**${birthdayData[birthdayIndex]}さん**のお誕生日でもあります！！\n${birthdayData[birthdayIndex]}さん、お誕生日おめでとうございます♪`);
 
-                this.discordBot.celebrate235MemberReactionCount = 2;
+                this.discordBot.isReactionCelebrate235MemberMessage = false;
                 birthdayIndex++;
                 break;
             }
