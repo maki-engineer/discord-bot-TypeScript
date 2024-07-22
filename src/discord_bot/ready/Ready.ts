@@ -260,13 +260,13 @@ export class Ready {
           const targetEmoji: string = this.millionMemberEmojiList.find((millionMember: {name: string, emoji: string}) => millionMember.name === birthdayData[0].name)!.emoji;
 
           if (this.checkMillionMemberList.includes(birthdayData[0].name)) {
-            client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).send({content: `本日${todayDateList.todayMonth}月${todayDateList.todayDate}日は**${birthdayData[0].name}**さんのお誕生日です！！\nHappy Birthday♪`, files: [birthdayData[0].img]});
+            client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).send({content: `本日${todayDateList.todayMonth}月${todayDateList.todayDate}日は**${birthdayData[0].name}**さんのお誕生日です！！\nHappy Birthday♪`, files: [`data/${birthdayData[0].img}`]});
 
-            this.discordBot.celebrateMillionMemberReactionList = [targetEmoji];
+            this.discordBot.celebrateMillionMemberReactionEmoji = targetEmoji;
           } else {
-            client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).send({content: `本日${todayDateList.todayMonth}月${todayDateList.todayDate}日は**${birthdayData[0].name}**のお誕生日です！！\nHappy Birthday♪`, files: [birthdayData[0].img]});
+            client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).send({content: `本日${todayDateList.todayMonth}月${todayDateList.todayDate}日は**${birthdayData[0].name}**のお誕生日です！！\nHappy Birthday♪`, files: [`data/${birthdayData[0].img}`]});
 
-            this.discordBot.celebrateMillionMemberReactionList = [targetEmoji];
+            this.discordBot.celebrateMillionMemberReactionEmoji = targetEmoji;
           }
           break;
 
@@ -285,19 +285,20 @@ export class Ready {
           const birthdayTimer = setInterval(() => {
             switch (birthdayIndex) {
               case birthdayData.length:
-                this.discordBot.celebrateMillionMemberReactionList = targetEmojiList;
                 clearInterval(birthdayTimer);
                 break;
 
               case 0:
-                client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).send({content: `本日${todayDateList.todayMonth}月${todayDateList.todayDate}日は**${birthdayData[birthdayIndex].name}**のお誕生日です！！\nHappy Birthday♪`, files: [birthdayData[birthdayIndex].img]});
+                client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).send({content: `本日${todayDateList.todayMonth}月${todayDateList.todayDate}日は**${birthdayData[birthdayIndex].name}**のお誕生日です！！\nHappy Birthday♪`, files: [`data/${birthdayData[birthdayIndex].img}`]});
 
+                this.discordBot.celebrateMillionMemberReactionEmoji = targetEmojiList[birthdayIndex];
                 birthdayIndex++;
                 break;
 
               default:
-                client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).send({content: `さらに！！　本日は**${birthdayData[birthdayIndex].name}**のお誕生日でもあります！！\nHappy Birthday♪`, files: [birthdayData[birthdayIndex].img]});
+                client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).send({content: `さらに！！　本日は**${birthdayData[birthdayIndex].name}**のお誕生日でもあります！！\nHappy Birthday♪`, files: [`data/${birthdayData[birthdayIndex].img}`]});
 
+                this.discordBot.celebrateMillionMemberReactionEmoji = targetEmojiList[birthdayIndex];
                 birthdayIndex++;
                 break;
             }

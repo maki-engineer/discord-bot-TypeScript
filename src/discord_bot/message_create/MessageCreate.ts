@@ -113,11 +113,11 @@ export class MessageCreate {
    * @return {void}
    */
   private reactToBirthdayMillionMemberMessage(message: typeof Message): void {
-    if (this.discordBot.celebrateMillionMemberReactionList.length === 0) return;
+    if (this.discordBot.celebrateMillionMemberReactionEmoji === '') return;
 
-    this.discordBot.celebrateMillionMemberReactionList.forEach((emoji: string) => message.react(emoji));
+    message.react(this.discordBot.celebrateMillionMemberReactionEmoji);
 
-    this.discordBot.celebrateMillionMemberReactionList = [];
+    this.discordBot.celebrateMillionMemberReactionEmoji = '';
   }
 
   /**
