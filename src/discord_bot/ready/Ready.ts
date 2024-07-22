@@ -151,13 +151,15 @@ export class Ready {
   }
 
   /**
-   * 雑談場（通話外）チャンネルでメッセージ送信して1週間経ったメッセージを削除
+   * 9時15分に雑談場（通話外）チャンネルでメッセージ送信して1週間経ったメッセージを削除
    *
    * @param {Client} client Clientクラス
    *
    * @return {void}
    */
   private deleteOldMessageFrom235ChatPlaceChannel(client: typeof Client): void {
+    if ((this.todayHour !== 9) || (this.todayMin !== 15)) return;
+
     const setTime = new Date();
     setTime.setDate(setTime.getDate() - 7);
     const dateSevenDaysAgo = setTime.getDate();
@@ -177,14 +179,13 @@ export class Ready {
           default:
             client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).messages.fetch(foundData[deleteIndex].message_id)
             .then((message: typeof Message) => {
-              message.delete();
+              message.delete()
+              .then((message: typeof Message) => client.users.cache.get(this.discordBot.userIdForMaki).send('以下のメッセージを削除しました！\n\n' + message.content))
+              .catch((error: unknown) => client.users.cache.get(this.discordBot.userIdForMaki).send('メッセージを削除できませんでした。'));
               DeleteMessage.deleteMessage(foundData[deleteIndex].message_id)
               .then((deletedData: {message_id: string, date: number}[]) => deletedData);
 
               deleteIndex++;
-            })
-            .catch((error: unknown) => {
-              client.users.cache.get(this.discordBot.userIdForMaki).send('メッセージを削除できませんでした。');
             });
             break;
         }
@@ -200,6 +201,8 @@ export class Ready {
    * @return {void}
    */
   private celebrate235Member(client: typeof Client): void {
+    if ((this.todayHour !== 9) || (this.todayMin !== 0)) return;
+
     BirthdayFor235Member.get235MemberBirthdayList(this.discordBot.userIdForMaki, this.todayMonth, this.todayDate)
     .then((birthdayData: {name: string, user_id: string, month: number, date: number}[]) => {
       if (birthdayData.length === 0) return;
@@ -248,6 +251,8 @@ export class Ready {
    * @return {void}
    */
   private celebrateMillionMember(client: typeof Client): void {
+    if ((this.todayHour !== 9) || (this.todayMin !== 30)) return;
+
     BirthdayForMillionMember.getMillionMemberBirthdayList(this.todayMonth, this.todayDate)
     .then((birthdayData: {name: string, month: number, date: number, img: string}[]) => {
       if (birthdayData.length === 0) return;

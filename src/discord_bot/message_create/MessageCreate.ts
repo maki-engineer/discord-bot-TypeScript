@@ -22,7 +22,7 @@ export class MessageCreate {
    */
   public messageCreateEvent(): void {
     this.discordBot.on('messageCreate', (message: typeof Message) => {
-      // イベント企画の文章作成機能でアクションを付ける必要がある235botのメッセージだけは反応する
+      // イベント企画で作成した文章にアクション
 
       // 235メンバーの誕生日をお祝いしてるメッセージにアクション
 
