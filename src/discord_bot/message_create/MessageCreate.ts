@@ -11,6 +11,8 @@ export class MessageCreate {
   private readonly prefix: string = '235';
   private readonly setTimeoutSec: number = 15_000;
 
+  private readonly maleEventEmojiList: string[] = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+
   private readonly birthday235MemberEmojiList: string[] = [
     '<:__:794969172630044674>',
     '<:__:794969688982552607>',
@@ -27,7 +29,7 @@ export class MessageCreate {
    */
   public messageCreateEvent(): void {
     this.discordBot.on('messageCreate', (message: typeof Message) => {
-      // イベント企画で作成した文章にアクション
+      this.reactToUsedMaleEventCommandMessage(message);
 
       this.reactToBirthday235MemberMessage(message);
 
@@ -69,6 +71,23 @@ export class MessageCreate {
 
       this.testCommand(message, commandName);
     });
+  }
+
+  /**
+   * イベント企画で作成した文章にアクション
+   *
+   * @param message Messageクラス
+   *
+   * @return {void}
+   */
+  private reactToUsedMaleEventCommandMessage(message: typeof Message): void {
+    if (this.discordBot.usedMaleEventCommandReactionCount === 0) return;
+
+    for (let i = 0; i < this.discordBot.usedMaleEventCommandReactionCount; i++) {
+      message.react(this.maleEventEmojiList[i]);
+    }
+
+    this.discordBot.usedMaleEventCommandReactionCount = 0;
   }
 
   /**
