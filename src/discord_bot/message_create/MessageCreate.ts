@@ -246,7 +246,7 @@ export class MessageCreate {
       return;
     }
 
-    let isAllInt = true;
+    let isAllInt: boolean = true;
 
     for (let i = 0; i < commandList.length; i++) {
       // 追加文章はバリデーションチェックしない
@@ -424,7 +424,7 @@ export class MessageCreate {
       return;
     }
 
-    let isAllInt = true;
+    let isAllInt: boolean = true;
 
     for (const date of commandList) {
       if (!Number.isInteger(Number(date))) {
