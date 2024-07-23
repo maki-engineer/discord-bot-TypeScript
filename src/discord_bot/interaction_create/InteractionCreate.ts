@@ -7,7 +7,7 @@ const { DiscordBot } = require('../DiscordBot');
  */
 export class InteractionCreate {
   private discordBot: typeof DiscordBot;
-  private readonly setTimeoutSec: number = 180_000;
+  private readonly setTimeoutSec = 180_000;
 
   constructor(discordBot: typeof DiscordBot) {
     this.discordBot = discordBot;

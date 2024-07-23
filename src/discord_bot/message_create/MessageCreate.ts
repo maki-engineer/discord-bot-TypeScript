@@ -8,12 +8,12 @@ const { BirthdayFor235Member, DeleteMessage } = require('../../../models/index')
  */
 export class MessageCreate {
   private discordBot: typeof DiscordBot;
-  private readonly prefix: string = '235';
-  private readonly setTimeoutSec: number = 15_000;
+  private readonly prefix = '235';
+  private readonly setTimeoutSec = 15_000;
 
-  private readonly maleEventEmojiList: string[] = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+  private readonly maleEventEmojiList = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
 
-  private readonly birthday235MemberEmojiList: string[] = [
+  private readonly birthday235MemberEmojiList = [
     '<:__:794969172630044674>',
     '<:__:794969688982552607>',
   ];

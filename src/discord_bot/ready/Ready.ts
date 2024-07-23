@@ -10,21 +10,21 @@ const cron = require('node-cron');
 export class Ready {
   private discordBot: typeof DiscordBot;
 
-  private readonly anniversaryDataFor235Production: {name: string, year: number, month: number, date: number} = {
+  private readonly anniversaryDataFor235Production = {
     name: '『アイドルマスター ミリオンライブ！ シアターデイズ』',
     year: 2017,
     month: 6,
     date: 29
   };
 
-  private readonly anniversaryDataForMillionLive: {name: string, year: number, month: number, date: number} = {
+  private readonly anniversaryDataForMillionLive = {
     name: '235プロダクション',
     year: 2020,
     month: 12,
     date: 24
   };
 
-  private readonly commandList: {name: string, description: string}[] = [
+  private readonly commandList = [
     {name: '235ap', description: 'APすることが出来た曲を登録するときに使用するコマンドです。'},
     {name: '235apremove', description: '間違ってAP曲データに登録してしまった曲を取り消すときに使用するコマンドです。'},
     {name: '235apall', description: 'これまでAPしてきた曲や曲数を知りたいときに使用するコマンドです。'},
@@ -35,7 +35,7 @@ export class Ready {
     {name: '235roomdivision', description: 'ボイスチャンネルに参加しているメンバーを分けたいときに使用するコマンドです。'},
   ];
 
-  private readonly millionMemberEmojiList: {name: string, emoji: string}[] = [
+  private readonly millionMemberEmojiList = [
     {name: '白石紬'  ,   emoji: '<:Tsumu_Tere:1130877675712565318>'},
     {name: '望月杏奈',   emoji: '<:Anna_Mochi:1112376914502488064>'},
     {name: '如月千早',   emoji: '<:Chihaya_Dog:995364437634596875>'},
@@ -91,7 +91,7 @@ export class Ready {
     {name: 'エミリー',   emoji: '<:Emily_Pop:1139199194154934383>'},
   ];
 
-  private readonly checkMillionMemberList: string[] = [
+  private readonly checkMillionMemberList = [
     '桜守歌織',
     '馬場このみ',
     '青羽美咲',
