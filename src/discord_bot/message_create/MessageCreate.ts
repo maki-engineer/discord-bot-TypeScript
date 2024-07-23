@@ -69,6 +69,7 @@ export class MessageCreate {
       // コマンドを取得
       const commandName: string = commandList.shift()!.toLowerCase();
 
+      this.helpCommand(message, commandName);
       this.testCommand(message, commandName);
     });
   }
@@ -177,6 +178,44 @@ export class MessageCreate {
     .catch((error: unknown) => {
       client.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.username}さんの誕生日を登録できませんでした。`);
     });
+  }
+
+  /**
+   * 235helpコマンド 235botの機能一覧を教える
+   *
+   * @param {Message} message Messageクラス
+   * @param {string} commandName 入力されたコマンド名
+   *
+   * @return {void}
+   */
+  private helpCommand(message: typeof Message, commandName: string): void {
+    if (commandName !== 'help') return;
+
+    switch (message.author.id) {
+      case this.discordBot.userIdForUtatane:
+        message.reply('235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235men\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。');
+
+        setTimeout(async () => {
+          try {
+            await message.delete();
+          } catch (error: unknown) {
+            console.log('message is deleted.');
+          }
+        }, this.setTimeoutSec);
+        break;
+
+      default:
+        message.reply('235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。');
+
+        setTimeout(async () => {
+          try {
+            await message.delete();
+          } catch (error: unknown) {
+            console.log('message is deleted.');
+          }
+        }, this.setTimeoutSec);
+        break;
+    }
   }
 
   /**
