@@ -71,6 +71,7 @@ export class MessageCreate {
 
       this.helpCommand(message, commandName);
       this.birthdayEventCommand(message, commandName, commandList);
+      this.menEventCommand(message, commandName, commandList);
       this.testCommand(message, commandName);
     });
   }
@@ -398,6 +399,146 @@ export class MessageCreate {
   }
 
   /**
+   * 235menコマンド 男子会の日程を決める文章を作成
+   *
+   * @param {Message} message Messageクラス
+   * @param {string} commandName 入力されたコマンド名
+   * @param {string[]} commandList 引数一覧
+   *
+   * @return {void}
+   */
+  private menEventCommand(message: typeof Message, commandName: string, commandList: string[]): void {
+    if ((commandName !== 'men') || (message.author.id !== this.discordBot.userIdForUtatane)) return;
+
+    if ((commandList.length < 1) || (commandList.length > 10)) {
+      message.reply('235menコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**2～10個まで**です！\n\n235men 8 12 15 21');
+
+      setTimeout(async () => {
+        try {
+          message.delete();
+        } catch (error: unknown) {
+          console.log('message is deleted.');
+        }
+      }, this.setTimeoutSec);
+
+      return;
+    }
+
+    let isAllInt = true;
+
+    for (let i = 0; i < commandList.length; i++) {
+      if (!Number.isInteger(Number(commandList[i]))) {
+        isAllInt = false;
+        break;
+      }
+    }
+
+    if (!isAllInt) {
+      message.reply('半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！');
+
+      setTimeout(async () => {
+        try {
+          message.delete();
+        } catch (error: unknown) {
+          console.log('message is deleted.');
+        }
+      }, this.setTimeoutSec);
+
+      return;
+    }
+
+    if (this.isExistsSameValue(commandList)) {
+      message.reply('同じ日程が入力されています！');
+
+      setTimeout(async () => {
+        try {
+          message.delete();
+        } catch (error: unknown) {
+          console.log('message is deleted.');
+        }
+      }, this.setTimeoutSec);
+
+      return;
+    }
+
+    let isValidDate: boolean = true;
+    const today = new Date();
+    const lastDatetime = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    // 今月末日を取得
+    const lastDate = lastDatetime.getDate();
+
+    for (let i = 0; i < commandList.length; i++) {
+      if ((Number(commandList[i]) < 1) || (Number(commandList[i]) > lastDate)) {
+        isValidDate = false;
+        break;
+      }
+    }
+
+    if (!isValidDate) {
+      message.reply(`日は1～${lastDate}の間で入力してください！`);
+
+      setTimeout(async () => {
+        try {
+          message.delete();
+        } catch (error: unknown) {
+          console.log('message is deleted.');
+        }
+      }, this.setTimeoutSec);
+
+      return;
+    }
+
+    commandList.sort((a, b) => Number(a) - Number(b));
+
+    const todayYear = today.getFullYear();
+    const todayMonth = today.getMonth() + 1;
+    const eventDayList = commandList.map((date) => new Date(todayYear, todayMonth - 1, Number(date)).getDay());
+
+    const week = [
+      '日曜日',
+      '月曜日',
+      '火曜日',
+      '水曜日',
+      '木曜日',
+      '金曜日',
+      '土曜日',
+    ];
+
+    const textList = [
+      [
+        `ふみこ男子の皆様方～～～～～～～～～～～！${todayMonth}月期の235士官学校開校日を決めたいと思いますわ～～～～～！！！日程なんですけど、\n\n`,
+        `ふみこ男子の皆様方～～～～～～～～～！${todayMonth}月期の235士官学校開校日を決めたいと思います！その日程なんですけど、\n\n`,
+      ],
+      [
+        '\n誠に勝手ながらこのいずれかの日程でやろうと思いますので、スタンプで反応を頂けると嬉しいです～～～～ふみこ男子の皆様方！よろしくおねがいしますわね！！！！！！！！！ﾍｹｯ!!!!!!!!',
+        '\n真に勝手ながらこのいずれかにしようと思いますので、2~3日中にスタンプで反応を頂けると幸いです！よろしくお願いしま～～～～～～～す🙏',
+      ],
+    ];
+
+    let eventText: string = '@everyone\n' + textList[0][Math.floor(Math.random() * textList[0].length)];
+
+    for (let i = 0; i < commandList.length; i++) {
+      eventText += `**${todayMonth}月${commandList[i]}日 （${week[eventDayList[i]]}）…　${this.maleEventEmojiList[i]}**\n`;
+    }
+
+    eventText += textList[1][Math.floor(Math.random() * textList[1].length)];
+
+    message.channel.send(eventText);
+
+    this.discordBot.usedMaleEventCommandReactionCount = commandList.length;
+
+    setTimeout(() => message.reply('うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪'), 6_000);
+
+    setTimeout(async () => {
+      try {
+        message.delete();
+      } catch (error: unknown) {
+        console.log('message is deleted.');
+      }
+    }, this.setTimeoutSec);
+  }
+
+  /**
    * 235testコマンド 新しい機能を追加する時に実験とかする用
    *
    * @param {Message} message Messageクラス
@@ -413,5 +554,18 @@ export class MessageCreate {
     setTimeout(async () => {
       await message.delete();
     }, this.setTimeoutSec);
+  }
+
+  /**
+   * 指定された配列の中に重複している要素があるかチェック
+   *
+   * @param {string[]} targetList 配列
+   *
+   * @return {boolean}
+   */
+  private isExistsSameValue(targetList: string[]): boolean {
+    const set = new Set(targetList);
+
+    return set.size !== targetList.length;
   }
 }
