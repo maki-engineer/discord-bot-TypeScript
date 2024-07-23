@@ -426,8 +426,8 @@ export class MessageCreate {
 
     let isAllInt = true;
 
-    for (let i = 0; i < commandList.length; i++) {
-      if (!Number.isInteger(Number(commandList[i]))) {
+    for (const date of commandList) {
+      if (!Number.isInteger(Number(date))) {
         isAllInt = false;
         break;
       }
@@ -467,8 +467,8 @@ export class MessageCreate {
     // 今月末日を取得
     const lastDate = lastDatetime.getDate();
 
-    for (let i = 0; i < commandList.length; i++) {
-      if ((Number(commandList[i]) < 1) || (Number(commandList[i]) > lastDate)) {
+    for (const date of commandList) {
+      if ((Number(date) < 1) || (Number(date) > lastDate)) {
         isValidDate = false;
         break;
       }
