@@ -76,7 +76,7 @@ export class MessageCreate {
   /**
    * イベント企画で作成した文章にアクション
    *
-   * @param message Messageクラス
+   * @param {Message} message Messageクラス
    *
    * @return {void}
    */
@@ -93,7 +93,7 @@ export class MessageCreate {
   /**
    * 235メンバーの誕生日をお祝いしてるメッセージにアクション
    *
-   * @param message Messageクラス
+   * @param {Message} message Messageクラス
    *
    * @return {void}
    */
@@ -108,7 +108,7 @@ export class MessageCreate {
   /**
    * ミリオンメンバーの誕生日をお祝いしてるメッセージにアクション
    *
-   * @param message Messageクラス
+   * @param {Message} message Messageクラス
    *
    * @return {void}
    */
@@ -123,8 +123,8 @@ export class MessageCreate {
   /**
    * 雑談場（通話外）の235botのリプライじゃないメッセージを保存（１週間後に消すため）
    *
-   * @param message Messageクラス
-   * @param client Clientクラス
+   * @param {Message} message Messageクラス
+   * @param {Client} client Clientクラス
    *
    * @return {void}
    */
