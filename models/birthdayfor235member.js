@@ -47,6 +47,34 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     /**
+     * 今月誕生日の235プロダクションメンバーを昇順で取得
+     *
+     * @param {number} month 月
+     * @param {any} transaction ユニットテストをする時に指定
+     *
+     * @return {object}
+     */
+    static async getThisMonthBirthdayMember(month, transaction = null)
+    {
+      let options = {
+        where: {
+          month
+        },
+        order: [
+          ['month'],
+          ['date'],
+        ],
+        raw: true
+      };
+
+      if (transaction !== null) {
+        options.transaction = transaction;
+      }
+
+      return await this.findAll(options);
+    }
+
+    /**
      * 新しく235プロダクションに入ってきたメンバーの誕生日を登録
      *
      * @param {string} userName ユーザー名
