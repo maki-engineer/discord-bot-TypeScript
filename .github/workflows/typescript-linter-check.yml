@@ -2,10 +2,6 @@ name: TypeScript Linter Check
 
 on: push
 
-defaults:
-    run:
-        working-directory: discord-app
-
 jobs:
     linter-action:
         name: TypeScript Linter Check
@@ -13,7 +9,7 @@ jobs:
         steps:
             - uses: actions/checkout@v1
             - name: Prepare
-              run: npm install
+              run: cd discord-app && npm install
             - name: TypeScript Linter Check
               id: linter
               uses: AntonKornus/TypeScript-Linter@1.0.0
