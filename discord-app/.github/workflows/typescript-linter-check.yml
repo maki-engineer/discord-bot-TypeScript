@@ -6,9 +6,6 @@ jobs:
     linter-action:
         name: TypeScript Linter Check
         runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: ./discord-app/
         steps:
             - uses: actions/checkout@v1
             - name: Prepare
