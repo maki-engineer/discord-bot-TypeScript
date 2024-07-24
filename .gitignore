@@ -1,10 +1,2 @@
-build
-config
-node_modules
-data
-migrations
-seeders
-src/run_test/test.ts
-test_coverage_dir
 .env
-package-lock.json
+postgre_sql/backup/development_235_backup.sql
