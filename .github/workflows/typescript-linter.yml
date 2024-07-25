@@ -16,4 +16,4 @@ jobs:
                 with:
                     node-version: "20"
               - run: npm install
-              - run: num run eslint-src
+              - run: npm run eslint-src
