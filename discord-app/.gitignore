@@ -1,5 +1,4 @@
 build
-config
 node_modules
 data
 migrations
