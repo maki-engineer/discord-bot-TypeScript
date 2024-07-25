@@ -24,5 +24,6 @@ module.exports = {
     'no-console': 'warn',
     camelcase: ['error', { properties: 'never' }],
     semi: ['error', 'always'],
+    'linebreak-style': 'off',
   },
 };
