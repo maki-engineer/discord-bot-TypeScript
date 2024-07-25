@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "eslint-models": "npx eslint models/",
+    "eslint-src": "npx eslint src/",
     "build": "npx tsc",
     "build:watch": "npx tsc --watch",
     "start": "npx ts-node src/main.ts",

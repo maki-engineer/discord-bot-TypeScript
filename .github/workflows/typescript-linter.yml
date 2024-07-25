@@ -16,4 +16,5 @@ jobs:
                 with:
                     node-version: "20"
               - run: npm install
-              - run: npm run eslint ./
+              - run: npm run eslint-models
+              - run: num run eslint-src
