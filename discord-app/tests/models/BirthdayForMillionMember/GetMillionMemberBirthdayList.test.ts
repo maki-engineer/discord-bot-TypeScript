@@ -24,14 +24,29 @@ describe('正常系（BirthdayForMillionMember.getMillionMemberBirthdayList）',
     const targetDate = 22;
 
     const dummyData = [
-      {name: '双海亜美', month: 5, date: 22, img: 'img/million-character/birthday/ami.jpg'},
-      {name: '双海真美', month: 5, date: 22, img: 'img/million-character/birthday/mami.jpg'},
-      {name: '天海春香', month: 4, date: 3, img: 'img/million-character/birthday/haruka.jpg'},
+      {
+        name: '双海亜美', month: 5, date: 22, img: 'img/million-character/birthday/ami.jpg',
+      },
+      {
+        name: '双海真美', month: 5, date: 22, img: 'img/million-character/birthday/mami.jpg',
+      },
+      {
+        name: '天海春香', month: 4, date: 3, img: 'img/million-character/birthday/haruka.jpg',
+      },
     ];
 
-    await BirthdayForMillionMember.bulkCreate(dummyData, {transaction});
+    await BirthdayForMillionMember.bulkCreate(dummyData, { transaction });
 
-    const result: {name: string, month: number, date: number, img: string}[] = await BirthdayForMillionMember.getMillionMemberBirthdayList(targetMonth, targetDate, transaction);
+    const result: {
+      name: string,
+      month: number,
+      date: number,
+      img: string
+    }[] = await BirthdayForMillionMember.getMillionMemberBirthdayList(
+      targetMonth,
+      targetDate,
+      transaction,
+    );
 
     expect(result).toHaveLength(2);
     expect(result).toBeInstanceOf(Array);
@@ -52,7 +67,16 @@ describe('正常系（BirthdayForMillionMember.getMillionMemberBirthdayList）',
     const targetMonth = 4;
     const targetDate = 3;
 
-    const result: {name: string, month: number, date: number, img: string}[] = await BirthdayForMillionMember.getMillionMemberBirthdayList(targetMonth, targetDate, transaction);
+    const result: {
+      name: string,
+      month: number,
+      date: number,
+      img: string
+    }[] = await BirthdayForMillionMember.getMillionMemberBirthdayList(
+      targetMonth,
+      targetDate,
+      transaction,
+    );
 
     expect(result).toHaveLength(0);
     expect(result).toEqual([]);
