@@ -4,13 +4,23 @@ on:
     push
 
 jobs:
+    unittest-db-up:
+        runs-on: ubuntu-latest
+        steps:
+              - run: docker compose up unittest.db -d
     jest:
         runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: discord-app
         steps:
               - uses: actions/checkout@master
               - uses: actions/setup-node@v4
                 with:
                     node-version: "20"
-              - run: cd discord-app
               - run: npm install
               - run: npm run test
+    unittest-db-down:
+        runs-on: ubuntu-latest
+        steps:
+              - run: docker compose rm -fsv unittest.db
