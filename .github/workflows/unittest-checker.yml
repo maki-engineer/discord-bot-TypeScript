@@ -6,13 +6,17 @@ on:
 jobs:
     jest:
         runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: discord-app
         steps:
               - uses: actions/checkout@master
               - uses: actions/setup-node@v4
                 with:
                     node-version: "20"
-              - run: npm install
-              - run: npm run test
+              - run: |
+                  docker compose up unittest.db -d && cd discord-app && npm install && npm install sequelize-cli && npx sequelize-cli db:migrate --env unittest && npm run test
+                env:
+                    POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+                    POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+                    POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+                    POSTGRES_USER_UNITTEST: ${{ secrets.POSTGRES_USER_UNITTEST }}
+                    POSTGRES_PASSWORD_UNITTEST: ${{ secrets.POSTGRES_PASSWORD_UNITTEST }}
+                    POSTGRES_DB_UNITTEST: ${{ secrets.POSTGRES_DB_UNITTEST }}
