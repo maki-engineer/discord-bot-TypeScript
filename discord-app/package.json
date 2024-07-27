@@ -11,8 +11,8 @@
     "start": "npx ts-node src/main.ts",
     "start:dev": "nodemon build/src/main.js",
     "compile": "tsc -p .",
-    "migrate": "npx sequelize db:migrate",
-    "seed": "npx sequelize db:seed:all"
+    "migrate": "sequelize db:migrate",
+    "seed": "sequelize db:seed:all"
   },
   "keywords": [],
   "author": "",

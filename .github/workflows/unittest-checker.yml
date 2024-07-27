@@ -12,7 +12,7 @@ jobs:
                 with:
                     node-version: "20"
               - run: |
-                  docker compose up unittest.db -d && cd discord-app && npm install && npm run migrate && npm run test
+                  docker compose up unittest.db -d && cd discord-app && npm install && ./node_modules/.bin/sequelize db:migrate && npm run test
                 env:
                     POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
                     POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
