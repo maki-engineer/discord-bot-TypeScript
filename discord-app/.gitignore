@@ -1,7 +1,7 @@
 build
 node_modules
 data
-migrations
+# migrations
 seeders
 src/run_test/test.ts
 test_coverage_dir
