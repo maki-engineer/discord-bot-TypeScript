@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-const { Ready } = require('./ready/Ready');
+const Ready = require('./ready/Ready').default;
 const { InteractionCreate } = require('./interaction_create/InteractionCreate');
 const { MessageCreate } = require('./message_create/MessageCreate');
 const { GuildMemberRemove } = require('./guild_member_remove/GuildMemberRemove');
