@@ -82,3 +82,5 @@ describe('正常系（BirthdayForMillionMember.getMillionMemberBirthdayList）',
     expect(result).toEqual([]);
   });
 });
+
+export {};
