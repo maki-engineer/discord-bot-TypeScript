@@ -117,11 +117,11 @@ export default class Ready {
         this.discordBot.channels.cache.get(this.discordBot.channelIdFor235ChatPlace) === undefined
       ) return;
 
-      cron.schedule('0 15 9 * * *', () => this.deleteOldMessageFrom235ChatPlaceChannel(this.discordBot));
-      cron.schedule('0 0 9 * * *', () => this.celebrate235Member(this.discordBot));
-      cron.schedule('0 30 9 * * *', () => this.celebrateMillionMember(this.discordBot));
-      cron.schedule('0 0 10 * * *', () => this.celebrate235ProductionAnniversary(this.discordBot));
-      cron.schedule('0 0 10 * * *', () => this.celebrateMillionLiveAnniversary(this.discordBot));
+      cron.schedule('0 15 0 * * *', () => this.deleteOldMessageFrom235ChatPlaceChannel(this.discordBot));
+      cron.schedule('0 0 0 * * *', () => this.celebrate235Member(this.discordBot));
+      cron.schedule('0 30 0 * * *', () => this.celebrateMillionMember(this.discordBot));
+      cron.schedule('0 0 1 * * *', () => this.celebrate235ProductionAnniversary(this.discordBot));
+      cron.schedule('0 0 1 * * *', () => this.celebrateMillionLiveAnniversary(this.discordBot));
     });
   }
 
