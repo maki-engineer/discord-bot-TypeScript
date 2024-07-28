@@ -1,14 +1,15 @@
 const { Message, Client } = require('discord.js');
-const { DiscordBot } = require('../DiscordBot');
+const DiscordBot = require('../DiscordBot').default;
 const { BirthdayFor235Member, DeleteMessage } = require('../../../models/index');
-
 
 /**
  * メッセージが送信された時に行う処理クラス
  */
-export class MessageCreate {
+export default class MessageCreate {
   private discordBot: typeof DiscordBot;
+
   private readonly prefix = '235';
+
   private readonly setTimeoutSec = 15_000;
 
   private readonly maleEventEmojiList = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
@@ -48,7 +49,13 @@ export class MessageCreate {
       // chatgpt用
 
       // 自己紹介チャンネルから新しく入ったメンバーの誕生日を登録する＆挨拶をする
-      if ((this.discordBot.channels.cache.get(this.discordBot.channelIdFor235Introduction) !== undefined) && (message.channelId === this.discordBot.channelIdFor235Introduction)) {
+      if (
+        (
+          this.discordBot.channels.cache.get(this.discordBot.channelIdFor235Introduction)
+          !== undefined
+        )
+        && (message.channelId === this.discordBot.channelIdFor235Introduction)
+      ) {
         // 誕生日を登録
         this.registNew235MemberBirthday(message, this.discordBot);
 
@@ -86,7 +93,7 @@ export class MessageCreate {
   private reactToUsedMaleEventCommandMessage(message: typeof Message): void {
     if (this.discordBot.usedMaleEventCommandReactionCount === 0) return;
 
-    for (let i = 0; i < this.discordBot.usedMaleEventCommandReactionCount; i++) {
+    for (let i = 0; i < this.discordBot.usedMaleEventCommandReactionCount; i += 1) {
       message.react(this.maleEventEmojiList[i]);
     }
 
@@ -133,13 +140,17 @@ export class MessageCreate {
    */
   private storeMessage(message: typeof Message, client: typeof Client): void {
     if (client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace) === undefined) return;
-    if ((message.channelId !== this.discordBot.channelIdFor235ChatPlace) || (message.author.bot === false) || (message.mentions.repliedUser !== null)) return;
+    if (
+      (message.channelId !== this.discordBot.channelIdFor235ChatPlace)
+      || (message.author.bot === false)
+      || (message.mentions.repliedUser !== null)
+    ) return;
 
     const today = new Date();
     const storeDate = today.getDate();
 
     DeleteMessage.storeMessage(message.id, storeDate)
-    .then((newData: {message_id: string, date: number}) => client.users.cache.get(this.discordBot.userIdForMaki).send('新しいメッセージを delete_messages テーブルに登録しました！'));
+      .then(() => console.log('新しいメッセージを delete_messages テーブルに登録しました！'));
   }
 
   /**
@@ -156,7 +167,7 @@ export class MessageCreate {
 
     if (foundIndex === -1) return;
 
-    const birthdayList: string[] = messageList[foundIndex + 1].split(/年|月|\//).map(data => data.match(/\d+/g)![0].replace(/^0+/, ''));
+    const birthdayList: string[] = messageList[foundIndex + 1].split(/年|月|\//).map((data) => data.match(/\d+/g)![0].replace(/^0+/, ''));
 
     if (birthdayList.length === 3) {
       birthdayList.shift();
@@ -166,20 +177,15 @@ export class MessageCreate {
       message.author.username,
       message.author.id,
       birthdayList[0],
-      birthdayList[1]
+      birthdayList[1],
     )
-    .then((newData: {
-      name: string,
-      user_id: string,
-      month: number,
-      date: number
-    }[]) => {
-      client.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`);
-      client.users.cache.get(this.discordBot.userIdForUtatane).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`);
-    })
-    .catch((error: unknown) => {
-      client.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.username}さんの誕生日を登録できませんでした。`);
-    });
+      .then(() => {
+        client.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`);
+        client.users.cache.get(this.discordBot.userIdForUtatane).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`);
+      })
+      .catch(() => {
+        client.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.username}さんの誕生日を登録できませんでした。`);
+      });
   }
 
   /**
@@ -197,24 +203,20 @@ export class MessageCreate {
       case this.discordBot.userIdForUtatane:
         message.reply('235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235men\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。');
 
-        setTimeout(async () => {
-          try {
-            await message.delete();
-          } catch (error: unknown) {
-            console.log('message is deleted.');
-          }
+        setTimeout(() => {
+          message.delete()
+            .then(() => console.log('message deleting.'))
+            .catch(() => console.log('message is deleted.'));
         }, this.setTimeoutSec);
         break;
 
       default:
         message.reply('235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。');
 
-        setTimeout(async () => {
-          try {
-            await message.delete();
-          } catch (error: unknown) {
-            console.log('message is deleted.');
-          }
+        setTimeout(() => {
+          message.delete()
+            .then(() => console.log('message deleting.'))
+            .catch(() => console.log('message is deleted.'));
         }, this.setTimeoutSec);
         break;
     }
@@ -229,18 +231,20 @@ export class MessageCreate {
    *
    * @return {void}
    */
-  private birthdayEventCommand(message: typeof Message, commandName: string, commandList: string[]): void {
+  private birthdayEventCommand(
+    message: typeof Message,
+    commandName: string,
+    commandList: string[],
+  ): void {
     if ((commandName !== 'birthday') || (message.author.id !== this.discordBot.userIdForUtatane)) return;
 
     if ((commandList.length < 3) || (commandList.length > 4)) {
       message.reply('235birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n任意のテキストを追加したい場合は、3つ入力した後に、追加したいテキストを入力してください。\n※半角スペースで区切るのを忘れずに！！\n\n235birthday 8 15 21');
 
-      setTimeout(async () => {
-        try {
-          await message.delete();
-        } catch (error: unknown) {
-          console.log('message is deleted.');
-        }
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
 
       return;
@@ -248,7 +252,7 @@ export class MessageCreate {
 
     let isAllInt: boolean = true;
 
-    for (let i = 0; i < commandList.length; i++) {
+    for (let i = 0; i < commandList.length; i += 1) {
       // 追加文章はバリデーションチェックしない
       if (i === 3) {
         break;
@@ -263,12 +267,10 @@ export class MessageCreate {
     if (!isAllInt) {
       message.reply('半角数字以外が含まれています！\n月、日、時間は全て**半角数字のみ**で入力してください！');
 
-      setTimeout(async () => {
-        try {
-          await message.delete();
-        } catch (error: unknown) {
-          console.log('message is deleted.');
-        }
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
 
       return;
@@ -277,12 +279,10 @@ export class MessageCreate {
     if ((Number(commandList[0]) < 1) || (Number(commandList[0]) > 12)) {
       message.reply('月は1～12の間で入力してください！');
 
-      setTimeout(async () => {
-        try {
-          message.delete();
-        } catch (error: unknown) {
-          console.log('message is deleted.');
-        }
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
 
       return;
@@ -296,12 +296,10 @@ export class MessageCreate {
     if ((Number(commandList[1]) < 1) || (Number(commandList[1]) > lastDate)) {
       message.reply(`日は1～${lastDate}の間で入力してください！`);
 
-      setTimeout(async () => {
-        try {
-          message.delete();
-        } catch (error: unknown) {
-          console.log('message is deleted.');
-        }
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
 
       return;
@@ -310,12 +308,10 @@ export class MessageCreate {
     if ((Number(commandList[2]) < 0) || (Number(commandList[2]) > 23)) {
       message.reply('時間は0～23の間で入力してください！');
 
-      setTimeout(async () => {
-        try {
-          message.delete();
-        } catch (error: unknown) {
-          console.log('message is deleted.');
-        }
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
 
       return;
@@ -366,36 +362,39 @@ export class MessageCreate {
       ],
     ];
 
-    let eventText: string = '@everyone\n' + textList[0][Math.floor(Math.random() * textList[0].length)];
+    let eventText: string = `@everyone\n${textList[0][Math.floor(Math.random() * textList[0].length)]}`;
 
     BirthdayFor235Member.getThisMonthBirthdayMember(commandList[0])
-    .then((birthdayMemberList: {name: string, user_id: string, month: number, date: number}[]) => {
-      birthdayMemberList.forEach((birthdayMember) => {
-        eventText += `**${birthdayMember.date}日...${birthdayMember.name}さん**\n`;
-      });
+      .then((birthdayMemberList: {
+        name: string,
+        user_id: string,
+        month: number,
+        date: number,
+      }[]) => {
+        birthdayMemberList.forEach((birthdayMember) => {
+          eventText += `**${birthdayMember.date}日...${birthdayMember.name}さん**\n`;
+        });
 
-      eventText += textList[1][Math.floor(Math.random() * textList[1].length)];
+        eventText += textList[1][Math.floor(Math.random() * textList[1].length)];
 
-      eventText += `\n\n**開催日：${commandList[0]}月${commandList[1]}日 （${week[eventDay]}）**\n**時間：${commandList[2]}時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n`;
+        eventText += `\n\n**開催日：${commandList[0]}月${commandList[1]}日 （${week[eventDay]}）**\n**時間：${commandList[2]}時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n`;
 
-      eventText += textList[2][Math.floor(Math.random() * textList[2].length)];
+        eventText += textList[2][Math.floor(Math.random() * textList[2].length)];
 
-      if (commandList.length === 4) {
-        eventText += '\n' + commandList[3];
-      }
-
-      message.channel.send(eventText);
-
-      setTimeout(() => message.reply('うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪'), 6_000);
-
-      setTimeout(async () => {
-        try {
-          message.delete();
-        } catch (error: unknown) {
-          console.log('message is deleted.');
+        if (commandList.length === 4) {
+          eventText += `\n${commandList[3]}`;
         }
-      }, this.setTimeoutSec);
-    });
+
+        message.channel.send(eventText);
+
+        setTimeout(() => message.reply('うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪'), 6_000);
+
+        setTimeout(() => {
+          message.delete()
+            .then(() => console.log('message deleting.'))
+            .catch(() => console.log('message is deleted.'));
+        }, this.setTimeoutSec);
+      });
   }
 
   /**
@@ -407,82 +406,67 @@ export class MessageCreate {
    *
    * @return {void}
    */
-  private menEventCommand(message: typeof Message, commandName: string, commandList: string[]): void {
+  private menEventCommand(
+    message: typeof Message,
+    commandName: string,
+    commandList: string[],
+  ): void {
     if ((commandName !== 'men') || (message.author.id !== this.discordBot.userIdForUtatane)) return;
 
     if ((commandList.length < 1) || (commandList.length > 10)) {
       message.reply('235menコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**2～10個まで**です！\n\n235men 8 12 15 21');
 
-      setTimeout(async () => {
-        try {
-          message.delete();
-        } catch (error: unknown) {
-          console.log('message is deleted.');
-        }
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
 
       return;
     }
 
-    let isAllInt: boolean = true;
-
-    for (const date of commandList) {
-      if (!Number.isInteger(Number(date))) {
-        isAllInt = false;
-        break;
-      }
-    }
+    const isAllInt: boolean = commandList.every((date) => (Number.isInteger(Number(date))));
 
     if (!isAllInt) {
       message.reply('半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！');
 
-      setTimeout(async () => {
-        try {
-          message.delete();
-        } catch (error: unknown) {
-          console.log('message is deleted.');
-        }
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
 
       return;
     }
 
-    if (this.isExistsSameValue(commandList)) {
+    if (MessageCreate.isExistsSameValue(commandList)) {
       message.reply('同じ日程が入力されています！');
 
-      setTimeout(async () => {
-        try {
-          message.delete();
-        } catch (error: unknown) {
-          console.log('message is deleted.');
-        }
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
 
       return;
     }
 
-    let isValidDate: boolean = true;
     const today = new Date();
     const lastDatetime = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     // 今月末日を取得
     const lastDate = lastDatetime.getDate();
 
-    for (const date of commandList) {
-      if ((Number(date) < 1) || (Number(date) > lastDate)) {
-        isValidDate = false;
-        break;
-      }
-    }
+    const isValidDate: boolean = commandList.every(
+      (date) => ((Number(date) >= 1) && (Number(date) <= lastDate)),
+    );
 
     if (!isValidDate) {
       message.reply(`日は1～${lastDate}の間で入力してください！`);
 
-      setTimeout(async () => {
-        try {
-          message.delete();
-        } catch (error: unknown) {
-          console.log('message is deleted.');
-        }
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
 
       return;
@@ -492,7 +476,9 @@ export class MessageCreate {
 
     const todayYear = today.getFullYear();
     const todayMonth = today.getMonth() + 1;
-    const eventDayList = commandList.map((date) => new Date(todayYear, todayMonth - 1, Number(date)).getDay());
+    const eventDayList = commandList.map(
+      (date) => new Date(todayYear, todayMonth - 1, Number(date)).getDay(),
+    );
 
     const week = [
       '日曜日',
@@ -515,9 +501,9 @@ export class MessageCreate {
       ],
     ];
 
-    let eventText: string = '@everyone\n' + textList[0][Math.floor(Math.random() * textList[0].length)];
+    let eventText: string = `@everyone\n${textList[0][Math.floor(Math.random() * textList[0].length)]}`;
 
-    for (let i = 0; i < commandList.length; i++) {
+    for (let i = 0; i < commandList.length; i += 1) {
       eventText += `**${todayMonth}月${commandList[i]}日 （${week[eventDayList[i]]}）…　${this.maleEventEmojiList[i]}**\n`;
     }
 
@@ -529,12 +515,10 @@ export class MessageCreate {
 
     setTimeout(() => message.reply('うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪'), 6_000);
 
-    setTimeout(async () => {
-      try {
-        message.delete();
-      } catch (error: unknown) {
-        console.log('message is deleted.');
-      }
+    setTimeout(() => {
+      message.delete()
+        .then(() => console.log('message deleting.'))
+        .catch(() => console.log('message is deleted.'));
     }, this.setTimeoutSec);
   }
 
@@ -551,8 +535,10 @@ export class MessageCreate {
 
     message.reply('テスト用コマンド');
 
-    setTimeout(async () => {
-      await message.delete();
+    setTimeout(() => {
+      message.delete()
+        .then(() => console.log('message deleting.'))
+        .catch(() => console.log('message is deleted.'));
     }, this.setTimeoutSec);
   }
 
@@ -563,7 +549,7 @@ export class MessageCreate {
    *
    * @return {boolean}
    */
-  private isExistsSameValue(targetList: string[]): boolean {
+  private static isExistsSameValue(targetList: string[]): boolean {
     const set = new Set(targetList);
 
     return set.size !== targetList.length;

@@ -1,4 +1,4 @@
-const { DiscordBot } = require('./discord_bot/DiscordBot');
+const DiscordBot = require('./discord_bot/DiscordBot').default;
 
 const discordBot = new DiscordBot();
 

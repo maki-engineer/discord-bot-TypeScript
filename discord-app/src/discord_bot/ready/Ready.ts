@@ -1,6 +1,6 @@
 const { Client, Message } = require('discord.js');
 const cron = require('node-cron');
-const { DiscordBot } = require('../DiscordBot');
+const DiscordBot = require('../DiscordBot').default;
 const { BirthdayFor235Member, BirthdayForMillionMember, DeleteMessage } = require('../../../models/index');
 
 /**
