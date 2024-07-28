@@ -1,4 +1,3 @@
-'use strict';
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
@@ -8,8 +7,7 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models)
-    {
+    static associate() {
       // define association here
     }
 
@@ -21,9 +19,8 @@ module.exports = (sequelize, DataTypes) => {
      *
      * @return {object}
      */
-    static async findDeleteMessages(date, transaction = null)
-    {
-      let options = {where: {date: date}, raw: true};
+    static async findDeleteMessages(date, transaction = null) {
+      const options = { where: { date }, raw: true };
 
       if (transaction !== null) {
         options.transaction = transaction;
@@ -41,15 +38,14 @@ module.exports = (sequelize, DataTypes) => {
      *
      * @return {object}
      */
-    static async storeMessage(messageId, date, transaction = null)
-    {
+    static async storeMessage(messageId, date, transaction = null) {
       const insertData = {
         message_id: messageId,
-        date
+        date,
       };
 
       if (transaction !== null) {
-        return await this.create(insertData, {transaction: transaction});
+        return await this.create(insertData, { transaction });
       }
 
       return await this.create(insertData);
@@ -63,12 +59,11 @@ module.exports = (sequelize, DataTypes) => {
      *
      * @return {object}
      */
-    static async deleteMessage(messageId, transaction = null)
-    {
+    static async deleteMessage(messageId, transaction = null) {
       const deleteData = {
         where: {
-          message_id: messageId
-        }
+          message_id: messageId,
+        },
       };
 
       if (transaction !== null) {
@@ -81,7 +76,7 @@ module.exports = (sequelize, DataTypes) => {
 
   DeleteMessage.init({
     message_id: DataTypes.STRING,
-    date: DataTypes.INTEGER
+    date: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'DeleteMessage',
