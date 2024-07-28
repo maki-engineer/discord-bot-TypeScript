@@ -25,10 +25,10 @@ describe('正常系（BirthdayForMillionMember.getMillionMemberBirthdayList）',
 
     const dummyData = [
       {
-        name: '双海亜美', month: 5, date: 22, img: 'img/million-character/birthday/ami.jpg',
+        name: '双海亜美', month: targetMonth, date: targetDate, img: 'img/million-character/birthday/ami.jpg',
       },
       {
-        name: '双海真美', month: 5, date: 22, img: 'img/million-character/birthday/mami.jpg',
+        name: '双海真美', month: targetMonth, date: targetDate, img: 'img/million-character/birthday/mami.jpg',
       },
       {
         name: '天海春香', month: 4, date: 3, img: 'img/million-character/birthday/haruka.jpg',
@@ -82,3 +82,5 @@ describe('正常系（BirthdayForMillionMember.getMillionMemberBirthdayList）',
     expect(result).toEqual([]);
   });
 });
+
+export {};
