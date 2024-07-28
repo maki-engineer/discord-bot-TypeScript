@@ -28,5 +28,6 @@ module.exports = {
     '@typescript-eslint/no-unsafe-assignment': 'warn',
     '@typescript-eslint/no-unsafe-member-access': 'warn',
     '@typescript-eslint/no-unsafe-call': 'warn',
+    'no-irregular-whitespace': 'warn',
   },
 };
