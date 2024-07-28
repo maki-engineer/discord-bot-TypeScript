@@ -1,5 +1,3 @@
-'use strict';
-
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
@@ -9,8 +7,7 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models)
-    {
+    static associate() {
       // define association here
     }
 
@@ -23,14 +20,13 @@ module.exports = (sequelize, DataTypes) => {
      *
      * @return {object}
      */
-    static async getMillionMemberBirthdayList(month, date, transaction = null)
-    {
-      let options = {
+    static async getMillionMemberBirthdayList(month, date, transaction = null) {
+      const options = {
         where: {
           month,
-          date
+          date,
         },
-        raw: true
+        raw: true,
       };
 
       if (transaction !== null) {
@@ -45,12 +41,12 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     month: DataTypes.INTEGER,
     date: DataTypes.INTEGER,
-    img: DataTypes.STRING
+    img: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'BirthdayForMillionMember',
     underscored: true,
-    timestamps: false
+    timestamps: false,
   });
 
   BirthdayForMillionMember.removeAttribute('id');

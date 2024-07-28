@@ -1,21 +1,7 @@
-'use strict';
-
-const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
-const Op = Sequelize.Op;
 
 module.exports = (sequelize, DataTypes) => {
-  class BirthdayFor235Member extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models)
-    {
-      // define association here
-    }
-
+  class BirthdayFor235Member extends Sequelize.Model {
     /**
      * 235プロダクションメンバーの中で当日誕生日の人を取得
      *
@@ -26,17 +12,16 @@ module.exports = (sequelize, DataTypes) => {
      *
      * @return {object}
      */
-    static async get235MemberBirthdayList(userId, month, date, transaction = null)
-    {
-      let options = {
+    static async get235MemberBirthdayList(userId, month, date, transaction = null) {
+      const options = {
         where: {
           user_id: {
-            [Op.ne]: userId
+            [Sequelize.Op.ne]: userId,
           },
           month,
-          date
+          date,
         },
-        raw: true
+        raw: true,
       };
 
       if (transaction !== null) {
@@ -54,17 +39,16 @@ module.exports = (sequelize, DataTypes) => {
      *
      * @return {object}
      */
-    static async getThisMonthBirthdayMember(month, transaction = null)
-    {
-      let options = {
+    static async getThisMonthBirthdayMember(month, transaction = null) {
+      const options = {
         where: {
-          month
+          month,
         },
         order: [
           ['month'],
           ['date'],
         ],
-        raw: true
+        raw: true,
       };
 
       if (transaction !== null) {
@@ -83,17 +67,16 @@ module.exports = (sequelize, DataTypes) => {
      * @param {number} date 日
      * @param {any} transaction ユニットテストをする時に指定
      */
-    static async registNew235MemberBirthday(userName, userId, month, date, transaction = null)
-    {
+    static async registNew235MemberBirthday(userName, userId, month, date, transaction = null) {
       const insertData = {
         name: userName,
         user_id: userId,
         month,
-        date
+        date,
       };
 
       if (transaction !== null) {
-        return await this.create(insertData, {transaction});
+        return await this.create(insertData, { transaction });
       }
 
       return await this.create(insertData);
@@ -107,12 +90,11 @@ module.exports = (sequelize, DataTypes) => {
      *
      * @return {object}
      */
-    static async delete235MemberBirthday(userId, transaction = null)
-    {
+    static async delete235MemberBirthday(userId, transaction = null) {
       const deleteData = {
         where: {
-          user_id: userId
-        }
+          user_id: userId,
+        },
       };
 
       if (transaction !== null) {
@@ -127,7 +109,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     user_id: DataTypes.STRING,
     month: DataTypes.INTEGER,
-    date: DataTypes.INTEGER
+    date: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'BirthdayFor235Member',
