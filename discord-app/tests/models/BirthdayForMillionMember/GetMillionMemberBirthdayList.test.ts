@@ -4,6 +4,8 @@ const { BirthdayForMillionMember, sequelize } = require('../../../models/index')
 
 describe('正常系（BirthdayForMillionMember.getMillionMemberBirthdayList）', (): void => {
   let transaction: any;
+  const targetMonth = 5;
+  const targetDate = 22;
 
   beforeEach(async (): Promise < void > => {
     transaction = await sequelize.transaction();
@@ -20,9 +22,6 @@ describe('正常系（BirthdayForMillionMember.getMillionMemberBirthdayList）',
   });
 
   test('当日誕生日のミリオンメンバー一覧が配列で返ること', async (): Promise <void > => {
-    const targetMonth = 5;
-    const targetDate = 22;
-
     const dummyData = [
       {
         name: '双海亜美', month: targetMonth, date: targetDate, img: 'img/million-character/birthday/ami.jpg',
@@ -64,9 +63,6 @@ describe('正常系（BirthdayForMillionMember.getMillionMemberBirthdayList）',
   });
 
   test('当日誕生日のミリオンメンバーがいなかった場合は、空配列が返ること', async (): Promise < void > => {
-    const targetMonth = 4;
-    const targetDate = 3;
-
     const result: {
       name: string,
       month: number,
