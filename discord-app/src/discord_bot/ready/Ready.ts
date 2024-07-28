@@ -206,7 +206,7 @@ export default class Ready {
       todayDate: number,
       todayHour: number,
       todayMin: number,
-    } = this.getTodayDateList();
+    } = Ready.getTodayDateList();
 
     BirthdayFor235Member.get235MemberBirthdayList(
       this.discordBot.userIdForMaki,
@@ -267,7 +267,7 @@ export default class Ready {
       todayDate: number,
       todayHour: number,
       todayMin: number,
-    } = this.getTodayDateList();
+    } = Ready.getTodayDateList();
 
     BirthdayForMillionMember.getMillionMemberBirthdayList(
       todayDateList.todayMonth,
@@ -359,7 +359,7 @@ export default class Ready {
       todayDate: number,
       todayHour: number,
       todayMin: number,
-    } = this.getTodayDateList();
+    } = Ready.getTodayDateList();
 
     if (
       (todayDateList.todayMonth !== this.anniversaryDataFor235Production.month)
@@ -383,7 +383,7 @@ export default class Ready {
       todayDate: number,
       todayHour: number,
       todayMin: number,
-    } = this.getTodayDateList();
+    } = Ready.getTodayDateList();
 
     if (
       (todayDateList.todayMonth !== this.anniversaryDataForMillionLive.month)
@@ -398,7 +398,7 @@ export default class Ready {
    *
    * @return {object}
    */
-  private getTodayDateList(): {
+  private static getTodayDateList(): {
     todayYear: number,
     todayMonth: number,
     todayDate: number,
