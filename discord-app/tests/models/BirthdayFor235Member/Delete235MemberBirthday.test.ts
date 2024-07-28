@@ -34,7 +34,7 @@ describe('正常系（BirthdayFor235Member.delete235MemberBirthday）', (): void
       },
     );
 
-    let birthdayFor235MemberData: [] | {
+    let birthdayFor235MemberData: {
       name: string,
       user_id: string,
       month: number,

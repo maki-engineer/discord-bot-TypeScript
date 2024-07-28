@@ -32,7 +32,7 @@ describe('正常系（DeleteMessage.deleteMessage）', (): void => {
       },
     );
 
-    let deleteMessageData: [] | {
+    let deleteMessageData: {
       message_id: string,
       date: number,
     }[] = await DeleteMessage.findAll({

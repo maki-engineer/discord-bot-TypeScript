@@ -4,6 +4,7 @@ const { DeleteMessage, sequelize } = require('../../../models/index');
 
 describe('正常系（DeleteMessage.findDeleteMessages）', (): void => {
   let transaction: any;
+  const targetDate = 14;
 
   beforeEach(async (): Promise < void > => {
     transaction = await sequelize.transaction();
@@ -20,8 +21,6 @@ describe('正常系（DeleteMessage.findDeleteMessages）', (): void => {
   });
 
   test('1週間前に投稿されたメッセージ一覧が配列で返ること', async (): Promise < void > => {
-    const targetDate = 14;
-
     const dummyData = [
       {
         message_id: '123456789', date: targetDate,
@@ -55,12 +54,7 @@ describe('正常系（DeleteMessage.findDeleteMessages）', (): void => {
   });
 
   test('削除対象のメッセージが見つからなかった場合は、空配列が返ること', async (): Promise < void > => {
-    const targetDate = 14;
-
-    const result: {
-      message_id: string,
-      date: number,
-    }[] = await DeleteMessage.findDeleteMessages(targetDate, transaction);
+    const result: [] = await DeleteMessage.findDeleteMessages(targetDate, transaction);
 
     expect(result).toHaveLength(0);
     expect(result).toEqual([]);
