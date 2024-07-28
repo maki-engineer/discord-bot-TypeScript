@@ -1,12 +1,12 @@
 const { Interaction } = require('discord.js');
-const { DiscordBot } = require('../DiscordBot');
-
+const DiscordBot = require('../DiscordBot').default;
 
 /**
  * スラッシュコマンドが使われた時に行う処理クラス
  */
-export class InteractionCreate {
+export default class InteractionCreate {
   private discordBot: typeof DiscordBot;
+
   private readonly setTimeoutSec = 180_000;
 
   constructor(discordBot: typeof DiscordBot) {

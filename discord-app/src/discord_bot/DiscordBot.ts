@@ -1,25 +1,32 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-const { Ready } = require('./ready/Ready');
-const { InteractionCreate } = require('./interaction_create/InteractionCreate');
-const { MessageCreate } = require('./message_create/MessageCreate');
-const { GuildMemberRemove } = require('./guild_member_remove/GuildMemberRemove');
+const Ready = require('./ready/Ready').default;
+const InteractionCreate = require('./interaction_create/InteractionCreate').default;
+const MessageCreate = require('./message_create/MessageCreate').default;
+const GuildMemberRemove = require('./guild_member_remove/GuildMemberRemove').default;
 
 require('dotenv').config();
-
 
 /**
  * 235botクラス
  * ここには主に235botを動かすための基本的な初期設定や起動させるためのメソッドなどが書いてある。
  */
-export class DiscordBot extends Client {
+export default class DiscordBot extends Client {
   private _celebrateMillionMemberReactionEmoji: string = '';
+
   private _isReactionCelebrate235MemberMessage: boolean = true;
+
   private _usedMaleEventCommandReactionCount: number = 0;
+
   private readonly discordToken = process.env.DISCORD_TOKEN;
+
   private readonly _serverIdFor235 = process.env.SERVER_ID_FOR_235;
+
   private readonly _channelIdFor235ChatPlace = process.env.CHANNEL_ID_FOR_235_CHAT_PLACE;
+
   private readonly _channelIdFor235Introduction = process.env.CHANNEL_ID_FOR_235_INTRODUCTION;
+
   private readonly _userIdForUtatane = process.env.USER_ID_FOR_UTATANE;
+
   private readonly _userIdForMaki = process.env.USER_ID_FOR_MAKI;
 
   constructor() {
@@ -42,7 +49,7 @@ export class DiscordBot extends Client {
         GatewayIntentBits.DirectMessageTyping,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildScheduledEvents,
-      ]
+      ],
     });
   }
 
