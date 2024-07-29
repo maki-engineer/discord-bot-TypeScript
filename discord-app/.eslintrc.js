@@ -8,7 +8,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  ignorePatterns: ['build'],
+  ignorePatterns: ['build', 'jest.config.ts'],
   extends: [
     'airbnb-base',
     'airbnb-typescript/base',
