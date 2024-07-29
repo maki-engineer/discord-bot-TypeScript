@@ -17,6 +17,8 @@ export default class DiscordBot extends Client {
 
   private _usedMaleEventCommandReactionCount: number = 0;
 
+  private _dividedUserIdList: string[] = [];
+
   private readonly discordToken = process.env.DISCORD_TOKEN;
 
   private readonly _serverIdFor235 = process.env.SERVER_ID_FOR_235;
@@ -24,6 +26,11 @@ export default class DiscordBot extends Client {
   private readonly _channelIdFor235ChatPlace = process.env.CHANNEL_ID_FOR_235_CHAT_PLACE;
 
   private readonly _channelIdFor235Introduction = process.env.CHANNEL_ID_FOR_235_INTRODUCTION;
+
+  private readonly _voiceChannelIdFor235ChatPlace = process.env.VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE;
+
+  private readonly _voiceChannelIdFor235ChatPlace2 = process.env
+    .VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE_2;
 
   private readonly _userIdForUtatane = process.env.USER_ID_FOR_UTATANE;
 
@@ -77,6 +84,14 @@ export default class DiscordBot extends Client {
     this._usedMaleEventCommandReactionCount = usedMaleEventCommandReactionCount;
   }
 
+  get dividedUserIdList(): string[] {
+    return this._dividedUserIdList;
+  }
+
+  set dividedUserIdList(dividedUserIdList: string[]) {
+    this._dividedUserIdList = dividedUserIdList;
+  }
+
   get serverIdFor235() {
     return this._serverIdFor235;
   }
@@ -87,6 +102,14 @@ export default class DiscordBot extends Client {
 
   get channelIdFor235Introduction() {
     return this._channelIdFor235Introduction;
+  }
+
+  get voiceChannelIdFor235ChatPlace() {
+    return this._voiceChannelIdFor235ChatPlace;
+  }
+
+  get voiceChannelIdFor235ChatPlace2() {
+    return this._voiceChannelIdFor235ChatPlace2;
   }
 
   get userIdForUtatane() {
