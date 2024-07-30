@@ -60,7 +60,8 @@ export default class MessageCreate {
         this.registNew235MemberBirthday(message, this.discordBot);
 
         // 挨拶
-        message.reply(`${message.author.username}さん、235プロダクションへようこそ！\nこれからもよろしくおねがいします♪`);
+        message.reply(`${message.author.globalName}さん、235プロダクションへようこそ！\nこれからもよろしくおねがいします♪`);
+        this.discordBot.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.globalName}さんが新しく235プロダクションに参加されました！`);
       }
 
       // コマンドメッセージ以外は無視
