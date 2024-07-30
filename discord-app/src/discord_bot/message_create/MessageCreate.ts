@@ -589,25 +589,25 @@ export default class MessageCreate {
 
     message.channel.sendTyping();
 
-    let divisionCount: number = 0;
-    let duplicationCount: number = 100;
-    let halfMemberList: { userName: string, userId: string }[] = [];
-    let halfMemberList2: { userName: string, userId: string }[] = [];
     let halfIndex: number = 0;
     let halfIndex2: number = 0;
 
+    // 配列を分ける
+    if (participatingVoiceChannelMemberList.length % 2 === 0) {
+      halfIndex = Math.floor(participatingVoiceChannelMemberList.length / 2) - 1;
+      halfIndex2 = participatingVoiceChannelMemberList.length - halfIndex - 1;
+    } else {
+      halfIndex = Math.floor(participatingVoiceChannelMemberList.length / 2);
+      halfIndex2 = participatingVoiceChannelMemberList.length - halfIndex;
+    }
+
+    let duplicationCount: number = 100;
+    let halfMemberList: { userName: string, userId: string }[] = [];
+    let halfMemberList2: { userName: string, userId: string }[] = [];
+
+    let divisionCount: number = 0;
+
     while (duplicationCount >= 3) {
-      duplicationCount = 0;
-
-      // 配列を分ける
-      if (participatingVoiceChannelMemberList.length % 2 === 0) {
-        halfIndex = Math.floor(participatingVoiceChannelMemberList.length / 2) - 1;
-        halfIndex2 = participatingVoiceChannelMemberList.length - halfIndex - 1;
-      } else {
-        halfIndex = Math.floor(participatingVoiceChannelMemberList.length / 2);
-        halfIndex2 = participatingVoiceChannelMemberList.length - halfIndex;
-      }
-
       for (let i = 0; i <= halfIndex; i += 1) {
         halfMemberList.push(participatingVoiceChannelMemberList[i]);
       }
@@ -645,7 +645,7 @@ export default class MessageCreate {
 
         this.discordBot.dividedUserIdList = dividedUserIdList2;
 
-        setTimeout(() => message.reply(`このような結果になりました！\n\n**雑談**\n------------------------------------------------------------\n${dividedUserNameList.join('\n')}\n------------------------------------------------------------\n\n**雑談その2**\n------------------------------------------------------------\n${dividedUserNameList2.join('\n')}\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。`), 2_000);
+        setTimeout(() => message.reply(`このような結果になりました！\n\n**雑談１**\n------------------------------------------------------------\n${dividedUserNameList.join('\n')}\n------------------------------------------------------------\n\n**雑談２**\n------------------------------------------------------------\n${dividedUserNameList2.join('\n')}\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。`), 2_000);
 
         setTimeout(() => {
           const roomDivideTimer = setInterval(() => {
