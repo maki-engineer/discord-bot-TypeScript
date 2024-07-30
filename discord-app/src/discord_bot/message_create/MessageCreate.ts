@@ -560,7 +560,7 @@ export default class MessageCreate {
       }) => participatingVoiceChannelMember.userId === message.author.id);
 
     if (!isParticipateVoiceChannelUsedCommandMember) {
-      message.reply('235roomdivision コマンドは、雑談ボイスチャンネルに参加しているメンバーが使用できるコマンドです。');
+      message.reply('235roomdivision コマンドは、【雑談１】ボイスチャンネルに参加しているメンバーが使用できるコマンドです。');
 
       setTimeout(() => {
         message.delete()
@@ -572,7 +572,7 @@ export default class MessageCreate {
     }
 
     if (participatingVoiceChannelMemberList.length < 10) {
-      message.reply('雑談ボイスチャンネルに参加しているメンバーの人数が10人未満のため、分けることが出来ません！');
+      message.reply('【雑談１】ボイスチャンネルに参加しているメンバーの人数が10人未満のため、分けることが出来ません！');
 
       setTimeout(() => {
         message.delete()
@@ -647,7 +647,7 @@ export default class MessageCreate {
 
     this.discordBot.dividedUserIdList = dividedUserIdList2;
 
-    setTimeout(() => message.reply(`このような結果になりました！\n\n**雑談１**\n------------------------------------------------------------\n${dividedUserNameList.join('\n')}\n------------------------------------------------------------\n\n**雑談２**\n------------------------------------------------------------\n${dividedUserNameList2.join('\n')}\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。`), 2_000);
+    setTimeout(() => message.reply(`このような結果になりました！\n\n**【雑談１】**\n------------------------------------------------------------\n${dividedUserNameList.join('\n')}\n------------------------------------------------------------\n\n**【雑談２】**\n------------------------------------------------------------\n${dividedUserNameList2.join('\n')}\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。`), 2_000);
 
     setTimeout(() => {
       let divisionCount: number = 0;
