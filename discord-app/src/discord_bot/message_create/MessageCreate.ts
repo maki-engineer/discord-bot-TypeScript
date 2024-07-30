@@ -1,4 +1,4 @@
-const { Message, Client } = require('discord.js');
+const { Message, Client, GuildMember } = require('discord.js');
 const DiscordBot = require('../DiscordBot').default;
 const { BirthdayFor235Member, DeleteMessage } = require('../../../models/index');
 
@@ -79,6 +79,7 @@ export default class MessageCreate {
       this.helpCommand(message, commandName);
       this.birthdayEventCommand(message, commandName, commandList);
       this.menEventCommand(message, commandName, commandList);
+      this.roomDivisionCommand(this.discordBot, message, commandName);
       this.testCommand(message, commandName);
     });
   }
@@ -335,7 +336,7 @@ export default class MessageCreate {
       [
         `日々のプロデュース業お疲れ様です！！！　${commandList[0]}月に誕生日を迎える方々をご紹介します！！！\n${commandList[0]}月に誕生日を迎えるのは～......\n\n`,
         `日々のプロデュース業お疲れ様です！${commandList[0]}月にお誕生日を迎える方々のご案内です！\n${commandList[0]}月に誕生日を迎えるのは～…\n\n`,
-        `日々のプロデュース業お疲れ様です！${commandList[0]}月にお誕生日を迎えるメンバーさんの…ご案内です！！\n${commandList[0]}月に誕生日を迎えるのは～…\n\n"`,
+        `日々のプロデュース業お疲れ様です！${commandList[0]}月にお誕生日を迎えるメンバーさんの…ご案内です！！\n${commandList[0]}月に誕生日を迎えるのは～…\n\n`,
         `日々のプロデュース業お疲れ様です！\n${commandList[0]}月期ラウンジオンライン飲み会のご！案！内！です！\n${commandList[0]}月の誕生日は～～～～…\n\n`,
         `日々のプロデュース業お疲れ様です！${commandList[0]}月に誕生日を迎える方々をご紹介します！\n${commandList[0]}月に誕生日を迎えるのは～…\n\n`,
         '日々のプロデュース業お疲れ様です！！！今月お誕生日を迎えるのは～…\n\n',
@@ -523,6 +524,158 @@ export default class MessageCreate {
   }
 
   /**
+   * 235roomdivisionコマンド ボイスチャンネルに参加しているメンバーを分ける
+   *
+   * @param {Client} client Clientクラス
+   * @param {Message} message Messageクラス
+   * @param {string} commandName 入力されたコマンド名
+   *
+   * @return {void}
+   */
+  private roomDivisionCommand(
+    client: typeof Client,
+    message: typeof Message,
+    commandName: string,
+  ): void {
+    if (commandName !== 'roomdivision') return;
+
+    let participatingVoiceChannelMemberList: {
+      userName: string,
+      userId: string,
+    }[] = client.voice.client.channels.cache.get(
+      this.discordBot.voiceChannelIdFor235ChatPlace,
+    ).members
+      .filter((member: typeof GuildMember) => member.user.bot === false)
+      .map((member: typeof GuildMember) => {
+        return {
+          userName: member.user.globalName,
+          userId: member.user.id,
+        };
+      });
+
+    const isParticipateVoiceChannelUsedCommandMember: boolean = participatingVoiceChannelMemberList
+      .some((participatingVoiceChannelMember: {
+        userName: string,
+        userId: string,
+      }) => participatingVoiceChannelMember.userId === message.author.id);
+
+    if (!isParticipateVoiceChannelUsedCommandMember) {
+      message.reply('235roomdivision コマンドは、【雑談１】ボイスチャンネルに参加しているメンバーが使用できるコマンドです。');
+
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
+      }, this.setTimeoutSec);
+
+      return;
+    }
+
+    if (participatingVoiceChannelMemberList.length < 10) {
+      message.reply('【雑談１】ボイスチャンネルに参加しているメンバーの人数が10人未満のため、分けることが出来ません！');
+
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
+      }, this.setTimeoutSec);
+
+      return;
+    }
+
+    message.channel.sendTyping();
+
+    let halfIndex: number = 0;
+    let halfIndex2: number = 0;
+
+    // 配列を分ける
+    if (participatingVoiceChannelMemberList.length % 2 === 0) {
+      halfIndex = Math.floor(participatingVoiceChannelMemberList.length / 2) - 1;
+      halfIndex2 = participatingVoiceChannelMemberList.length - halfIndex - 1;
+    } else {
+      halfIndex = Math.floor(participatingVoiceChannelMemberList.length / 2);
+      halfIndex2 = participatingVoiceChannelMemberList.length - halfIndex;
+    }
+
+    let duplicationCount: number = 100;
+    let halfMemberList: { userName: string, userId: string }[] = [];
+    let halfMemberList2: { userName: string, userId: string }[] = [];
+
+    while (duplicationCount >= 3) {
+      // 初期化
+      participatingVoiceChannelMemberList = MessageCreate.shuffle(
+        participatingVoiceChannelMemberList,
+      );
+
+      halfMemberList = [];
+      halfMemberList2 = [];
+
+      for (let i = 0; i <= halfIndex; i += 1) {
+        halfMemberList.push(participatingVoiceChannelMemberList[i]);
+      }
+
+      for (let i = halfIndex2; i < participatingVoiceChannelMemberList.length; i += 1) {
+        halfMemberList2.push(participatingVoiceChannelMemberList[i]);
+      }
+
+      // 3人以上被ってないかチェック
+      duplicationCount = halfMemberList2.filter((participatingVoiceChannelMember: {
+        userName: string,
+        userId: string,
+      }) => {
+        return this.discordBot.dividedUserIdList.indexOf(
+          participatingVoiceChannelMember.userId,
+        ) !== -1;
+      }).length;
+    }
+
+    // 2個目の配列のメンバーを雑談２ボイスチャンネルに移動
+    const dividedUserNameList = halfMemberList.map((dividedMember: {
+      userName: string,
+      userId: string,
+    }) => dividedMember.userName);
+
+    const dividedUserNameList2 = halfMemberList2.map((dividedMember: {
+      userName: string,
+      userId: string,
+    }) => dividedMember.userName);
+
+    const dividedUserIdList2 = halfMemberList2.map((dividedMember: {
+      userName: string,
+      userId: string,
+    }) => dividedMember.userId);
+
+    this.discordBot.dividedUserIdList = dividedUserIdList2;
+
+    setTimeout(() => message.reply(`このような結果になりました！\n\n**【雑談１】**\n------------------------------------------------------------\n${dividedUserNameList.join('\n')}\n------------------------------------------------------------\n\n**【雑談２】**\n------------------------------------------------------------\n${dividedUserNameList2.join('\n')}\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。`), 2_000);
+
+    setTimeout(() => {
+      let divisionCount: number = 0;
+
+      const roomDivideTimer = setInterval(() => {
+        switch (divisionCount) {
+          case halfMemberList2.length:
+            message.delete()
+              .then(() => console.log('message deleting.'))
+              .catch(() => console.log('message is deleted.'));
+            clearInterval(roomDivideTimer);
+            break;
+
+          default:
+            client.guilds.cache.get(this.discordBot.serverIdFor235).members
+              .fetch(dividedUserIdList2[divisionCount])
+              .then((member: typeof GuildMember) => member.voice.setChannel(
+                this.discordBot.voiceChannelIdFor235ChatPlace2,
+              ));
+
+            divisionCount += 1;
+            break;
+        }
+      }, 1_000);
+    }, 9_000);
+  }
+
+  /**
    * 235testコマンド 新しい機能を追加する時に実験とかする用
    *
    * @param {Message} message Messageクラス
@@ -553,5 +706,25 @@ export default class MessageCreate {
     const set = new Set(targetList);
 
     return set.size !== targetList.length;
+  }
+
+  /**
+   * 配列の要素の中身をシャッフル
+   *
+   * @param {T[]} memberList シャッフル対象のメンバーリスト
+   *
+   * @return {T[]}
+   */
+  private static shuffle<T>(memberList: T[]): T[] {
+    const out = Array.from(memberList);
+
+    for (let i = out.length - 1; i > 0; i -= 1) {
+      const r = Math.floor(Math.random() * (i + 1));
+      const tmp = out[i];
+      out[i] = out[r];
+      out[r] = tmp;
+    }
+
+    return out;
   }
 }
