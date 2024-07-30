@@ -583,10 +583,6 @@ export default class MessageCreate {
       return;
     }
 
-    participatingVoiceChannelMemberList = MessageCreate.shuffle(
-      participatingVoiceChannelMemberList,
-    );
-
     message.channel.sendTyping();
 
     let halfIndex: number = 0;
@@ -605,9 +601,15 @@ export default class MessageCreate {
     let halfMemberList: { userName: string, userId: string }[] = [];
     let halfMemberList2: { userName: string, userId: string }[] = [];
 
-    let divisionCount: number = 0;
-
     while (duplicationCount >= 3) {
+      // 初期化
+      participatingVoiceChannelMemberList = MessageCreate.shuffle(
+        participatingVoiceChannelMemberList,
+      );
+
+      halfMemberList = [];
+      halfMemberList2 = [];
+
       for (let i = 0; i <= halfIndex; i += 1) {
         halfMemberList.push(participatingVoiceChannelMemberList[i]);
       }
@@ -625,60 +627,52 @@ export default class MessageCreate {
           participatingVoiceChannelMember.userId,
         ) !== -1;
       }).length;
-
-      // 2個目の配列のメンバーを雑談2ボイスチャンネルに移動
-      if (duplicationCount < 3) {
-        const dividedUserNameList = halfMemberList.map((dividedMember: {
-          userName: string,
-          userId: string,
-        }) => dividedMember.userName);
-
-        const dividedUserNameList2 = halfMemberList2.map((dividedMember: {
-          userName: string,
-          userId: string,
-        }) => dividedMember.userName);
-
-        const dividedUserIdList2 = halfMemberList2.map((dividedMember: {
-          userName: string,
-          userId: string,
-        }) => dividedMember.userId);
-
-        this.discordBot.dividedUserIdList = dividedUserIdList2;
-
-        setTimeout(() => message.reply(`このような結果になりました！\n\n**雑談１**\n------------------------------------------------------------\n${dividedUserNameList.join('\n')}\n------------------------------------------------------------\n\n**雑談２**\n------------------------------------------------------------\n${dividedUserNameList2.join('\n')}\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。`), 2_000);
-
-        setTimeout(() => {
-          const roomDivideTimer = setInterval(() => {
-            switch (divisionCount) {
-              case halfMemberList2.length:
-                message.delete()
-                  .then(() => console.log('message deleting.'))
-                  .catch(() => console.log('message is deleted.'));
-                clearInterval(roomDivideTimer);
-                break;
-
-              default:
-                client.guilds.cache.get(this.discordBot.serverIdFor235).members
-                  .fetch(dividedUserIdList2[divisionCount])
-                  .then((member: typeof GuildMember) => member.voice.setChannel(
-                    this.discordBot.voiceChannelIdFor235ChatPlace2,
-                  ));
-
-                divisionCount += 1;
-                break;
-            }
-          }, 1_000);
-        }, 9_000);
-      }
-
-      // 初期化
-      participatingVoiceChannelMemberList = MessageCreate.shuffle(
-        participatingVoiceChannelMemberList,
-      );
-
-      halfMemberList = [];
-      halfMemberList2 = [];
     }
+
+    // 2個目の配列のメンバーを雑談２ボイスチャンネルに移動
+    const dividedUserNameList = halfMemberList.map((dividedMember: {
+      userName: string,
+      userId: string,
+    }) => dividedMember.userName);
+
+    const dividedUserNameList2 = halfMemberList2.map((dividedMember: {
+      userName: string,
+      userId: string,
+    }) => dividedMember.userName);
+
+    const dividedUserIdList2 = halfMemberList2.map((dividedMember: {
+      userName: string,
+      userId: string,
+    }) => dividedMember.userId);
+
+    this.discordBot.dividedUserIdList = dividedUserIdList2;
+
+    setTimeout(() => message.reply(`このような結果になりました！\n\n**雑談１**\n------------------------------------------------------------\n${dividedUserNameList.join('\n')}\n------------------------------------------------------------\n\n**雑談２**\n------------------------------------------------------------\n${dividedUserNameList2.join('\n')}\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。`), 2_000);
+
+    setTimeout(() => {
+      let divisionCount: number = 0;
+
+      const roomDivideTimer = setInterval(() => {
+        switch (divisionCount) {
+          case halfMemberList2.length:
+            message.delete()
+              .then(() => console.log('message deleting.'))
+              .catch(() => console.log('message is deleted.'));
+            clearInterval(roomDivideTimer);
+            break;
+
+          default:
+            client.guilds.cache.get(this.discordBot.serverIdFor235).members
+              .fetch(dividedUserIdList2[divisionCount])
+              .then((member: typeof GuildMember) => member.voice.setChannel(
+                this.discordBot.voiceChannelIdFor235ChatPlace2,
+              ));
+
+            divisionCount += 1;
+            break;
+        }
+      }, 1_000);
+    }, 9_000);
   }
 
   /**
