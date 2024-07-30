@@ -24,11 +24,6 @@ export default class Ready {
   };
 
   private readonly commandList = [
-    { name: '235ap', description: 'APすることが出来た曲を登録するときに使用するコマンドです。' },
-    { name: '235apremove', description: '間違ってAP曲データに登録してしまった曲を取り消すときに使用するコマンドです。' },
-    { name: '235apall', description: 'これまでAPしてきた曲や曲数を知りたいときに使用するコマンドです。' },
-    { name: '235notap', description: 'まだAPすることが出来ていない曲や曲数を知りたいときに使用するコマンドです。' },
-    { name: '235apsearch', description: '入力した曲がAP出来ているか知りたいときに使用するコマンドです。' },
     { name: '235birthday', description: '毎月開催されるオンライン飲み会の企画文章を作成したいときに使用するコマンドです。' },
     { name: '235men', description: '毎月開催される235士官学校🌹の日程を決めるときに使用するコマンドです。' },
     { name: '235roomdivision', description: 'ボイスチャンネルに参加しているメンバーを分けたいときに使用するコマンドです。' },

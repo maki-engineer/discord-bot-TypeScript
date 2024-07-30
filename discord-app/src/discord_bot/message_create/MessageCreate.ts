@@ -202,7 +202,7 @@ export default class MessageCreate {
 
     switch (message.author.id) {
       case this.discordBot.userIdForUtatane:
-        message.reply('235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235men\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。');
+        message.reply('235botは以下のようなコマンドを使用することが出来ます。\n\n・235birthday\n\n・235men\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。');
 
         setTimeout(() => {
           message.delete()
@@ -212,7 +212,7 @@ export default class MessageCreate {
         break;
 
       default:
-        message.reply('235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。');
+        message.reply('235botは以下のようなコマンドを使用することが出来ます。\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。');
 
         setTimeout(() => {
           message.delete()

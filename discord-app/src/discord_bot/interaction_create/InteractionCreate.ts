@@ -22,90 +22,10 @@ export default class InteractionCreate {
     this.discordBot.on('interactionCreate', (interaction: typeof Interaction) => {
       if (!interaction.isCommand()) return;
 
-      this.registAllPerfectMusicInteraction(interaction);
-      this.deleteAllPerfectMusicInteraction(interaction);
-      this.showAllPerfectMusicListInteraction(interaction);
-      this.showNotAllPerfectMusicListInteraction(interaction);
-      this.isMusicAllPerfectInteraction(interaction);
       this.createBirthdayEventMessageTemplateInteraction(interaction);
       this.createMaleEventMessageTemplateInteraction(interaction);
       this.divideVoiceChannelInteraction(interaction);
     });
-  }
-
-  /**
-   * 235apコマンド
-   *
-   * @param {Interaction} interaction Interactionクラス
-   *
-   * @return {void}
-   */
-  private registAllPerfectMusicInteraction(interaction: typeof Interaction): void {
-    if (interaction.commandName !== '235ap') return;
-
-    interaction.reply(`235apコマンドを使用することで、${interaction.user.username}さんがAPすることが出来た曲を登録することが出来ます。\nなお、もしまだ${interaction.user.username}さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n※入力することが出来る曲は1曲だけです。また、曲名はフルで入力する必要があります。2曲以上入力しているか、もしくはフルで入力することが出来ていない場合、登録することが出来ないので注意してください！`);
-
-    setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
-  }
-
-  /**
-   * 235apremoveコマンド
-   *
-   * @param {Interaction} interaction Interactionクラス
-   *
-   * @return {void}
-   */
-  private deleteAllPerfectMusicInteraction(interaction: typeof Interaction): void {
-    if (interaction.commandName !== '235apremove') return;
-
-    interaction.reply('235apremoveコマンドを使用することで、間違ってAP曲データに登録してしまった曲を取り消すことが出来ます。\n※入力することが出来る曲は1曲だけです。また、曲名はフルで入力する必要があります。2曲以上入力しているか、もしくはフルで入力することが出来ていない場合、登録することが出来ないので注意してください！');
-
-    setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
-  }
-
-  /**
-   * 235apallコマンド
-   *
-   * @param {Interaction} interaction Interactionクラス
-   *
-   * @return {void}
-   */
-  private showAllPerfectMusicListInteraction(interaction: typeof Interaction): void {
-    if (interaction.commandName !== '235apall') return;
-
-    interaction.reply(`235apallコマンドを使用することで、${interaction.user.username}さんが今までAPしてきた曲と曲数を知ることが出来ます。\nなお、もしまだ${interaction.user.username}さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプでAPしてきた曲と曲数を知ることが出来ます。\n（絞ることが出来るタイプの数は**1つ**だけです！）`);
-
-    setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
-  }
-
-  /**
-   * 235notapコマンド
-   *
-   * @param {Interaction} interaction Interactionクラス
-   *
-   * @return {void}
-   */
-  private showNotAllPerfectMusicListInteraction(interaction: typeof Interaction): void {
-    if (interaction.commandName !== '235notap') return;
-
-    interaction.reply(`235notapコマンドを使用することで、${interaction.user.username}さんがまだAP出来ていない曲と曲数を知ることが出来ます。\nなお、もしまだ${interaction.user.username}さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプでAP出来ていない曲と曲数を知ることが出来ます。\n（絞ることが出来るタイプの数は**1つ**だけです！）`);
-
-    setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
-  }
-
-  /**
-   * 235apsearchコマンド
-   *
-   * @param {Interaction} interaction Interactionクラス
-   *
-   * @return {void}
-   */
-  private isMusicAllPerfectInteraction(interaction: typeof Interaction): void {
-    if (interaction.commandName !== '235apsearch') return;
-
-    interaction.reply(`235apsearchコマンドを使用することで、${interaction.user.username}さんが入力した曲が既にAP出来ているか知ることが出来ます。\nなお、もしまだ${interaction.user.username}さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n※入力することが出来る曲は1曲だけです。また、曲名はフルで入力する必要があります。2曲以上入力しているか、もしくはフルで入力することが出来ていない場合、登録することが出来ないので注意してください！`);
-
-    setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
   }
 
   /**
@@ -166,7 +86,7 @@ export default class InteractionCreate {
   private divideVoiceChannelInteraction(interaction: typeof Interaction): void {
     if (interaction.commandName !== '235roomdivision') return;
 
-    interaction.reply('235roomdivisionコマンドを使用することで、雑談ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、雑談ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、雑談ボイスチャンネルに参加しているメンバーのみが使用できます。');
+    interaction.reply('235roomdivisionコマンドを使用することで、【雑談１】ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、【雑談１】ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、【雑談１】ボイスチャンネルに参加しているメンバーのみが使用できます。');
 
     setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
   }
