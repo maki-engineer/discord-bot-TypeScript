@@ -60,7 +60,8 @@ export default class MessageCreate {
         this.registNew235MemberBirthday(message, this.discordBot);
 
         // 挨拶
-        message.reply(`${message.author.username}さん、235プロダクションへようこそ！\nこれからもよろしくおねがいします♪`);
+        message.reply(`${message.author.globalName}さん、235プロダクションへようこそ！\nこれからもよろしくおねがいします♪`);
+        this.discordBot.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.globalName}さんが新しく235プロダクションに参加されました！`);
       }
 
       // コマンドメッセージ以外は無視
@@ -175,17 +176,14 @@ export default class MessageCreate {
     }
 
     BirthdayFor235Member.registNew235MemberBirthday(
-      message.author.username,
+      message.author.globalName,
       message.author.id,
       birthdayList[0],
       birthdayList[1],
     )
       .then(() => {
-        client.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`);
-        client.users.cache.get(this.discordBot.userIdForUtatane).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`);
-      })
-      .catch(() => {
-        client.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.username}さんの誕生日を登録できませんでした。`);
+        client.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`);
+        client.users.cache.get(this.discordBot.userIdForUtatane).send(`${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`);
       });
   }
 
