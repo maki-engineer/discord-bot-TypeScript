@@ -544,12 +544,14 @@ export default class MessageCreate {
       userId: string,
     }[] = client.voice.client.channels.cache.get(
       this.discordBot.voiceChannelIdFor235ChatPlace,
-    ).members.map((member: typeof GuildMember) => {
-      return {
-        userName: member.user.globalName,
-        userId: member.user.id,
-      };
-    });
+    ).members
+      .filter((member: typeof GuildMember) => member.user.bot === false)
+      .map((member: typeof GuildMember) => {
+        return {
+          userName: member.user.globalName,
+          userId: member.user.id,
+        };
+      });
 
     const isParticipateVoiceChannelUsedCommandMember: boolean = participatingVoiceChannelMemberList
       .some((participatingVoiceChannelMember: {
