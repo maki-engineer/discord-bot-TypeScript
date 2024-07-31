@@ -59,6 +59,34 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     /**
+     * CSVファイルに出力するための235メンバーの誕生日リストを取得
+     *
+     * @param {any} transaction ユニットテストをする時に指定
+     *
+     * @return {object}
+     */
+    static async get235MemberBirthdayListForCSV(transaction = null) {
+      const options = {
+        attributes: [
+          'name',
+          'month',
+          'date',
+        ],
+        order: [
+          ['month'],
+          ['date'],
+        ],
+        raw: true,
+      };
+
+      if (transaction !== null) {
+        options.transaction = transaction;
+      }
+
+      return await this.findAll(options);
+    }
+
+    /**
      * 新しく235プロダクションに入ってきたメンバーの誕生日を登録
      *
      * @param {string} userName ユーザー名
