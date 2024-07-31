@@ -1,4 +1,5 @@
 const { Client, Message } = require('discord.js');
+const fs = require('fs');
 const cron = require('node-cron');
 const DiscordBot = require('../DiscordBot').default;
 const { BirthdayFor235Member, BirthdayForMillionMember, DeleteMessage } = require('../../../models/index');
@@ -117,6 +118,7 @@ export default class Ready {
       cron.schedule('0 30 0 * * *', () => this.celebrateMillionMember(this.discordBot));
       cron.schedule('0 0 1 * * *', () => this.celebrate235ProductionAnniversary(this.discordBot));
       cron.schedule('0 0 1 * * *', () => this.celebrateMillionLiveAnniversary(this.discordBot));
+      cron.schedule('0 15 1 * * *', () => this.send235MemberBirthdayListToUtatane(this.discordBot));
     });
   }
 
@@ -386,6 +388,47 @@ export default class Ready {
     ) return;
 
     client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace).send(`本日${todayDateList.todayMonth}月${todayDateList.todayDate}日で**${this.anniversaryDataForMillionLive.name}**は**${Number(todayDateList.todayYear - this.anniversaryDataForMillionLive.year)}周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！`);
+  }
+
+  /**
+   * 毎月1日にうたたねさんに235プロダクションメンバーの誕生日リストをDMで送る
+   *
+   * @param {Client} client Clientクラス
+   *
+   * @return {void}
+   */
+  private send235MemberBirthdayListToUtatane(client: typeof Client): void {
+    const todayDateList: {
+      todayYear: number,
+      todayMonth: number,
+      todayDate: number,
+      todayHour: number,
+      todayMin: number,
+    } = Ready.getTodayDateList();
+
+    if (todayDateList.todayMonth !== 1) return;
+
+    let text: string = '名前,誕生日\n';
+    const csvPath = '../../../data/csv/birthday_for_235_members.csv';
+
+    fs.writeFileSync(csvPath, text);
+
+    BirthdayFor235Member.get235MemberBirthdayListforCSV()
+      .then((memberList: { name: string, month: number, date: number }[]) => {
+        memberList.forEach((member: { name: string, month: number, date: number }) => {
+          text += `${member.name}さん,${member.month}月${member.date}日\n`;
+
+          fs.writeFileSync(csvPath, text);
+        });
+      });
+
+    client.users.cache.get(this.discordBot.userIdForUtatane).send({
+      content: 'お疲れ様です！新しい月が始まりましたね！\n235プロダクションメンバーの誕生日リストをお送りします！\nもし追加されていないメンバー、もしくはすでに退出されたメンバーの誕生日がまだ追加されていた場合は報告をお願いします！',
+      files: [{
+        attachment: csvPath,
+        name: 'birthday_for_235_members.csv',
+      }],
+    });
   }
 
   /**
