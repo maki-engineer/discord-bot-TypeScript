@@ -410,11 +410,11 @@ export default class Ready {
     if (todayDateList.todayMonth !== 1) return;
 
     let text: string = '名前,誕生日\n';
-    const csvPath = '../../../data/csv/birthday_for_235_members.csv';
+    const csvPath = './data/csv/birthday_for_235_members.csv';
 
     fs.writeFileSync(csvPath, text);
 
-    BirthdayFor235Member.get235MemberBirthdayListforCSV()
+    BirthdayFor235Member.get235MemberBirthdayListForCSV()
       .then((memberList: { name: string, month: number, date: number }[]) => {
         memberList.forEach((member: { name: string, month: number, date: number }) => {
           text += `${member.name}さん,${member.month}月${member.date}日\n`;
@@ -425,6 +425,14 @@ export default class Ready {
 
     client.users.cache.get(this.discordBot.userIdForUtatane).send({
       content: 'お疲れ様です！新しい月が始まりましたね！\n235プロダクションメンバーの誕生日リストをお送りします！\nもし追加されていないメンバー、もしくはすでに退出されたメンバーの誕生日がまだ追加されていた場合は報告をお願いします！',
+      files: [{
+        attachment: csvPath,
+        name: 'birthday_for_235_members.csv',
+      }],
+    });
+
+    client.users.cache.get(this.discordBot.userIdForMaki).send({
+      content: '235プロダクションメンバーの誕生日リストをうたたねさんに送りました！',
       files: [{
         attachment: csvPath,
         name: 'birthday_for_235_members.csv',
