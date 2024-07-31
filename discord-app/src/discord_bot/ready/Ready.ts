@@ -424,7 +424,7 @@ export default class Ready {
       });
 
     client.users.cache.get(this.discordBot.userIdForUtatane).send({
-      content: 'お疲れ様です！新しい月が始まりましたね！\n235プロダクションメンバーの誕生日リストをお送りします！\nもし追加されていないメンバー、もしくはすでに退出されたメンバーの誕生日がまだ追加されていた場合は報告をお願いします！',
+      content: 'お疲れ様です！新しい月が始まりましたね！✨\n235プロダクションメンバーの誕生日リストをお送りします！\nもしまだ追加されていないメンバー、もしくはすでに退出されているメンバーがいた場合は報告をお願いします！🙇‍♂️',
       files: [{
         attachment: csvPath,
         name: 'birthday_for_235_members.csv',
