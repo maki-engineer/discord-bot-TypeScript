@@ -60,6 +60,7 @@ export default class MessageCreate {
         this.registNew235MemberBirthday(message, this.discordBot);
 
         // 挨拶
+        message.react('<:_Stmp_Tsubasa:794969154817753088>');
         message.reply(`${message.author.globalName}さん、235プロダクションへようこそ！\nこれからもよろしくおねがいします♪`);
         this.discordBot.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.globalName}さんが新しく235プロダクションに参加されました！`);
       }
