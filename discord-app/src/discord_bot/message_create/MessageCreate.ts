@@ -1,6 +1,6 @@
 const { Message, Client, GuildMember } = require('discord.js');
 const DiscordBot = require('../DiscordBot').default;
-const { BirthdayFor235Member, DeleteMessage } = require('../../../models/index');
+const { BirthdayFor235Member, DeleteMessage } = require('../../../models/index').default;
 
 /**
  * メッセージが送信された時に行う処理クラス

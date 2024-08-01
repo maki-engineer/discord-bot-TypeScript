@@ -2,7 +2,7 @@ process.env.NODE_ENV = 'unittest';
 
 require('dotenv').config();
 
-const { BirthdayFor235Member, sequelize } = require('../../../models/index');
+const { BirthdayFor235Member, sequelize } = require('../../../models/index').default;
 
 describe('正常系（BirthdayFor235Member.get235MemberBirthdayList）', (): void => {
   let transaction: any;

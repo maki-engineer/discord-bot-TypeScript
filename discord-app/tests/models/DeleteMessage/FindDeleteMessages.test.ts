@@ -1,6 +1,6 @@
 process.env.NODE_ENV = 'unittest';
 
-const { DeleteMessage, sequelize } = require('../../../models/index');
+const { DeleteMessage, sequelize } = require('../../../models/index').default;
 
 describe('正常系（DeleteMessage.findDeleteMessages）', (): void => {
   let transaction: any;

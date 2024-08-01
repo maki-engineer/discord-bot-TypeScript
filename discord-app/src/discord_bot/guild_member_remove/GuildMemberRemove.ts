@@ -1,6 +1,6 @@
 const { Client, Member } = require('discord.js');
 const DiscordBot = require('../DiscordBot').default;
-const { BirthdayFor235Member } = require('../../../models/index');
+const { BirthdayFor235Member } = require('../../../models/index').default;
 
 /**
  * サーバーから誰かが退出した時に行う処理クラス

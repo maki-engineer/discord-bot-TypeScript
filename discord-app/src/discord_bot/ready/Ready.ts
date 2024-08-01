@@ -2,7 +2,7 @@ const { Client, Message } = require('discord.js');
 const fs = require('fs');
 const cron = require('node-cron');
 const DiscordBot = require('../DiscordBot').default;
-const { BirthdayFor235Member, BirthdayForMillionMember, DeleteMessage } = require('../../../models/index');
+const { BirthdayFor235Member, BirthdayForMillionMember, DeleteMessage } = require('../../../models/index').default;
 
 /**
  * 常時行う処理クラス

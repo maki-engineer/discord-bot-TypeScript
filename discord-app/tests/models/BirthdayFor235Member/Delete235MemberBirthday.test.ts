@@ -1,6 +1,6 @@
 process.env.NODE_ENV = 'unittest';
 
-const { BirthdayFor235Member, sequelize } = require('../../../models/index');
+const { BirthdayFor235Member, sequelize } = require('../../../models/index').default;
 
 describe('正常系（BirthdayFor235Member.delete235MemberBirthday）', (): void => {
   let transaction: any;
