@@ -407,7 +407,7 @@ export default class Ready {
       todayMin: number,
     } = Ready.getTodayDateList();
 
-    if (todayDateList.todayMonth !== 1) return;
+    if (todayDateList.todayDate !== 1) return;
 
     let text: string = '名前,誕生日\n';
     const csvPath = './data/csv/birthday_for_235_members.csv';
