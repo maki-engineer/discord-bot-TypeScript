@@ -19,12 +19,4 @@ export = {
     dialect: 'postgres',
     timezone: '+09:00',
   },
-  test: {
-    username: 'postgres',
-    password: 'maki0403',
-    database: 'database_235_production',
-    host: '127.0.0.1',
-    dialect: 'postgres',
-    timezone: '+09:00',
-  },
 }
