@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize');
 const BirthdayFor235Member = require('./birthdayfor235member').default;
 const BirthdayForMillionMember = require('./birthdayformillionmember').default;
-const DeleteMessage = require('./deletemessage');
+const DeleteMessage = require('./deletemessage').default;
 
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config')[env];
