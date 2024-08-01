@@ -96,6 +96,8 @@ export default class DeleteMessage extends Model {
       },
     );
 
+    this.removeAttribute('id');
+
     return this;
   }
 }
