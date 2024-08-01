@@ -1,5 +1,5 @@
 process.env.NODE_ENV = 'unittest';
-const { BirthdayFor235Member, sequelize } = require('../../../models/index');
+const { BirthdayFor235Member, sequelize } = require('../../../models/index').default;
 
 describe('正常系（BirthdayFor235Member.getThisMonthBirthdayMember）', (): void => {
   let transaction: any;
@@ -81,13 +81,13 @@ describe('正常系（BirthdayFor235Member.getThisMonthBirthdayMember）', (): v
     );
 
     expect([
-      result[0].month,
-      result[1].month,
-      result[2].month,
+      result[0].date,
+      result[1].date,
+      result[2].date,
     ]).toEqual([
-      dummyData[2].month,
-      dummyData[0].month,
-      dummyData[1].month,
+      dummyData[2].date,
+      dummyData[0].date,
+      dummyData[1].date,
     ]);
   });
 

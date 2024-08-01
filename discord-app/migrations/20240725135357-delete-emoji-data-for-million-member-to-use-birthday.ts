@@ -1,12 +1,9 @@
-'use strict';
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  up: async (queryInterface: any, Sequelize: any) => {
     await queryInterface.dropTable('emoji_data_for_million_member_to_use_birthday');
   },
-
-  async down (queryInterface, Sequelize) {
+  down: async (queryInterface: any, Sequelize: any) => {
     await queryInterface.createTable('emoji_data_for_million_member_to_use_birthday', {
       name: {
         allowNull: false,
