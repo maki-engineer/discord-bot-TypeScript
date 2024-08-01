@@ -1,16 +1,10 @@
-'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('birthday_for_235_members', {
+  up: async (queryInterface: any, Sequelize: any) => {
+    await queryInterface.createTable('birthday_for_million_members', {
       name: {
         allowNull: false,
-        type: Sequelize.STRING
-      },
-      user_id: {
-        allowNull: false,
         unique: true,
-        defaultValue: '',
         type: Sequelize.STRING
       },
       month: {
@@ -29,17 +23,14 @@ module.exports = {
           min: 1
         },
       },
-      created_at: {
+      img: {
         allowNull: false,
-        type: Sequelize.DATE
-      },
-      updated_at: {
-        allowNull: false,
-        type: Sequelize.DATE
+        unique: true,
+        type: Sequelize.STRING
       }
     });
   },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('birtuday_for_235_members');
+  down: async (queryInterface: any, Sequelize: any) => {
+    await queryInterface.dropTable('birthday_for_million_members');
   }
 };

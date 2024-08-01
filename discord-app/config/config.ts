@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-module.exports = {
+export = {
   development: {
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
@@ -19,4 +19,12 @@ module.exports = {
     dialect: 'postgres',
     timezone: '+09:00',
   },
-};
+  test: {
+    username: 'postgres',
+    password: 'maki0403',
+    database: 'database_235_production',
+    host: '127.0.0.1',
+    dialect: 'postgres',
+    timezone: '+09:00',
+  },
+}

@@ -1,8 +1,6 @@
-'use strict';
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  up: async (queryInterface: any, Sequelize: any) => {
     /**
      * Add altering commands here.
      *
@@ -13,7 +11,7 @@ module.exports = {
     await queryInterface.removeColumn('birthday_for_235_members', 'updated_at');
   },
 
-  async down (queryInterface, Sequelize) {
+  down: async (queryInterface: any, Sequelize: any) => {
     /**
      * Add reverting commands here.
      *

@@ -1,17 +1,14 @@
-'use strict';
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    await queryInterface.dropTable('emoji_for_men_date_data');
-  },
-
-  async down (queryInterface, Sequelize) {
+  up: async (queryInterface: any, Sequelize: any) => {
     await queryInterface.createTable('emoji_for_men_date_data', {
       count: {
         allowNull: false,
         type: Sequelize.INTEGER
       }
     });
+  },
+  down: async (queryInterface: any, Sequelize: any) => {
+    await queryInterface.dropTable('emoji_for_men_date_data');
   }
 };
