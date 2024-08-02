@@ -16,7 +16,10 @@ jobs:
           - run: |
               mkdir -p postgre_sql/backup && touch ./postgre_sql/backup/development_235_backup.sql && wget "${{ secrets.POSTGRES_DB_BACKUP_URL }}" -O ./postgre_sql/backup/development_235_backup.sql && cd discord-app && npm install && cd .. && docker compose up -d && docker logs discord-app -f
             env:
-                USER_ID_FOR_MAKI: ${{ secrets.USER_ID_FOR_MAKI }}
+                CHANNEL_ID_FOR_235_CHAT_PLACE: ${{ secrets.CHANNEL_ID_FOR_235_CHAT_PLACE }}
+                CHANNEL_ID_FOR_235_INTRODUCTION: ${{ secrets.CHANNEL_ID_FOR_235_INTRODUCTION }}
+                DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+                NODE_ENV: ${{ vars.NODE_ENV }}
                 POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
                 POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
                 POSTGRES_DB_BACKUP_URL: ${{ secrets.POSTGRES_DB_BACKUP_URL }}
@@ -24,3 +27,8 @@ jobs:
                 POSTGRES_USER_UNITTEST: ${{ secrets.POSTGRES_USER_UNITTEST }}
                 POSTGRES_PASSWORD_UNITTEST: ${{ secrets.POSTGRES_PASSWORD_UNITTEST }}
                 POSTGRES_DB_UNITTEST: ${{ secrets.POSTGRES_DB_UNITTEST }}
+                SERVER_ID_FOR_235: ${{ secrets.SERVER_ID_FOR_235 }}
+                USER_ID_FOR_MAKI: ${{ secrets.USER_ID_FOR_MAKI }}
+                USER_ID_FOR_UTATANE: ${{ secrets.USER_ID_FOR_UTATANE }}
+                VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE: ${{ secrets.VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE }}
+                VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE_2: ${{ secrets.VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE_2 }}
