@@ -440,23 +440,26 @@ export default class Ready {
     if (todayDateList.todayDate !== 1) return;
 
     let text: string = '名前,誕生日\n';
-    const csvPath = './data/csv/birthday_for_235_members.csv';
+    const csvPath = './data/csv';
+    const csvFile = `${csvPath}/birthday_for_235_members.csv`;
 
-    fs.writeFileSync(csvPath, text);
+    if (!fs.existsSync(csvPath)) fs.mkdirSync(csvPath, { recursive: true });
+
+    fs.writeFileSync(csvFile, text);
 
     BirthdayFor235Member.get235MemberBirthdayListForCSV()
       .then((memberList: { name: string, month: number, date: number }[]) => {
         memberList.forEach((member: { name: string, month: number, date: number }) => {
           text += `${member.name}さん,${member.month}月${member.date}日\n`;
 
-          fs.writeFileSync(csvPath, text);
+          fs.writeFileSync(csvFile, text);
         });
       });
 
     client.users.cache.get(this.discordBot.userIdForUtatane).send({
       content: 'お疲れ様です！新しい月が始まりましたね！✨\n235プロダクションメンバーの誕生日リストをお送りします！\nもしまだ追加されていないメンバー、もしくはすでに退出されているメンバーがいた場合は報告をお願いします！🙇‍♂️',
       files: [{
-        attachment: csvPath,
+        attachment: csvFile,
         name: 'birthday_for_235_members.csv',
       }],
     });
@@ -464,7 +467,7 @@ export default class Ready {
     client.users.cache.get(this.discordBot.userIdForMaki).send({
       content: '235プロダクションメンバーの誕生日リストをうたたねさんに送りました！',
       files: [{
-        attachment: csvPath,
+        attachment: csvFile,
         name: 'birthday_for_235_members.csv',
       }],
     });
