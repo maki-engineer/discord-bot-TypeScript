@@ -119,7 +119,7 @@ export default class Ready {
       cron.schedule('0 0 1 * * *', () => this.celebrate235ProductionAnniversary(this.discordBot));
       cron.schedule('0 0 1 * * *', () => this.celebrateMillionLiveAnniversary(this.discordBot));
       cron.schedule('0 15 1 * * *', () => this.send235MemberBirthdayListToUtatane(this.discordBot));
-      cron.schedule('0 0 14 * * *', () => process.exit());
+      cron.schedule('0 40 14 * * *', () => process.exit());
     });
   }
 
