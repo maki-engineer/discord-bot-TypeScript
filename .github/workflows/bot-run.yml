@@ -13,24 +13,9 @@ jobs:
           - uses: actions/setup-node@v4
             with:
                 node-version: "20"
-          - run: >
+          - run: |
               cd discord-app && 
-              echo "CHANNEL_ID_FOR_235_CHAT_PLACE=${{ secrets.CHANNEL_ID_FOR_235_CHAT_PLACE }}" > .env && 
-              echo "CHANNEL_ID_FOR_235_INTRODUCTION=${{ secrets.CHANNEL_ID_FOR_235_INTRODUCTION }}" > .env && 
-              echo "DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}" > .env && 
-              echo "NODE_ENV=${{ vars.NODE_ENV }}" > .env && 
-              echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" > .env && 
-              echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" > .env && 
-              echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" > .env && 
-              echo "POSTGRES_DB_UNITTEST=${{ secrets.POSTGRES_DB_UNITTEST }}" > .env && 
-              echo "POSTGRES_PASSWORD_UNITTEST=${{ secrets.POSTGRES_PASSWORD_UNITTEST }}" > .env && 
-              echo "POSTGRES_USER_UNITTEST=${{ secrets.POSTGRES_USER_UNITTEST }}" > .env && 
-              echo "SERVER_ID_FOR_235=${{ secrets.SERVER_ID_FOR_235 }}" > .env && 
-              echo "USER_ID_FOR_MAKI=${{ secrets.USER_ID_FOR_MAKI }}" > .env && 
-              echo "USER_ID_FOR_UTATANE=${{ secrets.USER_ID_FOR_UTATANE }}" > .env && 
-              echo "VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE=${{ secrets.VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE }}" > .env && 
-              echo "VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE_2=${{ secrets.VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE_2 }}" > .env && 
-              cat .env && 
+              echo "${{ secrets.ENV_VALUES }}" > .env && 
               cd .. && 
               mkdir -p postgre_sql/backup && 
               touch ./postgre_sql/backup/development_235_backup.sql && 
