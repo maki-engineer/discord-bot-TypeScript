@@ -109,7 +109,7 @@ export default class Ready {
       this.setCommand();
       this.setStatus();
 
-      BirthdayFor235Member.findAll({ raw: true }).then((data: any) => console.log(data));
+      // BirthdayFor235Member.findAll({ raw: true }).then((data: any) => console.log(data));
 
       if (
         this.discordBot.channels.cache.get(this.discordBot.channelIdFor235ChatPlace) === undefined
