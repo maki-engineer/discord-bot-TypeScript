@@ -20,6 +20,7 @@ jobs:
               mkdir -p postgre_sql/backup && 
               touch ./postgre_sql/backup/development_235_backup.sql && 
               wget "${{ secrets.POSTGRES_DB_BACKUP_URL }}" -O ./postgre_sql/backup/development_235_backup.sql && 
+              cat ./postgre_sql/backup/development_235_backup.sql && 
               cd discord-app && 
               npm install && 
               cd .. && 
