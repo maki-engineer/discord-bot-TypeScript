@@ -687,6 +687,8 @@ export default class MessageCreate {
 
     message.reply('テスト用コマンド');
 
+    BirthdayFor235Member.findAll({ raw: true }).then((data: any) => console.log(data));
+
     setTimeout(() => {
       message.delete()
         .then(() => console.log('message deleting.'))

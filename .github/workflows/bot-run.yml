@@ -24,7 +24,7 @@ jobs:
               npm install && 
               cd .. && 
               docker compose up -d && 
-              docker exec postgres-db cat ./docker-entrypoint-initdb.d/development_235_backup.sql && 
+              docker exec postgres-db psql -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -f ./docker-entrypoint-initdb.d/development_235_backup.sql && 
               docker logs discord-app -f
             env:
               POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
