@@ -26,6 +26,7 @@ jobs:
               cd .. && 
               docker compose up -d && 
               cd discord-app && 
+              npx tsc -p . && 
               npx sequelize-cli db:migrate && 
               cd .. && 
               docker logs discord-app -f
