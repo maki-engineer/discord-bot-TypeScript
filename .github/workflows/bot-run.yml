@@ -14,7 +14,6 @@ jobs:
             with:
                 node-version: "20"
           - run: |
-              echo "${{ secrets.ENV_VALUES }}" > .env && 
               cd discord-app && 
               echo "${{ secrets.ENV_VALUES }}" > .env && 
               cd .. && 
@@ -26,6 +25,7 @@ jobs:
               npm install sequelize-cli && 
               cd .. && 
               docker compose up -d && 
+              docker exec postgres-db-production cat ./docker-entrypoint-initdb.d/development_235_backup.sql && 
               cd discord-app && 
               npx tsc -p . && 
               npx sequelize-cli db:migrate --env production && 
@@ -38,3 +38,6 @@ jobs:
               POSTGRES_DB_UNITTEST: ${{ secrets.POSTGRES_DB_UNITTEST }}
               POSTGRES_PASSWORD_UNITTEST: ${{ secrets.POSTGRES_PASSWORD_UNITTEST }}
               POSTGRES_USER_UNITTEST: ${{ secrets.POSTGRES_USER_UNITTEST }}
+              POSTGRES_DB_PRODUCTION: ${{ secrets.POSTGRES_DB_PRODUCTION }}
+              POSTGRES_PASSWORD_PRODUCTION: ${{ secrets.POSTGRES_PASSWORD_PRODUCTION }}
+              POSTGRES_USER_PRODUCTION: ${{ secrets.POSTGRES_USER_PRODUCTION }}
