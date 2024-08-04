@@ -25,7 +25,6 @@ jobs:
               npm install sequelize-cli && 
               cd .. && 
               docker compose up -d && 
-              docker exec postgres-db-production cat ./docker-entrypoint-initdb.d/development_235_backup.sql && 
               cd discord-app && 
               npx tsc -p . && 
               npx sequelize-cli db:migrate --env production && 
