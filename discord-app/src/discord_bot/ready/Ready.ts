@@ -113,13 +113,13 @@ export default class Ready {
         this.discordBot.channels.cache.get(this.discordBot.channelIdFor235ChatPlace) === undefined
       ) return;
 
-      cron.schedule('0 15 0 * * *', () => this.deleteOldMessageFrom235ChatPlaceChannel(this.discordBot));
-      cron.schedule('0 0 0 * * *', () => this.celebrate235Member(this.discordBot));
-      cron.schedule('0 30 0 * * *', () => this.celebrateMillionMember(this.discordBot));
-      cron.schedule('0 0 1 * * *', () => this.celebrate235ProductionAnniversary(this.discordBot));
-      cron.schedule('0 0 1 * * *', () => this.celebrateMillionLiveAnniversary(this.discordBot));
-      cron.schedule('0 15 1 * * *', () => this.send235MemberBirthdayListToUtatane(this.discordBot));
-      cron.schedule('0 0 14 * * *', () => process.exit());
+      cron.schedule('0 15 3 * * *', () => this.deleteOldMessageFrom235ChatPlaceChannel(this.discordBot));
+      cron.schedule('0 0 3 * * *', () => this.celebrate235Member(this.discordBot));
+      cron.schedule('0 30 3 * * *', () => this.celebrateMillionMember(this.discordBot));
+      cron.schedule('0 0 4 * * *', () => this.celebrate235ProductionAnniversary(this.discordBot));
+      cron.schedule('0 0 4 * * *', () => this.celebrateMillionLiveAnniversary(this.discordBot));
+      cron.schedule('0 15 4 * * *', () => this.send235MemberBirthdayListToUtatane(this.discordBot));
+      cron.schedule('0 55 1,7,13,19 * * *', () => process.exit());
     });
   }
 

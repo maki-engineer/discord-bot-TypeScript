@@ -12,12 +12,15 @@ jobs:
                 with:
                     node-version: "20"
               - run: |
-                  docker compose up unittest.db -d && cd discord-app && npm install && npx tsc -p . && npm install sequelize-cli && npx sequelize-cli db:migrate --env unittest && npm run test
+                  docker compose up unittest.db -d && 
+                  cd discord-app && 
+                  npm install && 
+                  npx tsc -p . && 
+                  npm install sequelize-cli && 
+                  npx sequelize-cli db:migrate --env unittest && 
+                  npm run test
                 env:
                     USER_ID_FOR_MAKI: ${{ secrets.USER_ID_FOR_MAKI }}
-                    POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-                    POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-                    POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
                     POSTGRES_USER_UNITTEST: ${{ secrets.POSTGRES_USER_UNITTEST }}
                     POSTGRES_PASSWORD_UNITTEST: ${{ secrets.POSTGRES_PASSWORD_UNITTEST }}
                     POSTGRES_DB_UNITTEST: ${{ secrets.POSTGRES_DB_UNITTEST }}

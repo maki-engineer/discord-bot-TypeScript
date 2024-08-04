@@ -31,9 +31,7 @@ export default class MessageCreate {
   public messageCreateEvent(): void {
     this.discordBot.on('messageCreate', (message: typeof Message) => {
       this.reactToUsedMaleEventCommandMessage(message);
-
       this.reactToBirthday235MemberMessage(message);
-
       this.reactToBirthdayMillionMemberMessage(message);
 
       // 235botのメッセージがリプライだった場合、1分後に削除
