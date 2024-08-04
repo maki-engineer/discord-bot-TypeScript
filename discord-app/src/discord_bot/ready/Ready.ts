@@ -109,9 +109,6 @@ export default class Ready {
       this.setCommand();
       this.setStatus();
 
-      // BirthdayFor235Member.findAll({ raw: true }).then((data: any) => console.log(data))
-      //   .catch((error: unknown) => console.log(error));
-
       if (
         this.discordBot.channels.cache.get(this.discordBot.channelIdFor235ChatPlace) === undefined
       ) return;
@@ -122,7 +119,7 @@ export default class Ready {
       cron.schedule('0 0 1 * * *', () => this.celebrate235ProductionAnniversary(this.discordBot));
       cron.schedule('0 0 1 * * *', () => this.celebrateMillionLiveAnniversary(this.discordBot));
       cron.schedule('0 15 1 * * *', () => this.send235MemberBirthdayListToUtatane(this.discordBot));
-      cron.schedule('0 49 5 * * *', () => process.exit());
+      cron.schedule('0 0 6 * * *', () => process.exit());
     });
   }
 
