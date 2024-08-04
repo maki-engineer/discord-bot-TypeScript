@@ -1,6 +1,6 @@
 const { Message, Client, GuildMember } = require('discord.js');
 const DiscordBot = require('../DiscordBot').default;
-const { BirthdayFor235Member, DeleteMessage, BirthdayForMillionMember } = require('../../../models/index').default;
+const { BirthdayFor235Member, DeleteMessage } = require('../../../models/index').default;
 
 /**
  * メッセージが送信された時に行う処理クラス
@@ -236,7 +236,7 @@ export default class MessageCreate {
     commandName: string,
     commandList: string[],
   ): void {
-    if ((commandName !== 'birthday') || (message.author.id !== this.discordBot.userIdForUtatane)) return;
+    if ((commandName !== 'birthday') || (message.author.id !== this.discordBot.userIdForMaki)) return;
 
     if ((commandList.length < 3) || (commandList.length > 4)) {
       message.reply('235birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n任意のテキストを追加したい場合は、3つ入力した後に、追加したいテキストを入力してください。\n※半角スペースで区切るのを忘れずに！！\n\n235birthday 8 15 21');
@@ -411,7 +411,7 @@ export default class MessageCreate {
     commandName: string,
     commandList: string[],
   ): void {
-    if ((commandName !== 'men') || (message.author.id !== this.discordBot.userIdForUtatane)) return;
+    if ((commandName !== 'men') || (message.author.id !== this.discordBot.userIdForMaki)) return;
 
     if ((commandList.length < 1) || (commandList.length > 10)) {
       message.reply('235menコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**2～10個まで**です！\n\n235men 8 12 15 21');
@@ -686,9 +686,6 @@ export default class MessageCreate {
     if ((commandName !== 'test') || (message.author.id !== this.discordBot.userIdForMaki)) return;
 
     message.reply('テスト用コマンド');
-
-    BirthdayForMillionMember.findAll({ raw: true }).then((data: any) => console.log(data))
-      .catch((error: unknown) => console.log(error));
 
     setTimeout(() => {
       message.delete()
