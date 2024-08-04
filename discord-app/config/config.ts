@@ -6,7 +6,7 @@ export = {
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
     host: 'db',
-    port: '5434',
+    port: '5432',
     dialect: 'postgres',
     timezone: '+09:00',
   },
