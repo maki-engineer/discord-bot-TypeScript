@@ -1,9 +1,11 @@
 name: Bot Run
 
 on:
-    pull_request
-    # schedule:
-      # - cron: '0 5 * * *'
+    schedule:
+      - cron: '0 2 * * *'  # 11時
+      - cron: '0 8 * * *'  # 17時
+      - cron: '0 14 * * *' # 23時
+      - cron: '0 20 * * *' # 5時
 
 jobs:
     build:

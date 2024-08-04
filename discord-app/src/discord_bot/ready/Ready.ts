@@ -113,13 +113,13 @@ export default class Ready {
         this.discordBot.channels.cache.get(this.discordBot.channelIdFor235ChatPlace) === undefined
       ) return;
 
-      cron.schedule('0 15 0 * * *', () => this.deleteOldMessageFrom235ChatPlaceChannel(this.discordBot));
-      cron.schedule('0 0 0 * * *', () => this.celebrate235Member(this.discordBot));
-      cron.schedule('0 30 0 * * *', () => this.celebrateMillionMember(this.discordBot));
-      cron.schedule('0 0 1 * * *', () => this.celebrate235ProductionAnniversary(this.discordBot));
-      cron.schedule('0 0 1 * * *', () => this.celebrateMillionLiveAnniversary(this.discordBot));
-      cron.schedule('0 52 6 * * *', () => this.send235MemberBirthdayListToUtatane(this.discordBot));
-      cron.schedule('0 53 6 * * *', () => process.exit());
+      cron.schedule('0 15 3 * * *', () => this.deleteOldMessageFrom235ChatPlaceChannel(this.discordBot));
+      cron.schedule('0 0 3 * * *', () => this.celebrate235Member(this.discordBot));
+      cron.schedule('0 30 3 * * *', () => this.celebrateMillionMember(this.discordBot));
+      cron.schedule('0 0 4 * * *', () => this.celebrate235ProductionAnniversary(this.discordBot));
+      cron.schedule('0 0 4 * * *', () => this.celebrateMillionLiveAnniversary(this.discordBot));
+      cron.schedule('0 15 4 * * *', () => this.send235MemberBirthdayListToUtatane(this.discordBot));
+      cron.schedule('0 55 1,7,13,19 * * *', () => process.exit());
     });
   }
 
@@ -437,7 +437,7 @@ export default class Ready {
       todayMin: number,
     } = Ready.getTodayDateList();
 
-    // if (todayDateList.todayDate !== 1) return;
+    if (todayDateList.todayDate !== 1) return;
 
     let text: string = '名前,誕生日\n';
     const csvPath = './data/csv';
@@ -456,13 +456,13 @@ export default class Ready {
         });
       });
 
-    // client.users.cache.get(this.discordBot.userIdForUtatane).send({
-    //   content: 'お疲れ様です！新しい月が始まりましたね！✨\n235プロダクションメンバーの誕生日リストをお送りします！\nもしまだ追加されていないメンバー、もしくはすでに退出されているメンバーがいた場合は報告をお願いします！🙇‍♂️',
-    //   files: [{
-    //     attachment: csvFile,
-    //     name: 'birthday_for_235_members.csv',
-    //   }],
-    // });
+    client.users.cache.get(this.discordBot.userIdForUtatane).send({
+      content: 'お疲れ様です！新しい月が始まりましたね！✨\n235プロダクションメンバーの誕生日リストをお送りします！\nもしまだ追加されていないメンバー、もしくはすでに退出されているメンバーがいた場合は報告をお願いします！🙇‍♂️',
+      files: [{
+        attachment: csvFile,
+        name: 'birthday_for_235_members.csv',
+      }],
+    });
 
     client.users.cache.get(this.discordBot.userIdForMaki).send({
       content: '235プロダクションメンバーの誕生日リストをうたたねさんに送りました！',
