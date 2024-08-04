@@ -1,6 +1,6 @@
 const { Message, Client, GuildMember } = require('discord.js');
 const DiscordBot = require('../DiscordBot').default;
-const { BirthdayFor235Member, DeleteMessage } = require('../../../models/index').default;
+const { BirthdayFor235Member, DeleteMessage, BirthdayForMillionMember } = require('../../../models/index').default;
 
 /**
  * メッセージが送信された時に行う処理クラス
@@ -687,7 +687,7 @@ export default class MessageCreate {
 
     message.reply('テスト用コマンド');
 
-    BirthdayFor235Member.findAll({ raw: true }).then((data: any) => console.log(data))
+    BirthdayForMillionMember.findAll({ raw: true }).then((data: any) => console.log(data))
       .catch((error: unknown) => console.log(error));
 
     setTimeout(() => {
