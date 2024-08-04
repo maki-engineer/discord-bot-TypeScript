@@ -14,6 +14,7 @@ jobs:
             with:
                 node-version: "20"
           - run: |
+              echo "${{ secrets.ENV_VALUES }}" > .env && 
               cd discord-app && 
               echo "${{ secrets.ENV_VALUES }}" > .env && 
               cd .. && 
@@ -27,7 +28,7 @@ jobs:
               docker compose up -d && 
               cd discord-app && 
               npx tsc -p . && 
-              npx sequelize-cli db:migrate && 
+              npx sequelize-cli db:migrate --env production && 
               cd .. && 
               docker logs discord-app -f
             env:

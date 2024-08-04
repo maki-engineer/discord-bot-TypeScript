@@ -19,4 +19,13 @@ export = {
     dialect: 'postgres',
     timezone: '+09:00',
   },
+  production: {
+    username: process.env.POSTGRES_USER_PRODUCTION,
+    password: process.env.POSTGRES_PASSWORD_PRODUCTION,
+    database: process.env.POSTGRES_DB_PRODUCTION,
+    host: '127.0.0.1',
+    port: '5435',
+    dialect: 'postgres',
+    timezone: '+09:00',
+  },
 }
