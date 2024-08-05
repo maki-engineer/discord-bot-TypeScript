@@ -15,7 +15,7 @@ export default class BirthdayForMillionMember extends Model {
      * @param {string} userId ユーザーID
      * @param {number} month 月
      * @param {number} date 日
-     * @param {any} transaction ユニットテストをする時に指定
+     * @param {any | null} transaction ユニットテストをする時に指定
      *
      * @return {object}
      */
@@ -51,7 +51,7 @@ export default class BirthdayForMillionMember extends Model {
    * 今月誕生日の235プロダクションメンバーを昇順で取得
    *
    * @param {number} month 月
-   * @param {any} transaction ユニットテストをする時に指定
+   * @param {any | null} transaction ユニットテストをする時に指定
    *
    * @return {object}
    */
@@ -82,7 +82,7 @@ export default class BirthdayForMillionMember extends Model {
   /**
    * CSVファイルに出力するための235メンバーの誕生日リストを取得
    *
-   * @param {any} transaction ユニットテストをする時に指定
+   * @param {any | null} transaction ユニットテストをする時に指定
    *
    * @return {object}
    */
@@ -119,7 +119,7 @@ export default class BirthdayForMillionMember extends Model {
    * @param {string} userId ユーザーID
    * @param {number} month 月
    * @param {number} date 日
-   * @param {any} transaction ユニットテストをする時に指定
+   * @param {any | null} transaction ユニットテストをする時に指定
    */
   static async registNew235MemberBirthday(
     userName: string,
@@ -146,7 +146,7 @@ export default class BirthdayForMillionMember extends Model {
    * 指定された235プロダクションメンバーの誕生日を削除
    *
    * @param {string} userId メンバーのユーザーID
-   * @param {any} transaction ユニットテストをする時に指定
+   * @param {any | null} transaction ユニットテストをする時に指定
    *
    * @return {object}
    */
@@ -164,7 +164,7 @@ export default class BirthdayForMillionMember extends Model {
     return await this.destroy(deleteData);
   }
 
-  public static initialize(sequelize: typeof Sequelize) {
+  static initialize(sequelize: typeof Sequelize) {
     this.init(
       {
         name: {
