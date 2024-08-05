@@ -14,7 +14,7 @@ export default class BirthdayForMillionMember extends Model {
      *
      * @param {number} month 月
      * @param {number} date 日
-     * @param {any} transaction ユニットテストをする時に指定
+     * @param {any | null} transaction ユニットテストをする時に指定
      *
      * @return {object}
      */
@@ -38,7 +38,7 @@ export default class BirthdayForMillionMember extends Model {
     return await this.findAll(options);
   }
 
-  public static initialize(sequelize: typeof Sequelize) {
+  static initialize(sequelize: typeof Sequelize) {
     this.init(
       {
         name: {

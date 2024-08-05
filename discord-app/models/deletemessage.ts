@@ -9,7 +9,7 @@ export default class DeleteMessage extends Model {
      * 削除対象のメッセージを取得
      *
      * @param {number} date 日
-     * @param {any} transaction ユニットテストをする時に指定
+     * @param {any | null} transaction ユニットテストをする時に指定
      *
      * @return {object}
      */
@@ -32,7 +32,7 @@ export default class DeleteMessage extends Model {
      *
      * @param {string} messageId 対象のメッセージID
      * @param {number} date 投稿された日
-     * @param {any} transaction ユニットテストをする時に指定
+     * @param {any | null} transaction ユニットテストをする時に指定
      *
      * @return {object}
      */
@@ -53,7 +53,7 @@ export default class DeleteMessage extends Model {
    * 削除対象のメッセージを削除
    *
    * @param {string} messageId 対象のメッセージID
-   * @param {any} transaction ユニットテストをする時に指定
+   * @param {any | null} transaction ユニットテストをする時に指定
    *
    * @return {object}
    */
@@ -71,7 +71,7 @@ export default class DeleteMessage extends Model {
     return await this.destroy(deleteData);
   }
 
-  public static initialize(sequelize: typeof Sequelize) {
+  static initialize(sequelize: typeof Sequelize) {
     this.init(
       {
         message_id: {
