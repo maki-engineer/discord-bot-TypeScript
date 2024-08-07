@@ -3,6 +3,7 @@ const Ready = require('./ready/Ready').default;
 const InteractionCreate = require('./interaction_create/InteractionCreate').default;
 const MessageCreate = require('./message_create/MessageCreate').default;
 const GuildMemberRemove = require('./guild_member_remove/GuildMemberRemove').default;
+const VoiceStateUpdate = require('./voice_state_update/VoiceStateUpdate').default;
 
 require('dotenv').config();
 
@@ -18,6 +19,8 @@ export default class DiscordBot extends Client {
   private _usedMaleEventCommandReactionCount: number = 0;
 
   private _dividedUserIdList: string[] = [];
+
+  private _connection: any;
 
   private readonly discordToken = process.env.DISCORD_TOKEN;
 
@@ -92,6 +95,14 @@ export default class DiscordBot extends Client {
     this._dividedUserIdList = dividedUserIdList;
   }
 
+  get connection(): any {
+    return this._connection;
+  }
+
+  set connection(connection: any) {
+    this._connection = connection;
+  }
+
   get serverIdFor235() {
     return this._serverIdFor235;
   }
@@ -139,5 +150,8 @@ export default class DiscordBot extends Client {
 
     // サーバーから誰かが退出した時に行う処理
     new GuildMemberRemove(this).guildMemberRemoveEvent();
+
+    // ボイスチャンネルに誰かが参加/退出した時に行う処理
+    new VoiceStateUpdate(this).voiceStateUpdateEvent();
   }
 }
