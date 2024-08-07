@@ -15,8 +15,6 @@ const { BirthdayFor235Member, DeleteMessage } = require('../../../models/index')
 export default class MessageCreate {
   private discordBot: typeof DiscordBot;
 
-  private connection: any;
-
   private readonly prefix = '235';
 
   private readonly setTimeoutSec = 15_000;
@@ -696,6 +694,27 @@ export default class MessageCreate {
     const usedCommandMember = await message.guild.members.fetch(message.author.id);
     const memberJoinVoiceChannel = usedCommandMember.voice.channel;
 
+    if (
+      (this.discordBot.connection !== undefined)
+      && (this.discordBot.connection.joinConfig.channelId === memberJoinVoiceChannel.id)
+    ) {
+      const embed = new EmbedBuilder()
+        .setTitle('既に接続されています！')
+        .setFields({ name: 'ボイスチャンネル名', value: memberJoinVoiceChannel.name })
+        .setColor('#FF0000')
+        .setTimestamp();
+
+      message.reply({ embeds: [embed] });
+
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
+      }, this.setTimeoutSec);
+
+      return;
+    }
+
     if (memberJoinVoiceChannel === null) {
       message.reply('235joinコマンドを使用することで、使用したメンバーが参加しているボイスチャンネルに235botが参加して、そのボイスチャンネルの聞き専チャンネルに投稿されたテキストを読み上げます！\nボイスチャンネルに参加してから再度このスラッシュコマンドを使用していただくか、もしくはテキストで「235join」と入力していただければボイスチャンネルに参加します！');
 
@@ -720,7 +739,7 @@ export default class MessageCreate {
       return;
     }
 
-    this.connection = joinVoiceChannel({
+    this.discordBot.connection = joinVoiceChannel({
       channelId: memberJoinVoiceChannel.id,
       guildId: message.guild.id,
       adapterCreator: message.guild.voiceAdapterCreator,

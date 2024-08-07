@@ -19,6 +19,8 @@ export default class DiscordBot extends Client {
 
   private _dividedUserIdList: string[] = [];
 
+  private _connection: any;
+
   private readonly discordToken = process.env.DISCORD_TOKEN;
 
   private readonly _serverIdFor235 = process.env.SERVER_ID_FOR_235;
@@ -90,6 +92,14 @@ export default class DiscordBot extends Client {
 
   set dividedUserIdList(dividedUserIdList: string[]) {
     this._dividedUserIdList = dividedUserIdList;
+  }
+
+  get connection(): any {
+    return this._connection;
+  }
+
+  set connection(connection: any) {
+    this._connection = connection;
   }
 
   get serverIdFor235() {

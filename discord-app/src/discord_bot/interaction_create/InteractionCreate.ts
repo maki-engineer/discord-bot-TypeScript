@@ -106,6 +106,23 @@ export default class InteractionCreate {
     const usedCommandMember = await interaction.guild.members.fetch(interaction.member.id);
     const memberJoinVoiceChannel = usedCommandMember.voice.channel;
 
+    if (
+      (this.discordBot.connection !== undefined)
+      && (this.discordBot.connection.joinConfig.channelId === memberJoinVoiceChannel.id)
+    ) {
+      const embed = new EmbedBuilder()
+        .setTitle('既に接続されています！')
+        .setFields({ name: 'ボイスチャンネル名', value: memberJoinVoiceChannel.name })
+        .setColor('#FF0000')
+        .setTimestamp();
+
+      interaction.reply({ embeds: [embed] });
+
+      setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
+
+      return;
+    }
+
     if (memberJoinVoiceChannel === null) {
       interaction.reply('235joinコマンドを使用することで、使用したメンバーが参加しているボイスチャンネルに235botが参加して、そのボイスチャンネルの聞き専チャンネルに投稿されたテキストを読み上げます！\nボイスチャンネルに参加してから再度このスラッシュコマンドを使用していただくか、もしくはテキストで「235join」と入力していただければボイスチャンネルに参加します！');
 
@@ -118,7 +135,7 @@ export default class InteractionCreate {
       return;
     }
 
-    joinVoiceChannel({
+    this.discordBot.connection = joinVoiceChannel({
       channelId: memberJoinVoiceChannel.id,
       guildId: interaction.guild.id,
       adapterCreator: interaction.guild.voiceAdapterCreator,
