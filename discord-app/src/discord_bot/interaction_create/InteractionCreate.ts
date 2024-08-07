@@ -27,6 +27,7 @@ export default class InteractionCreate {
       this.createMaleEventMessageTemplateInteraction(interaction);
       this.divideVoiceChannelInteraction(interaction);
       await this.joinVoiceChannelInteraction(interaction);
+      await this.disconnectVoiceChannelInteraction(interaction);
     });
   }
 
@@ -145,6 +146,62 @@ export default class InteractionCreate {
 
     const embed = new EmbedBuilder()
       .setTitle('接続されました！')
+      .setFields({ name: 'ボイスチャンネル名', value: memberJoinVoiceChannel.name })
+      .setColor('#00FF99')
+      .setTimestamp();
+
+    interaction.reply({ embeds: [embed] });
+
+    setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
+  }
+
+  /**
+   * 235disconnectコマンド
+   *
+   * @param {Interaction} interaction Interactionクラス
+   *
+   * @return {void}
+   */
+  private async disconnectVoiceChannelInteraction(interaction: typeof Interaction) {
+    if (interaction.commandName !== '235disconnect') return;
+
+    const usedCommandMember = await interaction.guild.members.fetch(interaction.member.id);
+    const memberJoinVoiceChannel = usedCommandMember.voice.channel;
+
+    if (this.discordBot.connection === undefined) {
+      const embed = new EmbedBuilder()
+        .setTitle('まだボイスチャンネルに接続されていません！')
+        .setColor('#FF0000')
+        .setTimestamp();
+
+      interaction.reply({ embeds: [embed] });
+
+      setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
+
+      return;
+    }
+
+    if (
+      (memberJoinVoiceChannel === null)
+      || (this.discordBot.connection.joinConfig.channelId !== memberJoinVoiceChannel.id)
+    ) {
+      const embed = new EmbedBuilder()
+        .setTitle('切断できるのは235botが入っているボイスチャンネルに参加しているメンバーだけです！')
+        .setColor('#FFCC00')
+        .setTimestamp();
+
+      interaction.reply({ embeds: [embed] });
+
+      setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
+
+      return;
+    }
+
+    this.discordBot.connection.destroy();
+    this.discordBot.connection = undefined;
+
+    const embed = new EmbedBuilder()
+      .setTitle('切断されました！')
       .setFields({ name: 'ボイスチャンネル名', value: memberJoinVoiceChannel.name })
       .setColor('#00FF99')
       .setTimestamp();

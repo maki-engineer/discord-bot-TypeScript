@@ -88,6 +88,7 @@ export default class MessageCreate {
       this.menEventCommand(message, commandName, commandList);
       this.roomDivisionCommand(this.discordBot, message, commandName);
       await this.joinVoiceChannelCommand(message, commandName);
+      await this.disconnectVoiceChannelCommand(message, commandName);
       this.testCommand(message, commandName);
     });
   }
@@ -749,6 +750,75 @@ export default class MessageCreate {
 
     const embed = new EmbedBuilder()
       .setTitle('接続されました！')
+      .setFields({ name: 'ボイスチャンネル名', value: memberJoinVoiceChannel.name })
+      .setColor('#00FF99')
+      .setTimestamp();
+
+    message.reply({ embeds: [embed] });
+
+    setTimeout(() => {
+      message.delete()
+        .then(() => console.log('message deleting.'))
+        .catch(() => console.log('message is deleted.'));
+    }, this.setTimeoutSec);
+  }
+
+  /**
+   * 235disconnectコマンド 235botをボイスチャンネルから切断
+   *
+   * @param {Message} message Messageクラス
+   * @param {string} commandName 入力されたコマンド名
+   *
+   * @return {void}
+   */
+  private async disconnectVoiceChannelCommand(message: typeof Message, commandName: string) {
+    if (commandName !== 'disconnect') return;
+
+    const usedCommandMember = await message.guild.members.fetch(message.author.id);
+    const memberJoinVoiceChannel = usedCommandMember.voice.channel;
+
+    if (this.discordBot.connection === undefined) {
+      const embed = new EmbedBuilder()
+        .setTitle('まだボイスチャンネルに接続されていません！')
+        .setColor('#FF0000')
+        .setTimestamp();
+
+      message.reply({ embeds: [embed] });
+
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
+      }, this.setTimeoutSec);
+
+      return;
+    }
+
+    if (
+      (memberJoinVoiceChannel === null)
+      || (this.discordBot.connection.joinConfig.channelId !== memberJoinVoiceChannel.id)
+    ) {
+      const embed = new EmbedBuilder()
+        .setTitle('切断できるのは235botが入っているボイスチャンネルに参加しているメンバーだけです！')
+        .setColor('#FFCC00')
+        .setTimestamp();
+
+      message.reply({ embeds: [embed] });
+
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
+      }, this.setTimeoutSec);
+
+      return;
+    }
+
+    this.discordBot.connection.destroy();
+    this.discordBot.connection = undefined;
+
+    const embed = new EmbedBuilder()
+      .setTitle('切断されました！')
       .setFields({ name: 'ボイスチャンネル名', value: memberJoinVoiceChannel.name })
       .setColor('#00FF99')
       .setTimestamp();

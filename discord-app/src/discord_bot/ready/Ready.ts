@@ -29,6 +29,7 @@ export default class Ready {
     { name: '235men', description: '毎月開催される235士官学校🌹の日程を決めるときに使用するコマンドです。' },
     { name: '235roomdivision', description: 'ボイスチャンネルに参加しているメンバーを分けたいときに使用するコマンドです。' },
     { name: '235join', description: '235botがボイスチャンネルに参加してテキストを読み上げます！' },
+    { name: '235disconnect', description: '235botをボイスチャンネルから退出させます！' },
   ];
 
   private readonly millionMemberEmojiList = [
