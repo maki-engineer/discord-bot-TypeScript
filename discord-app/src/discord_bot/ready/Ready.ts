@@ -28,6 +28,7 @@ export default class Ready {
     { name: '235birthday', description: '毎月開催されるオンライン飲み会の企画文章を作成したいときに使用するコマンドです。' },
     { name: '235men', description: '毎月開催される235士官学校🌹の日程を決めるときに使用するコマンドです。' },
     { name: '235roomdivision', description: 'ボイスチャンネルに参加しているメンバーを分けたいときに使用するコマンドです。' },
+    { name: '235join', description: '235botがボイスチャンネルに参加してテキストを読み上げます！' },
   ];
 
   private readonly millionMemberEmojiList = [

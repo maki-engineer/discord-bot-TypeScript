@@ -1,4 +1,5 @@
-const { Interaction } = require('discord.js');
+const { Interaction, EmbedBuilder } = require('discord.js');
+const { joinVoiceChannel } = require('@discordjs/voice');
 const DiscordBot = require('../DiscordBot').default;
 
 /**
@@ -19,12 +20,13 @@ export default class InteractionCreate {
    * @return {void}
    */
   public interactionCreateEvent(): void {
-    this.discordBot.on('interactionCreate', (interaction: typeof Interaction) => {
+    this.discordBot.on('interactionCreate', async (interaction: typeof Interaction) => {
       if (!interaction.isCommand()) return;
 
       this.createBirthdayEventMessageTemplateInteraction(interaction);
       this.createMaleEventMessageTemplateInteraction(interaction);
       this.divideVoiceChannelInteraction(interaction);
+      await this.joinVoiceChannelInteraction(interaction);
     });
   }
 
@@ -87,6 +89,50 @@ export default class InteractionCreate {
     if (interaction.commandName !== '235roomdivision') return;
 
     interaction.reply('235roomdivisionコマンドを使用することで、【雑談１】ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、【雑談１】ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、【雑談１】ボイスチャンネルに参加しているメンバーのみが使用できます。');
+
+    setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
+  }
+
+  /**
+   * 235joinコマンド
+   *
+   * @param {Interaction} interaction Interactionクラス
+   *
+   * @return {void}
+   */
+  private async joinVoiceChannelInteraction(interaction: typeof Interaction) {
+    if (interaction.commandName !== '235join') return;
+
+    const usedCommandMember = await interaction.guild.members.fetch(interaction.member.id);
+    const memberJoinVoiceChannel = usedCommandMember.voice.channel;
+
+    if (memberJoinVoiceChannel === null) {
+      interaction.reply('235joinコマンドを使用することで、使用したメンバーが参加しているボイスチャンネルに235botが参加して、そのボイスチャンネルの聞き専チャンネルに投稿されたテキストを読み上げます！\nボイスチャンネルに参加してから再度このスラッシュコマンドを使用していただくか、もしくはテキストで「235join」と入力していただければボイスチャンネルに参加します！');
+
+      return;
+    }
+
+    if (!memberJoinVoiceChannel.joinable || !memberJoinVoiceChannel.speakable) {
+      interaction.reply('参加先のボイスチャンネルに接続できなかったか、もしくは参加先のボイスチャンネルで音声を再生する権限がありませんでした；；');
+
+      return;
+    }
+
+    joinVoiceChannel({
+      channelId: memberJoinVoiceChannel.id,
+      guildId: interaction.guild.id,
+      adapterCreator: interaction.guild.voiceAdapterCreator,
+      selfMute: false,
+      selfDeaf: true,
+    });
+
+    const embed = new EmbedBuilder()
+      .setTitle('接続されました！')
+      .setFields({ name: 'ボイスチャンネル名', value: memberJoinVoiceChannel.name })
+      .setColor('#00FF99')
+      .setTimestamp();
+
+    interaction.reply({ embeds: [embed] });
 
     setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
   }
