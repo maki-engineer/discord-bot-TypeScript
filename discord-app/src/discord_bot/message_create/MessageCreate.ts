@@ -1,4 +1,11 @@
-const { Message, Client, GuildMember } = require('discord.js');
+const {
+  Message,
+  Client,
+  GuildMember,
+  EmbedBuilder,
+} = require('discord.js');
+
+const { joinVoiceChannel } = require('@discordjs/voice');
 const DiscordBot = require('../DiscordBot').default;
 const { BirthdayFor235Member, DeleteMessage } = require('../../../models/index').default;
 
@@ -7,6 +14,8 @@ const { BirthdayFor235Member, DeleteMessage } = require('../../../models/index')
  */
 export default class MessageCreate {
   private discordBot: typeof DiscordBot;
+
+  private connection: any;
 
   private readonly prefix = '235';
 
@@ -29,7 +38,7 @@ export default class MessageCreate {
    * @return {void}
    */
   public messageCreateEvent(): void {
-    this.discordBot.on('messageCreate', (message: typeof Message) => {
+    this.discordBot.on('messageCreate', async (message: typeof Message) => {
       this.reactToUsedMaleEventCommandMessage(message);
       this.reactToBirthday235MemberMessage(message);
       this.reactToBirthdayMillionMemberMessage(message);
@@ -80,6 +89,7 @@ export default class MessageCreate {
       this.birthdayEventCommand(message, commandName, commandList);
       this.menEventCommand(message, commandName, commandList);
       this.roomDivisionCommand(this.discordBot, message, commandName);
+      await this.joinVoiceChannelCommand(message, commandName);
       this.testCommand(message, commandName);
     });
   }
@@ -670,6 +680,67 @@ export default class MessageCreate {
         }
       }, 1_000);
     }, 9_000);
+  }
+
+  /**
+   * 235joinコマンド コマンドを入力したメンバーが入っているボイスチャンネルに参加
+   *
+   * @param {Message} message Messageクラス
+   * @param {string} commandName 入力されたコマンド名
+   *
+   * @return {void}
+   */
+  private async joinVoiceChannelCommand(message: typeof Message, commandName: string) {
+    if (commandName !== 'join') return;
+
+    const usedCommandMember = await message.guild.members.fetch(message.author.id);
+    const memberJoinVoiceChannel = usedCommandMember.voice.channel;
+
+    if (memberJoinVoiceChannel === null) {
+      message.reply('235joinコマンドを使用することで、使用したメンバーが参加しているボイスチャンネルに235botが参加して、そのボイスチャンネルの聞き専チャンネルに投稿されたテキストを読み上げます！\nボイスチャンネルに参加してから再度このスラッシュコマンドを使用していただくか、もしくはテキストで「235join」と入力していただければボイスチャンネルに参加します！');
+
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
+      }, this.setTimeoutSec);
+
+      return;
+    }
+
+    if (!memberJoinVoiceChannel.joinable || !memberJoinVoiceChannel.speakable) {
+      message.reply('参加先のボイスチャンネルに接続できなかったか、もしくは参加先のボイスチャンネルで音声を再生する権限がありませんでした；；');
+
+      setTimeout(() => {
+        message.delete()
+          .then(() => console.log('message deleting.'))
+          .catch(() => console.log('message is deleted.'));
+      }, this.setTimeoutSec);
+
+      return;
+    }
+
+    this.connection = joinVoiceChannel({
+      channelId: memberJoinVoiceChannel.id,
+      guildId: message.guild.id,
+      adapterCreator: message.guild.voiceAdapterCreator,
+      selfMute: false,
+      selfDeaf: true,
+    });
+
+    const embed = new EmbedBuilder()
+      .setTitle('接続されました！')
+      .setFields({ name: 'ボイスチャンネル名', value: memberJoinVoiceChannel.name })
+      .setColor('#00FF99')
+      .setTimestamp();
+
+    message.reply({ embeds: [embed] });
+
+    setTimeout(() => {
+      message.delete()
+        .then(() => console.log('message deleting.'))
+        .catch(() => console.log('message is deleted.'));
+    }, this.setTimeoutSec);
   }
 
   /**
