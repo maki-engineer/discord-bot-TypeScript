@@ -30,6 +30,10 @@ export default class DiscordBot extends Client {
 
   private readonly _channelIdFor235Introduction = process.env.CHANNEL_ID_FOR_235_INTRODUCTION;
 
+  private readonly _channelIdFor235ListenOnly = process.env.CHANNEL_ID_FOR_235_LISTEN_ONLY;
+
+  private readonly _channelIdFor235ListenOnly2 = process.env.CHANNEL_ID_FOR_235_LISTEN_ONLY_2;
+
   private readonly _voiceChannelIdFor235ChatPlace = process.env.VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE;
 
   private readonly _voiceChannelIdFor235ChatPlace2 = process.env
@@ -113,6 +117,14 @@ export default class DiscordBot extends Client {
 
   get channelIdFor235Introduction() {
     return this._channelIdFor235Introduction;
+  }
+
+  get channelIdFor235ListenOnly() {
+    return this._channelIdFor235ListenOnly;
+  }
+
+  get channelIdFor235ListenOnly2() {
+    return this._channelIdFor235ListenOnly2;
   }
 
   get voiceChannelIdFor235ChatPlace() {
