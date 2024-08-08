@@ -904,7 +904,7 @@ export default class MessageCreate {
   private testCommand(message: typeof Message, commandName: string, commandList: string[]): void {
     if ((commandName !== 'test') || (message.author.id !== this.discordBot.userIdForMaki) || (commandList.length === 0)) return;
 
-    switch(commandList[0]) {
+    switch (commandList[0]) {
       case 'birthday_for_235_members':
         BirthdayFor235Member.findAll({ raw: true }).then((member: {
           name: string,
@@ -924,9 +924,12 @@ export default class MessageCreate {
 
         break;
       case 'delete_messages':
-        DeleteMessage.findAll({ raw: true }).then((data: { message_id: string, date: number }[]) => console.log(data));
+        DeleteMessage.findAll({ raw: true }).then((data: {
+          message_id: string,
+          date: number,
+        }[]) => console.log(data));
 
-      break;
+        break;
     }
 
     setTimeout(() => {

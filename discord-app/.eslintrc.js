@@ -28,6 +28,7 @@ module.exports = {
     'arrow-body-style': 'off',
     'no-misleading-character-class': 'off',
     'no-useless-escape': 'off',
+    'default-case': 'off',
     '@typescript-eslint/no-unsafe-assignment': 'warn',
     '@typescript-eslint/no-unsafe-member-access': 'warn',
     '@typescript-eslint/no-unsafe-call': 'warn',
