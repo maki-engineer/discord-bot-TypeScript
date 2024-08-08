@@ -38,6 +38,8 @@ export default class GuildMemberRemove {
       .then(() => {
         client.users.cache.get(this.discordBot.userIdForMaki).send(`${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！`);
         client.users.cache.get(this.discordBot.userIdForUtatane).send(`${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！\nもし間違いがあった場合は報告をお願いします！`);
+
+        this.discordBot.isUpdatedDatabase = true;
       });
   }
 }

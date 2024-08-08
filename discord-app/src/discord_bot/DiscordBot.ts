@@ -22,6 +22,8 @@ export default class DiscordBot extends Client {
 
   private _connection: any;
 
+  private _isUpdatedDatabase: boolean = false;
+
   private readonly discordToken = process.env.DISCORD_TOKEN;
 
   private readonly _serverIdFor235 = process.env.SERVER_ID_FOR_235;
@@ -105,6 +107,14 @@ export default class DiscordBot extends Client {
 
   set connection(connection: any) {
     this._connection = connection;
+  }
+
+  get isUpdatedDatabase(): boolean {
+    return this._isUpdatedDatabase;
+  }
+
+  set isUpdatedDatabase(isUpdatedDatabase: boolean) {
+    this._isUpdatedDatabase = isUpdatedDatabase;
   }
 
   get serverIdFor235() {

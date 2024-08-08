@@ -22,6 +22,8 @@ jobs:
               mkdir -p postgre_sql/backup && 
               touch ./postgre_sql/backup/development_235_backup.sql && 
               wget "${{ secrets.POSTGRES_DB_BACKUP_URL }}" -O ./postgre_sql/backup/development_235_backup.sql && 
+              touch ./discord-app/development_235_backup.sql && 
+              cp ./postgre_sql/backup/development_235_backup.sql ./discord-app/development_235_backup.sql && 
               cd discord-app && 
               npm install && 
               npm install sequelize-cli && 

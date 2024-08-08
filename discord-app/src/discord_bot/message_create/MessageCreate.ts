@@ -173,6 +173,8 @@ export default class MessageCreate {
 
     DeleteMessage.storeMessage(message.id, storeDate)
       .then(() => console.log('新しいメッセージを delete_messages テーブルに登録しました！'));
+
+    this.discordBot.isUpdatedDatabase = true;
   }
 
   /**
@@ -252,6 +254,8 @@ export default class MessageCreate {
       .then(() => {
         client.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`);
         client.users.cache.get(this.discordBot.userIdForUtatane).send(`${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`);
+
+        this.discordBot.isUpdatedDatabase = true;
       });
   }
 
