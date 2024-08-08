@@ -5,9 +5,6 @@ on: push
 jobs:
     eslint:
         runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: discord-app
         steps:
               - uses: actions/checkout@master
               - uses: actions/setup-node@v4
