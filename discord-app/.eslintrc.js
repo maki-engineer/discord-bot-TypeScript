@@ -26,6 +26,8 @@ module.exports = {
     semi: ['error', 'always'],
     'linebreak-style': 'off',
     'arrow-body-style': 'off',
+    'no-misleading-character-class': 'off',
+    'no-useless-escape': 'off',
     '@typescript-eslint/no-unsafe-assignment': 'warn',
     '@typescript-eslint/no-unsafe-member-access': 'warn',
     '@typescript-eslint/no-unsafe-call': 'warn',
