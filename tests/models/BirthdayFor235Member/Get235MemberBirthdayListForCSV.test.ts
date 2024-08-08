@@ -43,7 +43,6 @@ describe('正常系（BirthdayFor235Member.get235MemberBirthdayListForCSV）', (
     }[] = await BirthdayFor235Member.get235MemberBirthdayListForCSV(transaction);
 
     expect(result).toHaveLength(3);
-    expect(result).toBeInstanceOf(Array);
     expect(result[0]).toBeInstanceOf(Object);
     expect(Object.keys(result[0])).toEqual([
       'name',

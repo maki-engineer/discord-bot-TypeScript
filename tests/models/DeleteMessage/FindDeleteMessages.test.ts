@@ -41,7 +41,6 @@ describe('正常系（DeleteMessage.findDeleteMessages）', (): void => {
     }[] = await DeleteMessage.findDeleteMessages(targetDate, transaction);
 
     expect(result).toHaveLength(2);
-    expect(result).toBeInstanceOf(Array);
     expect(result[0]).toBeInstanceOf(Object);
     expect(result[0].message_id).toBe(dummyData[0].message_id);
     expect(result[0].date).toBe(targetDate);

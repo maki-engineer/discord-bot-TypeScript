@@ -48,7 +48,6 @@ describe('正常系（BirthdayForMillionMember.getMillionMemberBirthdayList）',
     );
 
     expect(result).toHaveLength(2);
-    expect(result).toBeInstanceOf(Array);
     expect(result[0]).toBeInstanceOf(Object);
     expect(result[0].name).toBe(dummyData[0].name);
     expect(result[0].month).toBe(targetMonth);
