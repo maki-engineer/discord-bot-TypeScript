@@ -17,7 +17,7 @@ const {
 
 const fs = require('fs');
 const DiscordBot = require('../DiscordBot').default;
-const { BirthdayFor235Member, DeleteMessage } = require('../../../models/index').default;
+const { BirthdayFor235Member, BirthdayForMillionMember, DeleteMessage } = require('../../../models/index').default;
 
 /**
  * メッセージが送信された時に行う処理クラス
@@ -101,7 +101,7 @@ export default class MessageCreate {
       this.roomDivisionCommand(this.discordBot, message, commandName);
       await this.joinVoiceChannelCommand(message, commandName);
       await this.disconnectVoiceChannelCommand(message, commandName);
-      this.testCommand(message, commandName);
+      this.testCommand(message, commandName, commandList);
     });
   }
 
@@ -897,13 +897,40 @@ export default class MessageCreate {
    *
    * @param {Message} message Messageクラス
    * @param {string} commandName 入力されたコマンド名
+   * @param {string[]} commandList 引数一覧
    *
    * @return {void}
    */
-  private testCommand(message: typeof Message, commandName: string): void {
-    if ((commandName !== 'test') || (message.author.id !== this.discordBot.userIdForMaki)) return;
+  private testCommand(message: typeof Message, commandName: string, commandList: string[]): void {
+    if ((commandName !== 'test') || (message.author.id !== this.discordBot.userIdForMaki) || (commandList.length === 0)) return;
 
-    message.reply('テスト用コマンド');
+    switch (commandList[0]) {
+      case 'birthday_for_235_members':
+        BirthdayFor235Member.findAll({ raw: true }).then((member: {
+          name: string,
+          user_id: string,
+          month: number,
+          date: number,
+        }[]) => console.log(member));
+
+        break;
+      case 'birthday_for_million_members':
+        BirthdayForMillionMember.findAll({ raw: true }).then((member: {
+          name: string,
+          month: number,
+          date: number,
+          img: string,
+        }[]) => console.log(member));
+
+        break;
+      case 'delete_messages':
+        DeleteMessage.findAll({ raw: true }).then((data: {
+          message_id: string,
+          date: number,
+        }[]) => console.log(data));
+
+        break;
+    }
 
     setTimeout(() => {
       message.delete()
