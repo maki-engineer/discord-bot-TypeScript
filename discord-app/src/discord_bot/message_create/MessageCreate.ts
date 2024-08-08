@@ -186,12 +186,30 @@ export default class MessageCreate {
   private async readTextForVoiceVox(client: typeof Client, message: typeof Message) {
     if ((client.connection === undefined) || (message.content.startsWith(this.prefix))) return;
 
-    const readTextChannelIdList = [
-      this.discordBot.channelIdFor235ListenOnly,
-      this.discordBot.channelIdFor235ListenOnly2,
+    const readChannelIdList = [
+      client.connection.joinConfig.channelId,
     ];
 
-    if (!readTextChannelIdList.includes(message.channelId)) return;
+    const readTextChannelList = [
+      {
+        voiceChannelId: this.discordBot.voiceChannelIdFor235ChatPlace,
+        channelId: this.discordBot.channelIdFor235ListenOnly,
+      },
+      {
+        voiceChannelId: this.discordBot.voiceChannelIdFor235ChatPlace2,
+        channelId: this.discordBot.channelIdFor235ListenOnly2,
+      },
+    ];
+
+    const sentChannelId = readTextChannelList.find((data) => {
+      return data.voiceChannelId === client.connection.joinConfig.channelId;
+    });
+
+    if (sentChannelId !== undefined) {
+      readChannelIdList.push(sentChannelId.channelId);
+    }
+
+    if (!readChannelIdList.includes(message.channelId)) return;
 
     const filePath = './data/voice';
     const wavFile = `${filePath}/${message.author.id}.wav`;
