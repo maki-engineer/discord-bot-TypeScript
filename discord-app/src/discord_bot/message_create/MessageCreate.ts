@@ -196,13 +196,13 @@ export default class MessageCreate {
     const filePath = './data/voice';
     const wavFile = `${filePath}/${message.author.id}.wav`;
     // ここは多分後で変える
-    const character = '14';
+    const character = '62';
 
     if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
 
     const readText = MessageCreate.formatMessage(message.content);
     await MessageCreate.generateAudioFile(readText, wavFile, character);
-    await MessageCreate.play(message, wavFile, client.connection);
+    MessageCreate.play(message, wavFile, client.connection);
   }
 
   /**
@@ -935,12 +935,14 @@ export default class MessageCreate {
    * @return {string}
    */
   private static formatMessage(messageContent: any): string {
-    messageContent = messageContent.replace(/<:[a-zA-Z0-9_]+:[0-9]+>/g, '');
-    messageContent = messageContent.replace(MessageCreate.emojiRegex(), '');
-    messageContent = messageContent.replace(/(https?|ftp)(:\/\/[\w\/:%#\$&\?\(\)~\.=\+\-]+)/g, '');
-    messageContent = messageContent.replace(/\r?\n/g, '、');
+    let formattedMessageContent: string = messageContent;
 
-    return messageContent;
+    formattedMessageContent = formattedMessageContent.replace(/<:[a-zA-Z0-9_]+:[0-9]+>/g, '');
+    formattedMessageContent = formattedMessageContent.replace(MessageCreate.emojiRegex(), '');
+    formattedMessageContent = formattedMessageContent.replace(/(https?|ftp)(:\/\/[\w\/:%#\$&\?\(\)~\.=\+\-]+)/g, '');
+    formattedMessageContent = formattedMessageContent.replace(/\r?\n/g, '、');
+
+    return formattedMessageContent;
   }
 
   /**
@@ -965,13 +967,13 @@ export default class MessageCreate {
     const voiceVox = axios.create({ baseURL: 'http://voicevox-engine:50021/', proxy: false });
 
     const audioQuery = await voiceVox.post(`audio_query?text=${encodeURI(readText)}&speaker=${character}`, {
-      headers: { 'accept': 'application/json' },
+      headers: { accept: 'application/json' },
     });
 
     const synthesis = await voiceVox.post(`synthesis?speaker=${character}`, JSON.stringify(audioQuery.data), {
       responseType: 'arraybuffer',
       headers: {
-        'accept': 'audio/wav',
+        accept: 'audio/wav',
         'Content-Type': 'application/json',
       },
     });
@@ -988,7 +990,7 @@ export default class MessageCreate {
    *
    * @return {void}
    */
-  private static async play(message: typeof Message, wavFile: string, connection: any) {
+  private static play(message: typeof Message, wavFile: string, connection: any): void {
     const resource = createAudioResource(wavFile, { inputType: StreamType.Arbitrary });
     const player = createAudioPlayer({
       behaviors: {
