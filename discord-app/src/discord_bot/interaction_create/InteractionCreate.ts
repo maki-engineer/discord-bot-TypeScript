@@ -1,5 +1,15 @@
-const { Interaction, EmbedBuilder } = require('discord.js');
-const { joinVoiceChannel } = require('@discordjs/voice');
+const { Interaction, EmbedBuilder, Client } = require('discord.js');
+
+const {
+  joinVoiceChannel,
+  createAudioPlayer,
+  createAudioResource,
+  NoSubscriberBehavior,
+  StreamType,
+} = require('@discordjs/voice');
+
+const { default: axios } = require('axios');
+const fs = require('fs');
 const DiscordBot = require('../DiscordBot').default;
 
 /**
@@ -26,7 +36,7 @@ export default class InteractionCreate {
       this.createBirthdayEventMessageTemplateInteraction(interaction);
       this.createMaleEventMessageTemplateInteraction(interaction);
       this.divideVoiceChannelInteraction(interaction);
-      await this.joinVoiceChannelInteraction(interaction);
+      await this.joinVoiceChannelInteraction(interaction, this.discordBot);
       await this.disconnectVoiceChannelInteraction(interaction);
     });
   }
@@ -98,18 +108,22 @@ export default class InteractionCreate {
    * 235joinコマンド
    *
    * @param {Interaction} interaction Interactionクラス
+   * @param {Client} client Clientクラス
    *
    * @return {void}
    */
-  private async joinVoiceChannelInteraction(interaction: typeof Interaction) {
+  private async joinVoiceChannelInteraction(
+    interaction: typeof Interaction,
+    client: typeof Client,
+  ) {
     if (interaction.commandName !== '235join') return;
 
     const usedCommandMember = await interaction.guild.members.fetch(interaction.member.id);
     const memberJoinVoiceChannel = usedCommandMember.voice.channel;
 
     if (
-      (this.discordBot.connection !== undefined)
-      && (this.discordBot.connection.joinConfig.channelId === memberJoinVoiceChannel.id)
+      (client.connection !== undefined)
+      && (client.connection.joinConfig.channelId === memberJoinVoiceChannel.id)
     ) {
       const embed = new EmbedBuilder()
         .setTitle('既に接続されています！')
@@ -143,6 +157,18 @@ export default class InteractionCreate {
       selfMute: false,
       selfDeaf: true,
     });
+
+    const connectVoice = client.connectVoiceList[
+      Math.floor(Math.random() * client.connectVoiceList.length)
+    ];
+
+    const filePath = './data/voice';
+    const wavFile = `${filePath}/${usedCommandMember.user.id}.wav`;
+
+    if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
+
+    await InteractionCreate.generateAudioFile(connectVoice, wavFile, client.speakerId);
+    InteractionCreate.play(wavFile, client.connection);
 
     const embed = new EmbedBuilder()
       .setTitle('接続されました！')
@@ -209,5 +235,53 @@ export default class InteractionCreate {
     interaction.reply({ embeds: [embed] });
 
     setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
+  }
+
+  /**
+   * 入力されたテキストを読み上げるwavファイルを生成
+   *
+   * @param {string} readText 読み上げ対象のメッセージ
+   * @param {string} wavFile wavファイルの保存先パス
+   * @param {string} speakerId
+   *
+   * @return {void}
+   */
+  private static async generateAudioFile(readText: string, wavFile: string, speakerId: string) {
+    const voiceVox = axios.create({ baseURL: 'http://voicevox-engine:50021/', proxy: false });
+
+    const audioQuery = await voiceVox.post(`audio_query?text=${encodeURI(readText)}&speaker=${speakerId}`, {
+      headers: { accept: 'application/json' },
+    });
+
+    const synthesis = await voiceVox.post(`synthesis?speaker=${speakerId}`, JSON.stringify(audioQuery.data), {
+      responseType: 'arraybuffer',
+      headers: {
+        accept: 'audio/wav',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    fs.writeFileSync(wavFile, Buffer.from(synthesis.data), 'binary');
+  }
+
+  /**
+   * 生成したwavファイルを元に読み上げ
+   *
+   * @param {string} wavFile 生成したwavファイル
+   * @param {any} connection ボイスチャンネルオブジェクト
+   *
+   * @return {void}
+   */
+  private static play(wavFile: string, connection: any): void {
+    const resource = createAudioResource(wavFile, { inputType: StreamType.Arbitrary });
+    const player = createAudioPlayer({
+      behaviors: {
+        noSubscriber: NoSubscriberBehavior.Pause,
+      },
+    });
+
+    player.play(resource);
+
+    connection.subscribe(player);
   }
 }
