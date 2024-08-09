@@ -19,7 +19,7 @@ export default class GuildMemberRemove {
    */
   public guildMemberRemoveEvent(): void {
     this.discordBot.on('guildMemberRemove', (member: typeof Member) => {
-      this.delete235MemberBirthday(member, this.discordBot);
+      GuildMemberRemove.delete235MemberBirthday(member, this.discordBot);
     });
   }
 
@@ -31,13 +31,13 @@ export default class GuildMemberRemove {
    *
    * @return {void}
    */
-  private delete235MemberBirthday(member: typeof Member, client: typeof Client): void {
+  private static delete235MemberBirthday(member: typeof Member, client: typeof Client): void {
     if (member.user.bot) return;
 
     BirthdayFor235Member.delete235MemberBirthday(member.user.id)
       .then(() => {
-        client.users.cache.get(this.discordBot.userIdForMaki).send(`${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！`);
-        client.users.cache.get(this.discordBot.userIdForUtatane).send(`${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！\nもし間違いがあった場合は報告をお願いします！`);
+        client.users.cache.get(client.userIdForMaki).send(`${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！\n\nuser_id： ${member.user.id}`);
+        client.users.cache.get(client.userIdForUtatane).send(`${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！\nもし間違いがあった場合は報告をお願いします！`);
       });
   }
 }
