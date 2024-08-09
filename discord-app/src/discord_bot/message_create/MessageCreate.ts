@@ -56,7 +56,7 @@ export default class MessageCreate {
         setTimeout(() => message.delete(), 60_000);
       }
 
-      this.storeMessage(message, this.discordBot);
+      MessageCreate.storeMessage(message, this.discordBot);
 
       // botからのメッセージは無視
       if (message.author.bot) return;
@@ -74,7 +74,7 @@ export default class MessageCreate {
         && (message.channelId === this.discordBot.channelIdFor235Introduction)
       ) {
         // 誕生日を登録
-        this.registNew235MemberBirthday(message, this.discordBot);
+        MessageCreate.registNew235MemberBirthday(message, this.discordBot);
 
         // 挨拶
         message.react('<:_Stmp_Tsubasa:794969154817753088>');
@@ -160,10 +160,10 @@ export default class MessageCreate {
    *
    * @return {void}
    */
-  private storeMessage(message: typeof Message, client: typeof Client): void {
-    if (client.channels.cache.get(this.discordBot.channelIdFor235ChatPlace) === undefined) return;
+  private static storeMessage(message: typeof Message, client: typeof Client): void {
+    if (client.channels.cache.get(client.channelIdFor235ChatPlace) === undefined) return;
     if (
-      (message.channelId !== this.discordBot.channelIdFor235ChatPlace)
+      (message.channelId !== client.channelIdFor235ChatPlace)
       || (message.author.bot === false)
       || (message.mentions.repliedUser !== null)
     ) return;
@@ -172,7 +172,9 @@ export default class MessageCreate {
     const storeDate = today.getDate();
 
     DeleteMessage.storeMessage(message.id, storeDate)
-      .then(() => console.log('新しいメッセージを delete_messages テーブルに登録しました！'));
+      .then(() => {
+        client.users.cache.get(client.userIdForMaki).send(`新しいデータを delete_messages テーブルに保存しました！\n\nmessage_id： ${message.id}\ndate： ${storeDate}`);
+      });
   }
 
   /**
@@ -231,7 +233,7 @@ export default class MessageCreate {
    *
    * @return {void}
    */
-  private registNew235MemberBirthday(message: typeof Message, client: typeof Client): void {
+  private static registNew235MemberBirthday(message: typeof Message, client: typeof Client): void {
     const messageList: string[] = message.content.replace(/\r?\n/g, '').split(/：|・/);
     const foundIndex: number = messageList.indexOf('生年月日');
 
@@ -250,8 +252,8 @@ export default class MessageCreate {
       birthdayList[1],
     )
       .then(() => {
-        client.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`);
-        client.users.cache.get(this.discordBot.userIdForUtatane).send(`${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`);
+        client.users.cache.get(client.userIdForMaki).send(`${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\n\nuser_id： ${message.author.id}`);
+        client.users.cache.get(client.userIdForUtatane).send(`${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`);
       });
   }
 

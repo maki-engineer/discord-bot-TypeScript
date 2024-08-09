@@ -115,7 +115,7 @@ export default class Ready {
         this.discordBot.channels.cache.get(this.discordBot.channelIdFor235ChatPlace) === undefined
       ) return;
 
-      cron.schedule('0 15 3 * * *', () => this.deleteOldMessageFrom235ChatPlaceChannel(this.discordBot));
+      cron.schedule('0 15 3 * * *', () => Ready.deleteOldMessageFrom235ChatPlaceChannel(this.discordBot));
       cron.schedule('0 0 3 * * *', () => this.celebrate235Member(this.discordBot));
       cron.schedule('0 30 3 * * *', () => this.celebrateMillionMember(this.discordBot));
       cron.schedule('0 0 4 * * *', () => this.celebrate235ProductionAnniversary(this.discordBot));
@@ -157,7 +157,7 @@ export default class Ready {
    *
    * @return {void}
    */
-  private deleteOldMessageFrom235ChatPlaceChannel(client: typeof Client): void {
+  private static deleteOldMessageFrom235ChatPlaceChannel(client: typeof Client): void {
     const setTime = new Date();
     setTime.setDate(setTime.getDate() - 7);
     const dateSevenDaysAgo = setTime.getDate();
@@ -176,7 +176,7 @@ export default class Ready {
 
             default:
               client.channels.cache.get(
-                this.discordBot.channelIdFor235ChatPlace,
+                client.channelIdFor235ChatPlace,
               ).messages.fetch(foundData[deleteIndex].message_id)
                 .then(async (foundMessage: typeof Message) => {
                   foundMessage.delete();
@@ -189,6 +189,8 @@ export default class Ready {
               break;
           }
         }, 5_000);
+
+        client.users.cache.get(client.userIdForMaki).send(`${dateSevenDaysAgo}日に投稿されたメッセージを${deleteIndex}件削除しました！`);
       });
   }
 
