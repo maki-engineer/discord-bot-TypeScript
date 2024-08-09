@@ -22,6 +22,8 @@ export default class DiscordBot extends Client {
 
   private _connection: any;
 
+  private _speakerId: string = '62';
+
   private readonly discordToken = process.env.DISCORD_TOKEN;
 
   private readonly _serverIdFor235 = process.env.SERVER_ID_FOR_235;
@@ -105,6 +107,14 @@ export default class DiscordBot extends Client {
 
   set connection(connection: any) {
     this._connection = connection;
+  }
+
+  get speakerId(): string {
+    return this._speakerId;
+  }
+
+  set speakerId(speakerId: string) {
+    this._speakerId = speakerId;
   }
 
   get serverIdFor235() {

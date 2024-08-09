@@ -215,14 +215,12 @@ export default class MessageCreate {
 
     const filePath = './data/voice';
     const wavFile = `${filePath}/${message.author.id}.wav`;
-    // ここは多分後で変える
-    const character = '62';
 
     if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
 
     const readText = MessageCreate.formatMessage(message.content);
-    await MessageCreate.generateAudioFile(readText, wavFile, character);
-    MessageCreate.play(message, wavFile, client.connection);
+    await MessageCreate.generateAudioFile(readText, wavFile, client.speakerId);
+    MessageCreate.play(wavFile, client.connection);
   }
 
   /**
@@ -1006,18 +1004,18 @@ export default class MessageCreate {
    *
    * @param {string} readText 読み上げ対象のメッセージ
    * @param {string} wavFile wavファイルの保存先パス
-   * @param {string} character
+   * @param {string} speakerId
    *
    * @return {void}
    */
-  private static async generateAudioFile(readText: string, wavFile: string, character: string) {
+  private static async generateAudioFile(readText: string, wavFile: string, speakerId: string) {
     const voiceVox = axios.create({ baseURL: 'http://voicevox-engine:50021/', proxy: false });
 
-    const audioQuery = await voiceVox.post(`audio_query?text=${encodeURI(readText)}&speaker=${character}`, {
+    const audioQuery = await voiceVox.post(`audio_query?text=${encodeURI(readText)}&speaker=${speakerId}`, {
       headers: { accept: 'application/json' },
     });
 
-    const synthesis = await voiceVox.post(`synthesis?speaker=${character}`, JSON.stringify(audioQuery.data), {
+    const synthesis = await voiceVox.post(`synthesis?speaker=${speakerId}`, JSON.stringify(audioQuery.data), {
       responseType: 'arraybuffer',
       headers: {
         accept: 'audio/wav',
@@ -1031,13 +1029,12 @@ export default class MessageCreate {
   /**
    * 生成したwavファイルを元に読み上げ
    *
-   * @param {Message} message Messageクラス
    * @param {string} wavFile 生成したwavファイル
    * @param {any} connection ボイスチャンネルオブジェクト
    *
    * @return {void}
    */
-  private static play(message: typeof Message, wavFile: string, connection: any): void {
+  private static play(wavFile: string, connection: any): void {
     const resource = createAudioResource(wavFile, { inputType: StreamType.Arbitrary });
     const player = createAudioPlayer({
       behaviors: {
