@@ -26,6 +26,14 @@ export default class DiscordBot extends Client {
 
   private readonly discordToken = process.env.DISCORD_TOKEN;
 
+  private readonly _connectVoiceList = [
+    '接続されました！',
+    '私が...来た...！！',
+    'ふみこボットの登場だ～！！',
+    'イェイ！！今日も一日盛り上がっていきましょう！！',
+    'ふふ...私の出番が来たようですね...',
+  ];
+
   private readonly _serverIdFor235 = process.env.SERVER_ID_FOR_235;
 
   private readonly _channelIdFor235ChatPlace = process.env.CHANNEL_ID_FOR_235_CHAT_PLACE;
@@ -115,6 +123,10 @@ export default class DiscordBot extends Client {
 
   set speakerId(speakerId: string) {
     this._speakerId = speakerId;
+  }
+
+  get connectVoiceList(): string[] {
+    return this._connectVoiceList;
   }
 
   get serverIdFor235() {

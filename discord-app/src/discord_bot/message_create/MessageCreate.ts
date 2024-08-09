@@ -99,7 +99,7 @@ export default class MessageCreate {
       this.birthdayEventCommand(message, commandName, commandList);
       this.menEventCommand(message, commandName, commandList);
       this.roomDivisionCommand(this.discordBot, message, commandName);
-      await this.joinVoiceChannelCommand(message, commandName);
+      await this.joinVoiceChannelCommand(this.discordBot, message, commandName);
       await this.disconnectVoiceChannelCommand(message, commandName);
       this.testCommand(message, commandName, commandList);
     });
@@ -744,20 +744,25 @@ export default class MessageCreate {
   /**
    * 235joinコマンド コマンドを入力したメンバーが入っているボイスチャンネルに参加
    *
+   * @param {Client} client Clientクラス
    * @param {Message} message Messageクラス
    * @param {string} commandName 入力されたコマンド名
    *
    * @return {void}
    */
-  private async joinVoiceChannelCommand(message: typeof Message, commandName: string) {
+  private async joinVoiceChannelCommand(
+    client: typeof Client,
+    message: typeof Message,
+    commandName: string,
+  ) {
     if (commandName !== 'join') return;
 
     const usedCommandMember = await message.guild.members.fetch(message.author.id);
     const memberJoinVoiceChannel = usedCommandMember.voice.channel;
 
     if (
-      (this.discordBot.connection !== undefined)
-      && (this.discordBot.connection.joinConfig.channelId === memberJoinVoiceChannel.id)
+      (client.connection !== undefined)
+      && (client.connection.joinConfig.channelId === memberJoinVoiceChannel.id)
     ) {
       const embed = new EmbedBuilder()
         .setTitle('既に接続されています！')
@@ -807,6 +812,18 @@ export default class MessageCreate {
       selfMute: false,
       selfDeaf: true,
     });
+
+    const connectVoice = client.connectVoiceList[
+      Math.floor(Math.random() * client.connectVoiceList.length)
+    ];
+
+    const filePath = './data/voice';
+    const wavFile = `${filePath}/${usedCommandMember.user.id}.wav`;
+
+    if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
+
+    await MessageCreate.generateAudioFile(connectVoice, wavFile, client.speakerId);
+    MessageCreate.play(wavFile, client.connection);
 
     const embed = new EmbedBuilder()
       .setTitle('接続されました！')
