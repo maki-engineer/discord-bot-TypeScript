@@ -40,6 +40,7 @@ export default class InteractionCreate {
       await this.joinVoiceChannelInteraction(interaction, this.discordBot);
       await this.disconnectVoiceChannelInteraction(interaction);
       await this.setVoiceInteraction(interaction);
+      await this.registWordInDict(interaction);
     });
   }
 
@@ -283,6 +284,48 @@ export default class InteractionCreate {
     setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
   }
 
+  private async registWordInDict(interaction: typeof Interaction) {
+    if (interaction.commandName !== '235addword') return;
+
+    if (/^[ァ-ヶー]*$/.test(interaction.options.getString('読み方')) === false) {
+      const embed = new EmbedBuilder()
+        .setTitle('辞書登録に失敗しました；；')
+        .setDescription('読み方は全角カタカタのみで入力するようにする必要があります。')
+        .setColor('#FF0000')
+        .setTimestamp();
+
+      interaction.reply({
+        embeds: [embed],
+        ephemeral: true,
+      });
+
+      setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
+
+      return;
+    }
+
+    await InteractionCreate.registWord(
+      interaction.options.getString('単語'),
+      interaction.options.getString('読み方'),
+    );
+
+    const embed = new EmbedBuilder()
+      .setTitle('辞書に登録しました！')
+      .addFields(
+        { name: '単語', value: interaction.options.getString('単語'), inline: true },
+        { name: '読み方', value: interaction.options.getString('読み方'), inline: true },
+      )
+      .setColor('#00FF99')
+      .setTimestamp();
+
+    interaction.reply({
+      embeds: [embed],
+      ephemeral: true,
+    });
+
+    setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
+  }
+
   /**
    * 入力されたテキストを読み上げるwavファイルを生成
    *
@@ -329,5 +372,21 @@ export default class InteractionCreate {
     player.play(resource);
 
     connection.subscribe(player);
+  }
+
+  /**
+   * 単語を辞書に登録
+   *
+   * @param {string} word 単語
+   * @param {string} howToRead 読み方
+   *
+   * @return {void}
+   */
+  private static async registWord(word: string, howToRead: string) {
+    const voiceVox = axios.create({ baseURL: 'http://voicevox-engine:50021/', proxy: false });
+
+    await voiceVox.post(`user_dict_word?surface=${encodeURI(word)}&pronunciation=${encodeURI(howToRead)}&accent_type=0`, {
+      headers: { accept: 'application/json' },
+    });
   }
 }

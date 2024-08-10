@@ -68,6 +68,24 @@ export default class Ready {
         ],
       }],
     },
+    {
+      name: '235addword',
+      description: '読み上げる単語を辞書に登録します！',
+      options: [
+        {
+          type: 3,
+          name: '単語',
+          description: '登録したい単語',
+          required: true,
+        },
+        {
+          type: 3,
+          name: '読み方',
+          description: '読み方（全角カタカナ）',
+          required: true,
+        },
+      ],
+    },
   ];
 
   private readonly millionMemberEmojiList = [
