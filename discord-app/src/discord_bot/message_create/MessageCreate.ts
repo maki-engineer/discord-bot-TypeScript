@@ -218,8 +218,13 @@ export default class MessageCreate {
 
     if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
 
+    const speakerIdExists = await BirthdayFor235Member
+      .getSpeakerIdFromMessageSender(message.author.id);
+
+    const speakerId = speakerIdExists ?? client.speakerId;
+
     const readText = MessageCreate.formatMessage(message.content);
-    await MessageCreate.generateAudioFile(readText, wavFile, client.speakerId);
+    await MessageCreate.generateAudioFile(readText, wavFile, speakerId);
     MessageCreate.play(wavFile, client.connection);
   }
 
