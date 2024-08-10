@@ -30,6 +30,44 @@ export default class Ready {
     { name: '235roomdivision', description: 'ボイスチャンネルに参加しているメンバーを分けたいときに使用するコマンドです。' },
     { name: '235join', description: '235botがボイスチャンネルに参加してテキストを読み上げます！' },
     { name: '235disconnect', description: '235botをボイスチャンネルから退出させます！' },
+    {
+      name: '235setvoice',
+      description: 'テキストを読み上げる声を変更します！',
+      options: [{
+        type: 3,
+        name: 'character',
+        description: '読み上げてほしいキャラクターの声を選択してください！',
+        required: true,
+        // choices に追加できるのは25個まで！
+        choices: [
+          { name: '四国めたん', value: '2' },
+          { name: 'ずんだもん', value: '3' },
+          { name: '春日部つむぎ', value: '8' },
+          { name: '雨晴はう', value: '10' },
+          { name: '波音リツ', value: '9' },
+          { name: '玄野武宏', value: '11' },
+          { name: '白上虎太郎', value: '12' },
+          { name: '青山龍星', value: '13' },
+          { name: '冥鳴ひまり', value: '14' },
+          { name: '九州そら', value: '16' },
+          { name: 'もち子さん', value: '20' },
+          { name: '剣崎雌雄', value: '21' },
+          { name: 'WhiteCUL', value: '23' },
+          { name: '後鬼', value: '27' },
+          { name: 'No.7', value: '29' },
+          { name: 'ちび式じい', value: '42' },
+          { name: '櫻歌ミコ', value: '43' },
+          { name: '小夜/SAYO', value: '46' },
+          { name: 'ナースロボ＿タイプＴ', value: '47' },
+          { name: '†聖騎士 紅桜†', value: '51' },
+          { name: '雀松朱司', value: '52' },
+          { name: '麒ヶ島宗麟', value: '53' },
+          { name: '猫使ビィ', value: '58' },
+          { name: '中国うさぎ', value: '62' },
+          { name: '琴詠ニア', value: '74' },
+        ],
+      }],
+    },
   ];
 
   private readonly millionMemberEmojiList = [
@@ -215,7 +253,13 @@ export default class Ready {
       todayDateList.todayMonth,
       todayDateList.todayDate,
     )
-      .then((birthdayData: { name: string, user_id: string, month: number, date: number }[]) => {
+      .then((birthdayData: {
+        name: string,
+        user_id: string,
+        month: number,
+        date: number,
+        speaker_id: number,
+      }[]) => {
         if (birthdayData.length === 0) return;
 
         switch (birthdayData.length) {

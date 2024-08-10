@@ -27,13 +27,13 @@ describe('正常系（BirthdayFor235Member.get235MemberBirthdayList）', (): voi
   test('当日誕生日の235プロダクションメンバー一覧が配列で返ること', async (): Promise < void > => {
     const dummyData = [
       {
-        name: 'テスト太郎', user_id: '123456789', month: targetMonth, date: targetDate,
+        name: 'テスト太郎', user_id: '123456789', month: targetMonth, date: targetDate, speaker_id: 62,
       },
       {
-        name: '佐藤テスト', user_id: '2233445566', month: targetMonth, date: targetDate,
+        name: '佐藤テスト', user_id: '2233445566', month: targetMonth, date: targetDate, speaker_id: 62,
       },
       {
-        name: '山田テスト', user_id: '987654321', month: 12, date: 25,
+        name: '山田テスト', user_id: '987654321', month: 12, date: 25, speaker_id: 62,
       },
     ];
 
@@ -44,6 +44,7 @@ describe('正常系（BirthdayFor235Member.get235MemberBirthdayList）', (): voi
       user_id: string,
       month: number,
       date: number,
+      speaker_id: number,
     }[] = await BirthdayFor235Member.get235MemberBirthdayList(
       exclusionUserId,
       targetMonth,
