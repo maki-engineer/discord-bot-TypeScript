@@ -437,6 +437,7 @@ export default class MessageCreate {
         user_id: string,
         month: number,
         date: number,
+        speaker_id: number,
       }[]) => {
         birthdayMemberList.forEach((birthdayMember) => {
           eventText += `**${birthdayMember.date}日...${birthdayMember.name}さん**\n`;

@@ -215,7 +215,13 @@ export default class Ready {
       todayDateList.todayMonth,
       todayDateList.todayDate,
     )
-      .then((birthdayData: { name: string, user_id: string, month: number, date: number }[]) => {
+      .then((birthdayData: {
+        name: string,
+        user_id: string,
+        month: number,
+        date: number,
+        speaker_id: number,
+      }[]) => {
         if (birthdayData.length === 0) return;
 
         switch (birthdayData.length) {

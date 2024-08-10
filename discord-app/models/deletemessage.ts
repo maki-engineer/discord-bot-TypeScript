@@ -55,7 +55,7 @@ export default class DeleteMessage extends Model {
    * @param {string} messageId 対象のメッセージID
    * @param {any | null} transaction ユニットテストをする時に指定
    *
-   * @return {object}
+   * @return {number}
    */
   static async deleteMessage(messageId: string, transaction = null) {
     const deleteData: { where: { message_id: string }, transaction?: any } = {
