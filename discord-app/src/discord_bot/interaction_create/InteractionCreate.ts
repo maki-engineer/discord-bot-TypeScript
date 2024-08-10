@@ -278,6 +278,8 @@ export default class InteractionCreate {
       ephemeral: true,
     });
 
+    this.discordBot.users.cache.get(this.discordBot.userIdForMaki).send(`235プロメンバーがテキスト読み上げボイスを変更しました！お手隙の際にデータの反映をお願いします！\n\nuser_id： ${interaction.member.id}\nspeaker_id： ${interaction.options.getString('character')}`);
+
     setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
   }
 
