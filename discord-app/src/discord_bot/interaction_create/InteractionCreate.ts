@@ -11,6 +11,7 @@ const {
 const { default: axios } = require('axios');
 const fs = require('fs');
 const DiscordBot = require('../DiscordBot').default;
+const { BirthdayFor235Member } = require('../../../models/index').default;
 
 /**
  * スラッシュコマンドが使われた時に行う処理クラス
@@ -38,6 +39,7 @@ export default class InteractionCreate {
       this.divideVoiceChannelInteraction(interaction);
       await this.joinVoiceChannelInteraction(interaction, this.discordBot);
       await this.disconnectVoiceChannelInteraction(interaction);
+      await this.setVoiceInteraction(interaction);
     });
   }
 
@@ -250,6 +252,31 @@ export default class InteractionCreate {
       .setTimestamp();
 
     interaction.reply({ embeds: [embed] });
+
+    setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
+  }
+
+  /**
+   * テキストを読み上げるキャラクターのボイスを変更
+   *
+   * @param {Interaction} interaction Interactionクラス
+   *
+   * @return {void}
+   */
+  private async setVoiceInteraction(interaction: typeof Interaction) {
+    if (interaction.commandName !== '235setvoice') return;
+
+    await BirthdayFor235Member.setSpeakerId(interaction.member.id, interaction.options.getString('character'));
+
+    const embed = new EmbedBuilder()
+      .setTitle('読み上げるキャラクターの声を変更しました！')
+      .setColor('#00FF99')
+      .setTimestamp();
+
+    interaction.reply({
+      embeds: [embed],
+      ephemeral: true,
+    });
 
     setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
   }
