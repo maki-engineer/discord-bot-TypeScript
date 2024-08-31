@@ -1,16 +1,9 @@
 const { Interaction, EmbedBuilder, Client } = require('discord.js');
-
-const {
-  joinVoiceChannel,
-  createAudioPlayer,
-  createAudioResource,
-  NoSubscriberBehavior,
-  StreamType,
-} = require('@discordjs/voice');
-
+const { joinVoiceChannel } = require('@discordjs/voice');
 const { default: axios } = require('axios');
 const fs = require('fs');
 const DiscordBot = require('../DiscordBot').default;
+const VoiceVox = require('../../voice_vox/VoiceVox').default;
 const { BirthdayFor235Member } = require('../../../models/index').default;
 
 /**
@@ -187,8 +180,8 @@ export default class InteractionCreate {
 
     if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
 
-    await InteractionCreate.generateAudioFile(connectVoice, wavFile, client.speakerId);
-    InteractionCreate.play(wavFile, client.connection);
+    await VoiceVox.generateAudioFile(connectVoice, wavFile, client.speakerId);
+    VoiceVox.play(wavFile, client.connection);
 
     const embed = new EmbedBuilder()
       .setTitle('接続されました！')
@@ -324,54 +317,6 @@ export default class InteractionCreate {
     });
 
     setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
-  }
-
-  /**
-   * 入力されたテキストを読み上げるwavファイルを生成
-   *
-   * @param {string} readText 読み上げ対象のメッセージ
-   * @param {string} wavFile wavファイルの保存先パス
-   * @param {string} speakerId
-   *
-   * @return {void}
-   */
-  private static async generateAudioFile(readText: string, wavFile: string, speakerId: string) {
-    const voiceVox = axios.create({ baseURL: 'http://voicevox-engine:50021/', proxy: false });
-
-    const audioQuery = await voiceVox.post(`audio_query?text=${encodeURI(readText)}&speaker=${speakerId}`, {
-      headers: { accept: 'application/json' },
-    });
-
-    const synthesis = await voiceVox.post(`synthesis?speaker=${speakerId}`, JSON.stringify(audioQuery.data), {
-      responseType: 'arraybuffer',
-      headers: {
-        accept: 'audio/wav',
-        'Content-Type': 'application/json',
-      },
-    });
-
-    fs.writeFileSync(wavFile, Buffer.from(synthesis.data), 'binary');
-  }
-
-  /**
-   * 生成したwavファイルを元に読み上げ
-   *
-   * @param {string} wavFile 生成したwavファイル
-   * @param {any} connection ボイスチャンネルオブジェクト
-   *
-   * @return {void}
-   */
-  private static play(wavFile: string, connection: any): void {
-    const resource = createAudioResource(wavFile, { inputType: StreamType.Arbitrary });
-    const player = createAudioPlayer({
-      behaviors: {
-        noSubscriber: NoSubscriberBehavior.Pause,
-      },
-    });
-
-    player.play(resource);
-
-    connection.subscribe(player);
   }
 
   /**
