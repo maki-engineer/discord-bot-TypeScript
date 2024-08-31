@@ -44,14 +44,17 @@ export default class VoiceStateUpdate {
       .filter((member: typeof GuildMember) => member.user.bot === false)
       .map((member: typeof GuildMember) => member.user.id);
 
+    if (client.connection === undefined) return;
+
+    // 0人になったチャンネルが235botが参加している場所かどうか
     if (
-      (participatingVoiceChannelMemberList.length > 0)
-      || (this.discordBot.connection === undefined)
+      (stateMember.channelId !== client.connection.joinConfig.channelId)
+      || (participatingVoiceChannelMemberList.length > 0)
     ) {
       return;
     }
 
-    this.discordBot.connection.destroy();
+    client.connection.destroy();
     this.discordBot.connection = undefined;
   }
 
