@@ -178,7 +178,12 @@ export default class MessageCreate {
    * @return {void}
   */
   private async readTextForVoiceVox(client: typeof Client, message: typeof Message) {
-    if ((client.connection === undefined) || (message.content.startsWith(this.prefix))) return;
+    if (client.connection === undefined) return;
+
+    const formatMessageList: string[] = message.content.split(' ');
+    const commandList = client.commandList.map((command: any) => command.name);
+
+    if (commandList.includes(formatMessageList[0])) return;
 
     const readChannelIdList = [
       client.connection.joinConfig.channelId,

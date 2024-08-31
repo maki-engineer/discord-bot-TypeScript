@@ -24,70 +24,6 @@ export default class Ready {
     date: 24,
   };
 
-  private readonly commandList = [
-    { name: '235birthday', description: '毎月開催されるオンライン飲み会の企画文章を作成したいときに使用するコマンドです。' },
-    { name: '235men', description: '毎月開催される235士官学校🌹の日程を決めるときに使用するコマンドです。' },
-    { name: '235roomdivision', description: 'ボイスチャンネルに参加しているメンバーを分けたいときに使用するコマンドです。' },
-    { name: '235join', description: '235botがボイスチャンネルに参加してテキストを読み上げます！' },
-    { name: '235disconnect', description: '235botをボイスチャンネルから退出させます！' },
-    {
-      name: '235setvoice',
-      description: 'テキストを読み上げる声を変更します！',
-      options: [{
-        type: 3,
-        name: 'character',
-        description: '読み上げてほしいキャラクターの声を選択してください！',
-        required: true,
-        // choices に追加できるのは25個まで！
-        choices: [
-          { name: '四国めたん', value: '2' },
-          { name: 'ずんだもん', value: '3' },
-          { name: '春日部つむぎ', value: '8' },
-          { name: '雨晴はう', value: '10' },
-          { name: '波音リツ', value: '9' },
-          { name: '玄野武宏', value: '11' },
-          { name: '白上虎太郎', value: '12' },
-          { name: '青山龍星', value: '13' },
-          { name: '冥鳴ひまり', value: '14' },
-          { name: '九州そら', value: '16' },
-          { name: 'もち子さん', value: '20' },
-          { name: '剣崎雌雄', value: '21' },
-          { name: 'WhiteCUL', value: '23' },
-          { name: '後鬼', value: '27' },
-          { name: 'No.7', value: '29' },
-          { name: 'ちび式じい', value: '42' },
-          { name: '櫻歌ミコ', value: '43' },
-          { name: '小夜/SAYO', value: '46' },
-          { name: 'ナースロボ＿タイプＴ', value: '47' },
-          { name: '†聖騎士 紅桜†', value: '51' },
-          { name: '雀松朱司', value: '52' },
-          { name: '麒ヶ島宗麟', value: '53' },
-          { name: '猫使ビィ', value: '58' },
-          { name: '中国うさぎ', value: '62' },
-          { name: '琴詠ニア', value: '74' },
-        ],
-      }],
-    },
-    {
-      name: '235addword',
-      description: '読み上げる単語を辞書に登録します！',
-      options: [
-        {
-          type: 3,
-          name: '単語',
-          description: '登録したい単語',
-          required: true,
-        },
-        {
-          type: 3,
-          name: '読み方',
-          description: '読み方（全角カタカナ）',
-          required: true,
-        },
-      ],
-    },
-  ];
-
   private readonly millionMemberEmojiList = [
     { name: '白石紬', emoji: '<:Tsumu_Tere:1130877675712565318>' },
     { name: '望月杏奈', emoji: '<:Anna_Mochi:1112376914502488064>' },
@@ -190,7 +126,10 @@ export default class Ready {
   private setCommand(): void {
     if (this.discordBot.guilds.cache.get(this.discordBot.serverIdFor235) === undefined) return;
 
-    this.discordBot.application.commands.set(this.commandList, this.discordBot.serverIdFor235);
+    this.discordBot.application.commands.set(
+      this.discordBot.commandList,
+      this.discordBot.serverIdFor235,
+    );
   }
 
   /**
