@@ -9,7 +9,13 @@ const { joinVoiceChannel } = require('@discordjs/voice');
 const fs = require('fs');
 const DiscordBot = require('../DiscordBot').default;
 const VoiceVox = require('../../voice_vox/VoiceVox').default;
-const { BirthdayFor235Member, BirthdayForMillionMember, DeleteMessage } = require('../../../models/index').default;
+
+const {
+  BirthdayFor235Member,
+  BirthdayForMillionMember,
+  DeleteMessage,
+  DictWord,
+} = require('../../../models/index').default;
 
 /**
  * メッセージが送信された時に行う処理クラス
@@ -220,7 +226,8 @@ export default class MessageCreate {
 
     const speakerId = speakerIdExists ?? client.speakerId;
 
-    const readText = VoiceVox.formatMessage(message.content);
+    let readText: string = VoiceVox.formatMessage(message.content);
+    readText = await VoiceVox.replaceWord(readText);
     await VoiceVox.generateAudioFile(readText, wavFile, speakerId);
     VoiceVox.play(wavFile, client.connection);
   }
@@ -947,6 +954,13 @@ export default class MessageCreate {
         DeleteMessage.findAll({ raw: true }).then((data: {
           message_id: string,
           date: number,
+        }[]) => console.log(data));
+
+        break;
+      case 'dict_words':
+        DictWord.findAll({ raw: true }).then((data: {
+          word: string,
+          how_to_read: string,
         }[]) => console.log(data));
 
         break;

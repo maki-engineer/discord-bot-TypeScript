@@ -1,10 +1,9 @@
 const { Interaction, EmbedBuilder, Client } = require('discord.js');
 const { joinVoiceChannel } = require('@discordjs/voice');
-const { default: axios } = require('axios');
 const fs = require('fs');
 const DiscordBot = require('../DiscordBot').default;
 const VoiceVox = require('../../voice_vox/VoiceVox').default;
-const { BirthdayFor235Member } = require('../../../models/index').default;
+const { BirthdayFor235Member, DictWord } = require('../../../models/index').default;
 
 /**
  * スラッシュコマンドが使われた時に行う処理クラス
@@ -33,7 +32,7 @@ export default class InteractionCreate {
       await this.joinVoiceChannelInteraction(interaction, this.discordBot);
       await this.disconnectVoiceChannelInteraction(interaction);
       await this.setVoiceInteraction(interaction);
-      await this.registWordInDict(interaction);
+      await this.registWordInDictInteraction(interaction);
     });
   }
 
@@ -277,7 +276,14 @@ export default class InteractionCreate {
     setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
   }
 
-  private async registWordInDict(interaction: typeof Interaction) {
+  /**
+   * 入力された単語と読み方を単語辞書に登録
+   *
+   * @param {Interaction} interaction Interactionクラス
+   *
+   * @return {void}
+   */
+  private async registWordInDictInteraction(interaction: typeof Interaction) {
     if (interaction.commandName !== '235addword') return;
 
     if (/^[ァ-ヶー]*$/.test(interaction.options.getString('読み方')) === false) {
@@ -297,7 +303,7 @@ export default class InteractionCreate {
       return;
     }
 
-    await InteractionCreate.registWord(
+    await this.registWord(
       interaction.options.getString('単語'),
       interaction.options.getString('読み方'),
     );
@@ -321,17 +327,33 @@ export default class InteractionCreate {
 
   /**
    * 単語を辞書に登録
+   * すでに登録されていた単語が指定されていた場合は更新するように
    *
    * @param {string} word 単語
    * @param {string} howToRead 読み方
    *
    * @return {void}
    */
-  private static async registWord(word: string, howToRead: string) {
-    const voiceVox = axios.create({ baseURL: 'http://voicevox-engine:50021/', proxy: false });
+  private async registWord(word: string, howToRead: string) {
+    const dictWordList: [] | {
+      word: string,
+      how_to_read: string,
+    }[] = await DictWord.getDictWordList();
 
-    await voiceVox.post(`user_dict_word?surface=${encodeURI(word)}&pronunciation=${encodeURI(howToRead)}&accent_type=0`, {
-      headers: { accept: 'application/json' },
-    });
+    const wordList = dictWordList.map((dictWordData: {
+      word: string,
+      how_to_read: string,
+    }) => dictWordData.word);
+
+    // すでに登録されていたら更新
+    if (wordList.includes(word)) {
+      await DictWord.updateReadOfWordToDict(word, howToRead);
+      this.discordBot.users.cache.get(this.discordBot.userIdForMaki).send(`単語辞書に登録されている単語の読み方が更新されました！\nお手隙の際に反映をお願いします！\n\n更新対象の単語： ${word}\n更新後の読み方： ${howToRead}`);
+
+      return;
+    }
+
+    await DictWord.saveNewWordToDict(word, howToRead);
+    this.discordBot.users.cache.get(this.discordBot.userIdForMaki).send(`単語辞書に新しい単語が追加されました！\nお手隙の際に反映をお願いします！\n\n追加された単語： ${word}\n読み方： ${howToRead}`);
   }
 }

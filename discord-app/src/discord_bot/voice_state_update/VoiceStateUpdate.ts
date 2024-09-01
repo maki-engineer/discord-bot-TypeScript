@@ -100,7 +100,8 @@ export default class VoiceStateUpdate {
 
     if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
 
-    const readText = VoiceVox.formatMessage(announceVoice);
+    let readText = VoiceVox.formatMessage(announceVoice);
+    readText = await VoiceVox.replaceWord(readText);
     await VoiceVox.generateAudioFile(readText, wavFile, client.speakerId);
     VoiceVox.play(wavFile, client.connection);
   }

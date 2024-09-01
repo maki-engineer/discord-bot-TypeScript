@@ -51,7 +51,7 @@ describe('正常系（BirthdayFor235Member.setSpeakerId）', (): void => {
     expect(createData[0].speaker_id).toBe(Number(setSpeakerId));
   });
 
-  test('もし入力したメンバーの user_id が登録されていなくて更新されなかった場合は更新されないこと', async (): Promise < void > => {
+  test('もし入力したメンバーの user_id が登録されていなかった場合は更新されないこと', async (): Promise < void > => {
     const dummyData = {
       name: 'テスト太郎',
       user_id: '987654321',
