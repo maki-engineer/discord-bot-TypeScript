@@ -54,7 +54,7 @@ export default class MessageCreate {
         setTimeout(() => message.delete(), 60_000);
       }
 
-      MessageCreate.storeMessage(message, this.discordBot);
+      await MessageCreate.storeMessage(message, this.discordBot);
 
       // botからのメッセージは無視
       if (message.author.bot) return;
@@ -158,7 +158,7 @@ export default class MessageCreate {
    *
    * @return {void}
    */
-  private static storeMessage(message: typeof Message, client: typeof Client): void {
+  private static async storeMessage(message: typeof Message, client: typeof Client) {
     if (client.channels.cache.get(client.channelIdFor235ChatPlace) === undefined) return;
     if (
       (message.channelId !== client.channelIdFor235ChatPlace)
@@ -169,10 +169,7 @@ export default class MessageCreate {
     const today = new Date();
     const storeDate = today.getDate();
 
-    DeleteMessage.storeMessage(message.id, storeDate)
-      .then(() => {
-        client.users.cache.get(client.userIdForMaki).send(`新しいデータを delete_messages テーブルに保存しました！\n\nmessage_id： ${message.id}\ndate： ${storeDate}`);
-      });
+    await DeleteMessage.storeMessage(message.id, storeDate);
   }
 
   /**
@@ -259,7 +256,7 @@ export default class MessageCreate {
       birthdayList[1],
     )
       .then(() => {
-        client.users.cache.get(client.userIdForMaki).send(`${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\n\nuser_id： ${message.author.id}`);
+        client.users.cache.get(client.userIdForMaki).send(`${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`);
         client.users.cache.get(client.userIdForUtatane).send(`${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`);
       });
   }

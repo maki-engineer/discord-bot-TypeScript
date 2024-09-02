@@ -36,7 +36,7 @@ export default class GuildMemberRemove {
 
     BirthdayFor235Member.delete235MemberBirthday(member.user.id)
       .then(() => {
-        client.users.cache.get(client.userIdForMaki).send(`${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！\n\nuser_id： ${member.user.id}`);
+        client.users.cache.get(client.userIdForMaki).send(`${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！`);
         client.users.cache.get(client.userIdForUtatane).send(`${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！\nもし間違いがあった場合は報告をお願いします！`);
       });
   }

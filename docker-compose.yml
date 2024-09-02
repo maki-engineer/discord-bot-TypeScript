@@ -4,23 +4,8 @@ services:
       context: ./discord-app
       dockerfile: ./Dockerfile
     container_name: discord-app
-    depends_on:
-      - db
     volumes:
       - ./discord-app:/usr/src/app
-
-  db:
-    image: postgres:latest
-    container_name: postgres-db
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "5434:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./postgre_sql/backup/development_235_backup.sql:/docker-entrypoint-initdb.d/development_235_backup.sql
 
   unittest.db:
     image: postgres:latest
@@ -34,19 +19,6 @@ services:
     volumes:
       - postgres_test_data:/var/lib/postgresql/data
 
-  production.db:
-    image: postgres:latest
-    container_name: postgres-db-production
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER_PRODUCTION}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_PRODUCTION}
-      POSTGRES_DB: ${POSTGRES_DB_PRODUCTION}
-    ports:
-      - "5435:5432"
-    volumes:
-      - postgres_production_data:/var/lib/postgresql/data
-      - ./postgre_sql/backup/development_235_backup.sql:/docker-entrypoint-initdb.d/development_235_backup.sql
-
   voicevox-engine:
     image: voicevox/voicevox_engine:cpu-ubuntu20.04-latest
     container_name: voicevox_engine
@@ -54,6 +26,4 @@ services:
       - "50021:50021"
 
 volumes:
-  postgres_data:
   postgres_test_data:
-  postgres_production_data:

@@ -7,7 +7,19 @@ const DeleteMessage = require('./deletemessage').default;
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config')[env];
 
-const sequelize = new Sequelize(config.database, config.username, config.password, config);
+let sequelize: typeof Sequelize;
+
+if (config.url) {
+  sequelize = new Sequelize(config.url, {
+    dialectOptions: {
+      ssl: {
+        require: true,
+      },
+    },
+  });
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
 
 const db: {
   BirthdayFor235Member: typeof BirthdayFor235Member,

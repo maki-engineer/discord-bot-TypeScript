@@ -271,8 +271,6 @@ export default class InteractionCreate {
       ephemeral: true,
     });
 
-    this.discordBot.users.cache.get(this.discordBot.userIdForMaki).send(`235プロメンバーがテキスト読み上げボイスを変更しました！お手隙の際にデータの反映をお願いします！\n\nuser_id： ${interaction.member.id}\nspeaker_id： ${interaction.options.getString('character')}`);
-
     setTimeout(() => interaction.deleteReply(), this.setTimeoutSec);
   }
 
@@ -303,7 +301,7 @@ export default class InteractionCreate {
       return;
     }
 
-    await this.registWord(
+    await InteractionCreate.registWord(
       interaction.options.getString('単語'),
       interaction.options.getString('読み方'),
     );
@@ -334,7 +332,7 @@ export default class InteractionCreate {
    *
    * @return {void}
    */
-  private async registWord(word: string, howToRead: string) {
+  private static async registWord(word: string, howToRead: string) {
     const dictWordList: [] | {
       word: string,
       how_to_read: string,
@@ -348,12 +346,10 @@ export default class InteractionCreate {
     // すでに登録されていたら更新
     if (wordList.includes(word)) {
       await DictWord.updateReadOfWordToDict(word, howToRead);
-      this.discordBot.users.cache.get(this.discordBot.userIdForMaki).send(`単語辞書に登録されている単語の読み方が更新されました！\nお手隙の際に反映をお願いします！\n\n更新対象の単語： ${word}\n更新後の読み方： ${howToRead}`);
 
       return;
     }
 
     await DictWord.saveNewWordToDict(word, howToRead);
-    this.discordBot.users.cache.get(this.discordBot.userIdForMaki).send(`単語辞書に新しい単語が追加されました！\nお手隙の際に反映をお願いします！\n\n追加された単語： ${word}\n読み方： ${howToRead}`);
   }
 }
