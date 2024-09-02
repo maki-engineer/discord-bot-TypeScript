@@ -23,3 +23,7 @@ jobs:
               npx sequelize-cli db:migrate --env development && 
               cd .. && 
               docker logs discord-app -f
+            env:
+              POSTGRES_DB_UNITTEST: ${{ secrets.POSTGRES_DB_UNITTEST }}
+              POSTGRES_PASSWORD_UNITTEST: ${{ secrets.POSTGRES_PASSWORD_UNITTEST }}
+              POSTGRES_USER_UNITTEST: ${{ secrets.POSTGRES_USER_UNITTEST }}
