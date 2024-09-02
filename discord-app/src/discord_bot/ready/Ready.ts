@@ -184,8 +184,6 @@ export default class Ready {
               break;
           }
         }, 5_000);
-
-        client.users.cache.get(client.userIdForMaki).send(`${dateSevenDaysAgo}日に投稿されたメッセージを${deleteIndex}件削除しました！`);
       });
   }
 

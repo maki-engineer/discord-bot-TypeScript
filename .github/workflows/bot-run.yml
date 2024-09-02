@@ -18,27 +18,13 @@ jobs:
           - run: |
               cd discord-app && 
               echo "${{ secrets.ENV_VALUES }}" > .env && 
-              cd .. && 
-              mkdir -p postgre_sql/backup && 
-              touch ./postgre_sql/backup/development_235_backup.sql && 
-              wget "${{ secrets.POSTGRES_DB_BACKUP_URL }}" -O ./postgre_sql/backup/development_235_backup.sql && 
-              cd discord-app && 
               npm install && 
               npm install sequelize-cli && 
-              cd .. && 
               docker compose up -d && 
-              cd discord-app && 
               npx tsc -p . && 
-              npx sequelize-cli db:migrate --env production && 
-              cd .. && 
+              npx sequelize-cli db:migrate && 
               docker logs discord-app -f
             env:
-              POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-              POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-              POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
               POSTGRES_DB_UNITTEST: ${{ secrets.POSTGRES_DB_UNITTEST }}
               POSTGRES_PASSWORD_UNITTEST: ${{ secrets.POSTGRES_PASSWORD_UNITTEST }}
               POSTGRES_USER_UNITTEST: ${{ secrets.POSTGRES_USER_UNITTEST }}
-              POSTGRES_DB_PRODUCTION: ${{ secrets.POSTGRES_DB_PRODUCTION }}
-              POSTGRES_PASSWORD_PRODUCTION: ${{ secrets.POSTGRES_PASSWORD_PRODUCTION }}
-              POSTGRES_USER_PRODUCTION: ${{ secrets.POSTGRES_USER_PRODUCTION }}
