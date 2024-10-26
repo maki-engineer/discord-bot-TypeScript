@@ -312,7 +312,7 @@ export default class MessageCreate {
     commandName: string,
     commandList: string[],
   ): Promise < void > {
-    if ((commandName !== 'birthday') || (message.author.id === this.discordBot.userIdForUtatane)) return;
+    if ((commandName !== 'birthday') || (message.author.id !== this.discordBot.userIdForUtatane)) return;
 
     if ((commandList.length < 3) || (commandList.length > 4)) {
       message.reply('235birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n任意のテキストを追加したい場合は、3つ入力した後に、追加したいテキストを入力してください。\n※半角スペースで区切るのを忘れずに！！\n\n235birthday 8 15 21');
