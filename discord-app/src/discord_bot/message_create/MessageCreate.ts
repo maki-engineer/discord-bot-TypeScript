@@ -1,8 +1,11 @@
 const {
-  Message,
   Client,
-  GuildMember,
   EmbedBuilder,
+  GuildMember,
+  GuildScheduledEventEntityType,
+  GuildScheduledEventManager,
+  GuildScheduledEventPrivacyLevel,
+  Message,
 } = require('discord.js');
 
 const { joinVoiceChannel } = require('@discordjs/voice');
@@ -94,7 +97,7 @@ export default class MessageCreate {
       const commandName: string = commandList.shift()!.toLowerCase();
 
       this.helpCommand(message, commandName);
-      this.birthdayEventCommand(message, commandName, commandList);
+      await this.birthdayEventCommand(message, commandName, commandList);
       this.menEventCommand(message, commandName, commandList);
       this.roomDivisionCommand(this.discordBot, message, commandName);
       await this.joinVoiceChannelCommand(this.discordBot, message, commandName);
@@ -304,11 +307,11 @@ export default class MessageCreate {
    *
    * @return {void}
    */
-  private birthdayEventCommand(
+  private async birthdayEventCommand(
     message: typeof Message,
     commandName: string,
     commandList: string[],
-  ): void {
+  ): Promise < void > {
     if ((commandName !== 'birthday') || (message.author.id !== this.discordBot.userIdForUtatane)) return;
 
     if ((commandList.length < 3) || (commandList.length > 4)) {
@@ -362,9 +365,9 @@ export default class MessageCreate {
     }
 
     const today = new Date();
-    const lastDatetime = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    const lastDateTime = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     // 今月末日を取得
-    const lastDate = lastDatetime.getDate();
+    const lastDate = lastDateTime.getDate();
 
     if ((Number(commandList[1]) < 1) || (Number(commandList[1]) > lastDate)) {
       message.reply(`日は1～${lastDate}の間で入力してください！`);
@@ -391,8 +394,13 @@ export default class MessageCreate {
     }
 
     const todayYear = today.getFullYear();
-    const eventDatetime = new Date(todayYear, Number(commandList[0]) - 1, Number(commandList[1]));
-    const eventDay = eventDatetime.getDay();
+    const eventDateTime = new Date(
+      todayYear,
+      Number(commandList[0]) - 1,
+      Number(commandList[1]),
+      Number(commandList[2]) - 9,
+    );
+    const eventDay = eventDateTime.getDay();
 
     const week = [
       '日曜日',
@@ -460,15 +468,24 @@ export default class MessageCreate {
         }
 
         message.channel.send(eventText);
-
-        setTimeout(() => message.reply('うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪'), 6_000);
-
-        setTimeout(() => {
-          message.delete()
-            .then(() => console.log('message deleting.'))
-            .catch(() => console.log('message is deleted.'));
-        }, this.setTimeoutSec);
       });
+
+    const description = commandList[3] ?? 'ラウンジDiscordに集まってオンラインでやる飲み会だよ！';
+
+    const eventId = await this.createScheduleEvent(
+      `${commandList[0]}月期ラウンジオンライン飲み会`,
+      description,
+      eventDateTime,
+      this.discordBot.voiceChannelIdFor235ChatPlace,
+    );
+
+    setTimeout(() => message.reply(`うたたねさん、今回もお疲れ様です！\n\n【${commandList[0]}月期ラウンジオンライン飲み会】のイベントを作成しました！\nhttps://discord.com/events/${this.discordBot.serverIdFor235}/${eventId}\n\nいつもありがとうございます♪`), 6_000);
+
+    setTimeout(() => {
+      message.delete()
+        .then(() => console.log('message deleting.'))
+        .catch(() => console.log('message is deleted.'));
+    }, this.setTimeoutSec);
   }
 
   /**
@@ -526,9 +543,9 @@ export default class MessageCreate {
     }
 
     const today = new Date();
-    const lastDatetime = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    const lastDateTime = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     // 今月末日を取得
-    const lastDate = lastDatetime.getDate();
+    const lastDate = lastDateTime.getDate();
 
     const isValidDate: boolean = commandList.every(
       (date) => ((Number(date) >= 1) && (Number(date) <= lastDate)),
@@ -968,6 +985,42 @@ export default class MessageCreate {
         .then(() => console.log('message deleting.'))
         .catch(() => console.log('message is deleted.'));
     }, this.setTimeoutSec);
+  }
+
+  /**
+   * オンライン飲み会、男子会のイベントを作成
+   *
+   * @param {string} eventTitle 作成するイベント名
+   * @param {string} description 作成するイベントの説明
+   * @param {Date} scheduledStartTime イベントの開始日
+   * @param {string} channelId 開始場所（ボイスチャンネルのID）
+   * @param {string | null} image アイコン画像
+   *
+   * @return {string}
+   */
+  private async createScheduleEvent(
+    eventTitle: string,
+    description: string,
+    scheduledStartTime: Date,
+    channelId: string,
+    image: string | null = null,
+  ): Promise < string > {
+    const guild = this.discordBot.guilds.cache.get(this.discordBot.serverIdFor235);
+    const eventManager = new GuildScheduledEventManager(guild);
+
+    const options = {
+      name: eventTitle,
+      scheduledStartTime,
+      privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
+      entityType: GuildScheduledEventEntityType.Voice,
+      description,
+      channel: channelId,
+      image,
+    };
+
+    const createdEvent = await eventManager.create(options);
+
+    return createdEvent.id;
   }
 
   /**
