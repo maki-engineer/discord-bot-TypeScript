@@ -204,6 +204,10 @@ export default class MessageCreate {
         voiceChannelId: this.discordBot.voiceChannelIdFor235ChatPlace2,
         channelId: this.discordBot.channelIdFor235ListenOnly2,
       },
+      {
+        voiceChannelId: this.discordBot.voiceChannelIdForGame,
+        channelId: this.discordBot.channelIdForGameListenOnly,
+      },
     ];
 
     const sentChannelId = readTextChannelList.find((data) => {
