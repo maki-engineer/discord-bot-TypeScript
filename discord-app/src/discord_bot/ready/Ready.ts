@@ -2,6 +2,7 @@ const { Client, Message } = require('discord.js');
 const fs = require('fs');
 const cron = require('node-cron');
 const DiscordBot = require('../DiscordBot').default;
+const VoiceVox = require('../../voice_vox/VoiceVox').default;
 const { BirthdayFor235Member, BirthdayForMillionMember, DeleteMessage } = require('../../../models/index').default;
 
 /**
@@ -113,6 +114,7 @@ export default class Ready {
       cron.schedule('0 0 4 * * *', () => this.celebrate235ProductionAnniversary(this.discordBot));
       cron.schedule('0 0 4 * * *', () => this.celebrateMillionLiveAnniversary(this.discordBot));
       cron.schedule('0 15 4 * * *', () => this.send235MemberBirthdayListToUtatane(this.discordBot));
+      cron.schedule('0 50 22,4,10,16 * * *', () => this.disconnectVoiceChannel(this.discordBot));
       cron.schedule('0 55 22,4,10,16 * * *', () => process.exit());
     });
   }
@@ -432,13 +434,7 @@ export default class Ready {
    * @return {void}
    */
   private send235MemberBirthdayListToUtatane(client: typeof Client): void {
-    const todayDateList: {
-      todayYear: number,
-      todayMonth: number,
-      todayDate: number,
-      todayHour: number,
-      todayMin: number,
-    } = Ready.getTodayDateList();
+    const todayDateList = Ready.getTodayDateList();
 
     if (todayDateList.todayDate !== 1) return;
 
@@ -474,6 +470,34 @@ export default class Ready {
         name: 'birthday_for_235_members.csv',
       }],
     });
+  }
+
+  /**
+   * 235botが停止する5分前にボイスチャンネルにいた場合はアナウンスして退出する
+   *
+   * @param {Client} client Clientクラス
+   *
+   * @return {Promise <void>}
+   */
+  private async disconnectVoiceChannel(client: typeof Client): Promise <void> {
+    if (client.connection === undefined) return;
+
+    const todayDateList = Ready.getTodayDateList();
+
+    const disconnectVoice = `ぴんぽんぱんぽーん！もうすぐふみこぼっとが休憩時間に入るのでボイスチャンネルから退出します！${todayDateList.todayHour + 1}時30分頃になったらまたお呼びください！ばいちゃ！`;
+
+    const filePath = './data/voice';
+    const wavFile = `${filePath}/${client.userIdForMaki}.wav`;
+
+    if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
+
+    await VoiceVox.generateAudioFile(disconnectVoice, wavFile, client.speakerId);
+    VoiceVox.play(wavFile, client.connection);
+
+    setTimeout(() => {
+      client.connection.destroy();
+      this.discordBot.connection = undefined;
+    }, 15_000);
   }
 
   /**
