@@ -11,7 +11,8 @@
     "start:dev": "nodemon build/src/main.js",
     "compile": "tsc -p .",
     "migrate": "sequelize db:migrate",
-    "seed": "sequelize db:seed:all"
+    "seed": "sequelize db:seed:all",
+    "prepare": "cd .. && husky discord-app/.husky"
   },
   "keywords": [],
   "author": "",
@@ -43,5 +44,10 @@
     "ts-node": "^10.9.2",
     "tweetnacl": "^1.0.3",
     "typescript": "^5.1.6"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
+    "prettier": "^3.5.3"
   }
 }
