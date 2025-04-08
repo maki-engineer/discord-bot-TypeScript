@@ -5,21 +5,21 @@ const { DeleteMessage, sequelize } = require('../../../models/index').default;
 describe('正常系（DeleteMessage.deleteMessage）', (): void => {
   let transaction: any;
 
-  beforeEach(async (): Promise < void > => {
+  beforeEach(async (): Promise<void> => {
     transaction = await sequelize.transaction();
   });
 
-  afterEach(async (): Promise < void > => {
+  afterEach(async (): Promise<void> => {
     if (transaction) {
       await transaction.rollback();
     }
   });
 
-  afterAll(async (): Promise < void > => {
+  afterAll(async (): Promise<void> => {
     await sequelize.close();
   });
 
-  test('雑談場（通話外）チャンネルで投稿された1週間前のメッセージが削除された場合は、削除された数が返ること', async (): Promise < void > => {
+  test('雑談場（通話外）チャンネルで投稿された1週間前のメッセージが削除された場合は、削除された数が返ること', async (): Promise<void> => {
     const deleteMessageId = '123456789';
 
     await DeleteMessage.create(
@@ -33,8 +33,8 @@ describe('正常系（DeleteMessage.deleteMessage）', (): void => {
     );
 
     let deleteMessageData: {
-      message_id: string,
-      date: number,
+      message_id: string;
+      date: number;
     }[] = await DeleteMessage.findAll({
       raw: true,
       transaction,
@@ -43,10 +43,7 @@ describe('正常系（DeleteMessage.deleteMessage）', (): void => {
     expect(deleteMessageData).toHaveLength(1);
     expect(deleteMessageData[0].message_id).toBe(deleteMessageId);
 
-    const result: number = await DeleteMessage.deleteMessage(
-      deleteMessageId,
-      transaction,
-    );
+    const result: number = await DeleteMessage.deleteMessage(deleteMessageId, transaction);
 
     deleteMessageData = await DeleteMessage.findAll({
       raw: true,
