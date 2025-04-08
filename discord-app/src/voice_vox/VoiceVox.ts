@@ -26,17 +26,24 @@ export default class VoiceVox {
   static async generateAudioFile(readText: string, wavFile: string, speakerId: string) {
     const voiceVox = axios.create({ baseURL: 'http://voicevox-engine:50021/', proxy: false });
 
-    const audioQuery = await voiceVox.post(`audio_query?text=${encodeURI(readText)}&speaker=${speakerId}`, {
-      headers: { accept: 'application/json' },
-    });
-
-    const synthesis = await voiceVox.post(`synthesis?speaker=${speakerId}`, JSON.stringify(audioQuery.data), {
-      responseType: 'arraybuffer',
-      headers: {
-        accept: 'audio/wav',
-        'Content-Type': 'application/json',
+    const audioQuery = await voiceVox.post(
+      `audio_query?text=${encodeURI(readText)}&speaker=${speakerId}`,
+      {
+        headers: { accept: 'application/json' },
       },
-    });
+    );
+
+    const synthesis = await voiceVox.post(
+      `synthesis?speaker=${speakerId}`,
+      JSON.stringify(audioQuery.data),
+      {
+        responseType: 'arraybuffer',
+        headers: {
+          accept: 'audio/wav',
+          'Content-Type': 'application/json',
+        },
+      },
+    );
 
     fs.writeFileSync(wavFile, Buffer.from(synthesis.data), 'binary');
   }
@@ -74,7 +81,10 @@ export default class VoiceVox {
 
     formattedMessageContent = formattedMessageContent.replace(/<:[a-zA-Z0-9_]+:[0-9]+>/g, '');
     formattedMessageContent = formattedMessageContent.replace(VoiceVox.emojiRegex(), '');
-    formattedMessageContent = formattedMessageContent.replace(/(https?|ftp)(:\/\/[\w\/:%#\$&\?\(\)~\.=\+\-]+)/g, '');
+    formattedMessageContent = formattedMessageContent.replace(
+      /(https?|ftp)(:\/\/[\w\/:%#\$&\?\(\)~\.=\+\-]+)/g,
+      '',
+    );
     formattedMessageContent = formattedMessageContent.replace(/\r?\n/g, '、');
 
     return formattedMessageContent;
@@ -100,12 +110,15 @@ export default class VoiceVox {
     let formattedMessageContent: string = messageContent;
 
     const dictWordList: {
-      word: string,
-      how_to_read: string,
+      word: string;
+      how_to_read: string;
     }[] = await DictWord.getDictWordList();
 
-    dictWordList.forEach((dictWordData: { word: string, how_to_read: string }) => {
-      formattedMessageContent = formattedMessageContent.replace(new RegExp(dictWordData.word, 'g'), dictWordData.how_to_read);
+    dictWordList.forEach((dictWordData: { word: string; how_to_read: string }) => {
+      formattedMessageContent = formattedMessageContent.replace(
+        new RegExp(dictWordData.word, 'g'),
+        dictWordData.how_to_read,
+      );
     });
 
     return formattedMessageContent;

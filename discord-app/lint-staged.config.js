@@ -16,7 +16,7 @@ module.exports = {
     taskList.push(`npx prettier --write ${formatFileList.join(' ')}`);
 
     // linter を実行
-    taskList.push(...formatFileList.map((file) => `npm run linter ${file}`));
+    taskList.push(`npx eslint ${formatFileList.join(' ')}`);
 
     const testFileList = formatFileList.filter((file) => file.startsWith('tests/'));
 
