@@ -236,7 +236,7 @@ export default class MessageCreate {
 
     if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
 
-    const speakerIdExists = await BirthdayFor235Member.getSpeakerIdFromMessageSender(
+    const speakerIdExists = await BirthdayFor235MemberRepository.getSpeakerIdFromMessageSender(
       message.author.id,
     );
 
