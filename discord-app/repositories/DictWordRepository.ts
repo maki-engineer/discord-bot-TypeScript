@@ -14,7 +14,7 @@ export default class DictWordRepository {
       transaction?: any;
     } = { raw: true };
 
-    if (transaction !== null) {
+    if (transaction) {
       options.transaction = transaction;
     }
 
@@ -36,7 +36,7 @@ export default class DictWordRepository {
       how_to_read: howToRead,
     };
 
-    if (transaction !== null) {
+    if (transaction) {
       return await DictWord.create(insertData, { transaction });
     }
 
@@ -57,7 +57,7 @@ export default class DictWordRepository {
       where: { word },
     };
 
-    if (transaction !== null) {
+    if (transaction) {
       updateData.transaction = transaction;
     }
 

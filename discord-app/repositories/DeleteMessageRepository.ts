@@ -16,7 +16,7 @@ export default class DeleteMessageRepository {
       transaction?: any;
     } = { where: { date }, raw: true };
 
-    if (transaction !== null) {
+    if (transaction) {
       options.transaction = transaction;
     }
 
@@ -38,7 +38,7 @@ export default class DeleteMessageRepository {
       date,
     };
 
-    if (transaction !== null) {
+    if (transaction) {
       return await DeleteMessage.create(insertData, { transaction });
     }
 
@@ -60,7 +60,7 @@ export default class DeleteMessageRepository {
       },
     };
 
-    if (transaction !== null) {
+    if (transaction) {
       deleteData.transaction = transaction;
     }
 

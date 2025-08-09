@@ -33,7 +33,7 @@ export default class BirthdayFor235MemberRepository {
       raw: true,
     };
 
-    if (transaction !== null) {
+    if (transaction) {
       options.transaction = transaction;
     }
 
@@ -62,7 +62,7 @@ export default class BirthdayFor235MemberRepository {
       raw: true,
     };
 
-    if (transaction !== null) {
+    if (transaction) {
       options.transaction = transaction;
     }
 
@@ -88,7 +88,7 @@ export default class BirthdayFor235MemberRepository {
       raw: true,
     };
 
-    if (transaction !== null) {
+    if (transaction) {
       options.transaction = transaction;
     }
 
@@ -111,7 +111,7 @@ export default class BirthdayFor235MemberRepository {
       where: { user_id: userId },
     };
 
-    if (transaction !== null) {
+    if (transaction) {
       options.transaction = transaction;
     }
 
@@ -147,7 +147,7 @@ export default class BirthdayFor235MemberRepository {
       date,
     };
 
-    if (transaction !== null) {
+    if (transaction) {
       return await BirthdayFor235Member.create(insertData, { transaction });
     }
 
@@ -170,7 +170,7 @@ export default class BirthdayFor235MemberRepository {
       },
     };
 
-    if (transaction !== null) {
+    if (transaction) {
       updateData.transaction = transaction;
     }
 
@@ -192,7 +192,7 @@ export default class BirthdayFor235MemberRepository {
       },
     };
 
-    if (transaction !== null) {
+    if (transaction) {
       deleteData.transaction = transaction;
     }
 

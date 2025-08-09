@@ -23,7 +23,7 @@ export default class BirthdayForMillionMemberRepository {
       raw: true,
     };
 
-    if (transaction !== null) {
+    if (transaction) {
       options.transaction = transaction;
     }
 
