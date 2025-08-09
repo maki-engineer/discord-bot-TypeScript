@@ -177,7 +177,7 @@ export default class MessageCreate {
     if (client.channels.cache.get(client.channelIdFor235ChatPlace) === undefined) return;
     if (
       message.channelId !== client.channelIdFor235ChatPlace ||
-      message.author.bot === false ||
+      !message.author.bot ||
       message.mentions.repliedUser !== null
     )
       return;

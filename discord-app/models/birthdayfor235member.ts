@@ -1,6 +1,6 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
 
-export default class BirthdayForMillionMember extends Model {
+export default class BirthdayFor235Member extends Model {
   public name!: string;
 
   public user_id!: string;
