@@ -3,9 +3,11 @@ const fs = require('fs');
 const cron = require('node-cron');
 const BirthdayForMillionMemberRepository =
   require('../../../repositories/BirthdayForMillionMemberRepository').default;
+const BirthdayFor235MemberRepository =
+  require('../../../repositories/BirthdayFor235MemberRepository').default;
+const DeleteMessageRepository = require('../../../repositories/DeleteMessageRepository').default;
 const DiscordBot = require('../DiscordBot').default;
 const VoiceVox = require('../../voice_vox/VoiceVox').default;
-const { BirthdayFor235Member, DeleteMessage } = require('../../../models/index').default;
 
 /**
  * 常時行う処理クラス
@@ -164,7 +166,7 @@ export default class Ready {
     setTime.setDate(setTime.getDate() - 7);
     const dateSevenDaysAgo = setTime.getDate();
 
-    DeleteMessage.findDeleteMessages(dateSevenDaysAgo).then(
+    DeleteMessageRepository.findDeleteMessages(dateSevenDaysAgo).then(
       (foundData: { message_id: string; date: number }[]) => {
         if (foundData.length === 0) return;
 
@@ -183,7 +185,7 @@ export default class Ready {
                 .then(async (foundMessage: typeof Message) => {
                   foundMessage.delete();
 
-                  await DeleteMessage.deleteMessage(foundData[deleteIndex].message_id);
+                  await DeleteMessageRepository.deleteMessage(foundData[deleteIndex].message_id);
 
                   deleteIndex += 1;
                 })
@@ -211,7 +213,7 @@ export default class Ready {
       todayMin: number;
     } = Ready.getTodayDateList();
 
-    BirthdayFor235Member.get235MemberBirthdayList(
+    BirthdayFor235MemberRepository.get235MemberBirthdayList(
       this.discordBot.userIdForMaki,
       todayDateList.todayMonth,
       todayDateList.todayDate,
@@ -496,7 +498,7 @@ export default class Ready {
 
     fs.writeFileSync(csvFile, text);
 
-    BirthdayFor235Member.get235MemberBirthdayListForCSV().then(
+    BirthdayFor235MemberRepository.get235MemberBirthdayListForCSV().then(
       (memberList: { name: string; month: number; date: number }[]) => {
         memberList.forEach((member: { name: string; month: number; date: number }) => {
           text += `${member.name}さん,${member.month}月${member.date}日\n`;

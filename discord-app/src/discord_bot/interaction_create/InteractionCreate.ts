@@ -3,7 +3,9 @@ const { joinVoiceChannel } = require('@discordjs/voice');
 const fs = require('fs');
 const DiscordBot = require('../DiscordBot').default;
 const VoiceVox = require('../../voice_vox/VoiceVox').default;
-const { BirthdayFor235Member, DictWord } = require('../../../models/index').default;
+const BirthdayFor235MemberRepository =
+  require('../../../repositories/BirthdayFor235MemberRepository').default;
+const DictWordRepository = require('../../../repositories/DictWordRepository').default;
 
 /**
  * スラッシュコマンドが使われた時に行う処理クラス
@@ -49,7 +51,8 @@ export default class InteractionCreate {
     switch (interaction.user.id) {
       case this.discordBot.userIdForUtatane:
         interaction.reply({
-          content: '235birthdayコマンドを使用することで、毎月開催されるオンライン飲み会の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい月、日程、時間の**3つ**を**半角数字のみ**、**半角スペースで区切って**入力してください。\n\n235birthday 12 14 21',
+          content:
+            '235birthdayコマンドを使用することで、毎月開催されるオンライン飲み会の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい月、日程、時間の**3つ**を**半角数字のみ**、**半角スペースで区切って**入力してください。\n\n235birthday 12 14 21',
           ephemeral: true,
         });
 
@@ -58,7 +61,8 @@ export default class InteractionCreate {
 
       default:
         interaction.reply({
-          content: '235birthday コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。',
+          content:
+            '235birthday コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。',
           ephemeral: true,
         });
 
@@ -80,7 +84,8 @@ export default class InteractionCreate {
     switch (interaction.user.id) {
       case this.discordBot.userIdForUtatane:
         interaction.reply({
-          content: '235menコマンドを使用することで、毎月開催される235士官学校🌹の日程を決める文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**2～10個**、**半角数字のみ**で入力してください。\n\n235men 12 14 16 17',
+          content:
+            '235menコマンドを使用することで、毎月開催される235士官学校🌹の日程を決める文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**2～10個**、**半角数字のみ**で入力してください。\n\n235men 12 14 16 17',
           ephemeral: true,
         });
 
@@ -89,7 +94,8 @@ export default class InteractionCreate {
 
       default:
         interaction.reply({
-          content: '235men コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。',
+          content:
+            '235men コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。',
           ephemeral: true,
         });
 
@@ -109,7 +115,8 @@ export default class InteractionCreate {
     if (interaction.commandName !== '235roomdivision') return;
 
     interaction.reply({
-      content: '235roomdivisionコマンドを使用することで、【雑談１】ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、【雑談１】ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、【雑談１】ボイスチャンネルに参加しているメンバーのみが使用できます。',
+      content:
+        '235roomdivisionコマンドを使用することで、【雑談１】ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、【雑談１】ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、【雑談１】ボイスチャンネルに参加しているメンバーのみが使用できます。',
       ephemeral: true,
     });
 
@@ -134,8 +141,8 @@ export default class InteractionCreate {
     const memberJoinVoiceChannel = usedCommandMember.voice.channel;
 
     if (
-      (client.connection !== undefined)
-      && (client.connection.joinConfig.channelId === memberJoinVoiceChannel.id)
+      client.connection !== undefined &&
+      client.connection.joinConfig.channelId === memberJoinVoiceChannel.id
     ) {
       const embed = new EmbedBuilder()
         .setTitle('既に接続されています！')
@@ -151,13 +158,17 @@ export default class InteractionCreate {
     }
 
     if (memberJoinVoiceChannel === null) {
-      interaction.reply('235joinコマンドを使用することで、使用したメンバーが参加しているボイスチャンネルに235botが参加して、そのボイスチャンネルの聞き専チャンネルに投稿されたテキストを読み上げます！\nボイスチャンネルに参加してから再度このスラッシュコマンドを使用していただくか、もしくはテキストで「235join」と入力していただければボイスチャンネルに参加します！');
+      interaction.reply(
+        '235joinコマンドを使用することで、使用したメンバーが参加しているボイスチャンネルに235botが参加して、そのボイスチャンネルの聞き専チャンネルに投稿されたテキストを読み上げます！\nボイスチャンネルに参加してから再度このスラッシュコマンドを使用していただくか、もしくはテキストで「235join」と入力していただければボイスチャンネルに参加します！',
+      );
 
       return;
     }
 
     if (!memberJoinVoiceChannel.joinable || !memberJoinVoiceChannel.speakable) {
-      interaction.reply('参加先のボイスチャンネルに接続できなかったか、もしくは参加先のボイスチャンネルで音声を再生する権限がありませんでした；；');
+      interaction.reply(
+        '参加先のボイスチャンネルに接続できなかったか、もしくは参加先のボイスチャンネルで音声を再生する権限がありませんでした；；',
+      );
 
       return;
     }
@@ -170,9 +181,8 @@ export default class InteractionCreate {
       selfDeaf: true,
     });
 
-    const connectVoice = client.connectVoiceList[
-      Math.floor(Math.random() * client.connectVoiceList.length)
-    ];
+    const connectVoice =
+      client.connectVoiceList[Math.floor(Math.random() * client.connectVoiceList.length)];
 
     const filePath = './data/voice';
     const wavFile = `${filePath}/${usedCommandMember.user.id}.wav`;
@@ -220,11 +230,13 @@ export default class InteractionCreate {
     }
 
     if (
-      (memberJoinVoiceChannel === null)
-      || (this.discordBot.connection.joinConfig.channelId !== memberJoinVoiceChannel.id)
+      memberJoinVoiceChannel === null ||
+      this.discordBot.connection.joinConfig.channelId !== memberJoinVoiceChannel.id
     ) {
       const embed = new EmbedBuilder()
-        .setTitle('切断できるのは235botが入っているボイスチャンネルに参加しているメンバーだけです！')
+        .setTitle(
+          '切断できるのは235botが入っているボイスチャンネルに参加しているメンバーだけです！',
+        )
         .setColor('#FFCC00')
         .setTimestamp();
 
@@ -259,7 +271,10 @@ export default class InteractionCreate {
   private async setVoiceInteraction(interaction: typeof Interaction) {
     if (interaction.commandName !== '235setvoice') return;
 
-    await BirthdayFor235Member.setSpeakerId(interaction.member.id, interaction.options.getString('character'));
+    await BirthdayFor235MemberRepository.setSpeakerId(
+      interaction.member.id,
+      interaction.options.getString('character'),
+    );
 
     const embed = new EmbedBuilder()
       .setTitle('読み上げるキャラクターの声を変更しました！')
@@ -333,23 +348,24 @@ export default class InteractionCreate {
    * @return {void}
    */
   private static async registWord(word: string, howToRead: string) {
-    const dictWordList: [] | {
-      word: string,
-      how_to_read: string,
-    }[] = await DictWord.getDictWordList();
+    const dictWordList:
+      | []
+      | {
+          word: string;
+          how_to_read: string;
+        }[] = await DictWordRepository.getDictWordList();
 
-    const wordList = dictWordList.map((dictWordData: {
-      word: string,
-      how_to_read: string,
-    }) => dictWordData.word);
+    const wordList = dictWordList.map(
+      (dictWordData: { word: string; how_to_read: string }) => dictWordData.word,
+    );
 
     // すでに登録されていたら更新
     if (wordList.includes(word)) {
-      await DictWord.updateReadOfWordToDict(word, howToRead);
+      await DictWordRepository.updateReadOfWordToDict(word, howToRead);
 
       return;
     }
 
-    await DictWord.saveNewWordToDict(word, howToRead);
+    await DictWordRepository.saveNewWordToDict(word, howToRead);
   }
 }

@@ -1,8 +1,9 @@
 process.env.NODE_ENV = 'unittest';
 
+const DeleteMessageRepository = require('../../../repositories/DeleteMessageRepository').default;
 const { DeleteMessage, sequelize } = require('../../../models/index').default;
 
-describe('正常系（DeleteMessage.findDeleteMessages）', (): void => {
+describe('正常系（findDeleteMessages）', (): void => {
   let transaction: any;
   const targetDate = 14;
 
@@ -41,7 +42,7 @@ describe('正常系（DeleteMessage.findDeleteMessages）', (): void => {
     const result: {
       message_id: string;
       date: number;
-    }[] = await DeleteMessage.findDeleteMessages(targetDate, transaction);
+    }[] = await DeleteMessageRepository.findDeleteMessages(targetDate, transaction);
 
     expect(result).toHaveLength(2);
     expect(result).toBeInstanceOf(Array);
@@ -54,7 +55,7 @@ describe('正常系（DeleteMessage.findDeleteMessages）', (): void => {
   });
 
   test('削除対象のメッセージが見つからなかった場合は、空配列が返ること', async (): Promise<void> => {
-    const result: [] = await DeleteMessage.findDeleteMessages(targetDate, transaction);
+    const result: [] = await DeleteMessageRepository.findDeleteMessages(targetDate, transaction);
 
     expect(result).toHaveLength(0);
     expect(result).toEqual([]);

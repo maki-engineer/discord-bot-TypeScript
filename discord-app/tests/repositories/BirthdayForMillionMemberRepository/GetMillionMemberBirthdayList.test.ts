@@ -4,7 +4,7 @@ const BirthdayForMillionMemberRepository =
   require('../../../repositories/BirthdayForMillionMemberRepository').default;
 const { BirthdayForMillionMember, sequelize } = require('../../../models/index').default;
 
-describe('正常系（BirthdayForMillionMember.getMillionMemberBirthdayList）', (): void => {
+describe('正常系（getMillionMemberBirthdayList）', (): void => {
   let transaction: any;
   const targetMonth = 5;
   const targetDate = 22;
