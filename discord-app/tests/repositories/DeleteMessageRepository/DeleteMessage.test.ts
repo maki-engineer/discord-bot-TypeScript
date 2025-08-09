@@ -1,8 +1,9 @@
 process.env.NODE_ENV = 'unittest';
 
+const DeleteMessageRepository = require('../../../repositories/DeleteMessageRepository').default;
 const { DeleteMessage, sequelize } = require('../../../models/index').default;
 
-describe('正常系（DeleteMessage.deleteMessage）', (): void => {
+describe('正常系（deleteMessage）', (): void => {
   let transaction: any;
 
   beforeEach(async (): Promise<void> => {
@@ -43,7 +44,10 @@ describe('正常系（DeleteMessage.deleteMessage）', (): void => {
     expect(deleteMessageData).toHaveLength(1);
     expect(deleteMessageData[0].message_id).toBe(deleteMessageId);
 
-    const result: number = await DeleteMessage.deleteMessage(deleteMessageId, transaction);
+    const result: number = await DeleteMessageRepository.deleteMessage(
+      deleteMessageId,
+      transaction,
+    );
 
     deleteMessageData = await DeleteMessage.findAll({
       raw: true,

@@ -12,13 +12,12 @@ const { joinVoiceChannel } = require('@discordjs/voice');
 const fs = require('fs');
 const DiscordBot = require('../DiscordBot').default;
 const VoiceVox = require('../../voice_vox/VoiceVox').default;
+const BirthdayFor235MemberRepository =
+  require('../../../repositories/BirthdayFor235MemberRepository').default;
+const DeleteMessageRepository = require('../../../repositories/DeleteMessageRepository').default;
 
-const {
-  BirthdayFor235Member,
-  BirthdayForMillionMember,
-  DeleteMessage,
-  DictWord,
-} = require('../../../models/index').default;
+const { BirthdayFor235Member, BirthdayForMillionMember, DeleteMessage, DictWord } =
+  require('../../../models/index').default;
 
 /**
  * メッセージが送信された時に行う処理クラス
@@ -30,7 +29,18 @@ export default class MessageCreate {
 
   private readonly setTimeoutSec = 15_000;
 
-  private readonly maleEventEmojiList = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+  private readonly maleEventEmojiList = [
+    '1️⃣',
+    '2️⃣',
+    '3️⃣',
+    '4️⃣',
+    '5️⃣',
+    '6️⃣',
+    '7️⃣',
+    '8️⃣',
+    '9️⃣',
+    '🔟',
+  ];
 
   private readonly birthday235MemberEmojiList = [
     '<:__:794969172630044674>',
@@ -53,7 +63,7 @@ export default class MessageCreate {
       this.reactToBirthdayMillionMemberMessage(message);
 
       // 235botのメッセージがリプライだった場合、1分後に削除
-      if ((message.author.bot) && (message.mentions.repliedUser)) {
+      if (message.author.bot && message.mentions.repliedUser) {
         setTimeout(() => message.delete(), 60_000);
       }
 
@@ -68,19 +78,21 @@ export default class MessageCreate {
 
       // 自己紹介チャンネルから新しく入ったメンバーの誕生日を登録する＆挨拶をする
       if (
-        (
-          this.discordBot.channels.cache.get(this.discordBot.channelIdFor235Introduction)
-          !== undefined
-        )
-        && (message.channelId === this.discordBot.channelIdFor235Introduction)
+        this.discordBot.channels.cache.get(this.discordBot.channelIdFor235Introduction) !==
+          undefined &&
+        message.channelId === this.discordBot.channelIdFor235Introduction
       ) {
         // 誕生日を登録
         MessageCreate.registNew235MemberBirthday(message, this.discordBot);
 
         // 挨拶
         message.react('<:_Stmp_Tsubasa:794969154817753088>');
-        message.reply(`${message.author.globalName}さん、235プロダクションへようこそ！\nこれからもよろしくおねがいします♪`);
-        this.discordBot.users.cache.get(this.discordBot.userIdForMaki).send(`${message.author.globalName}さんが新しく235プロダクションに参加されました！`);
+        message.reply(
+          `${message.author.globalName}さん、235プロダクションへようこそ！\nこれからもよろしくおねがいします♪`,
+        );
+        this.discordBot.users.cache
+          .get(this.discordBot.userIdForMaki)
+          .send(`${message.author.globalName}さんが新しく235プロダクションに参加されました！`);
       }
 
       // コマンドメッセージ以外は無視
@@ -164,15 +176,16 @@ export default class MessageCreate {
   private static async storeMessage(message: typeof Message, client: typeof Client) {
     if (client.channels.cache.get(client.channelIdFor235ChatPlace) === undefined) return;
     if (
-      (message.channelId !== client.channelIdFor235ChatPlace)
-      || (message.author.bot === false)
-      || (message.mentions.repliedUser !== null)
-    ) return;
+      message.channelId !== client.channelIdFor235ChatPlace ||
+      !message.author.bot ||
+      message.mentions.repliedUser !== null
+    )
+      return;
 
     const today = new Date();
     const storeDate = today.getDate();
 
-    await DeleteMessage.storeMessage(message.id, storeDate);
+    await DeleteMessageRepository.storeMessage(message.id, storeDate);
   }
 
   /**
@@ -182,7 +195,7 @@ export default class MessageCreate {
    * @param {Message} message Messageクラス
    *
    * @return {void}
-  */
+   */
   private async readTextForVoiceVox(client: typeof Client, message: typeof Message) {
     if (client.connection === undefined) return;
 
@@ -191,9 +204,7 @@ export default class MessageCreate {
 
     if (commandList.includes(formatMessageList[0])) return;
 
-    const readChannelIdList = [
-      client.connection.joinConfig.channelId,
-    ];
+    const readChannelIdList = [client.connection.joinConfig.channelId];
 
     const readTextChannelList = [
       {
@@ -225,8 +236,9 @@ export default class MessageCreate {
 
     if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
 
-    const speakerIdExists = await BirthdayFor235Member
-      .getSpeakerIdFromMessageSender(message.author.id);
+    const speakerIdExists = await BirthdayFor235MemberRepository.getSpeakerIdFromMessageSender(
+      message.author.id,
+    );
 
     const speakerId = speakerIdExists ?? client.speakerId;
 
@@ -250,22 +262,31 @@ export default class MessageCreate {
 
     if (foundIndex === -1) return;
 
-    const birthdayList: string[] = messageList[foundIndex + 1].split(/年|月|\//).map((data) => data.match(/\d+/g)![0].replace(/^0+/, ''));
+    const birthdayList: string[] = messageList[foundIndex + 1]
+      .split(/年|月|\//)
+      .map((data) => data.match(/\d+/g)![0].replace(/^0+/, ''));
 
     if (birthdayList.length === 3) {
       birthdayList.shift();
     }
 
-    BirthdayFor235Member.registNew235MemberBirthday(
+    BirthdayFor235MemberRepository.registNew235MemberBirthday(
       message.author.globalName,
       message.author.id,
       birthdayList[0],
       birthdayList[1],
-    )
-      .then(() => {
-        client.users.cache.get(client.userIdForMaki).send(`${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`);
-        client.users.cache.get(client.userIdForUtatane).send(`${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`);
-      });
+    ).then(() => {
+      client.users.cache
+        .get(client.userIdForMaki)
+        .send(
+          `${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`,
+        );
+      client.users.cache
+        .get(client.userIdForUtatane)
+        .send(
+          `${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`,
+        );
+    });
   }
 
   /**
@@ -281,20 +302,26 @@ export default class MessageCreate {
 
     switch (message.author.id) {
       case this.discordBot.userIdForUtatane:
-        message.reply('235botは以下のようなコマンドを使用することが出来ます。\n\n・235birthday\n毎月開催されるオンライン飲み会の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい月、日程、時間の**3つ**を**半角数字のみ**、**半角スペースで区切って**入力してください。\n\n235birthday 12 14 21\n\n・235men\n毎月開催される235士官学校🌹の日程を決める文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**2～10個**、**半角数字のみ**で入力してください。\n\n235men 12 14 16 17\n\n・235roomdivision\n【雑談１】ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、【雑談１】ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、【雑談１】ボイスチャンネルに参加しているメンバーのみが使用できます。\n\n235botはスラッシュコマンド（**/**）にも対応しています。スラッシュコマンドを使用することで、テキストの読み上げ機能などを利用することが出来ます。');
+        message.reply(
+          '235botは以下のようなコマンドを使用することが出来ます。\n\n・235birthday\n毎月開催されるオンライン飲み会の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい月、日程、時間の**3つ**を**半角数字のみ**、**半角スペースで区切って**入力してください。\n\n235birthday 12 14 21\n\n・235men\n毎月開催される235士官学校🌹の日程を決める文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**2～10個**、**半角数字のみ**で入力してください。\n\n235men 12 14 16 17\n\n・235roomdivision\n【雑談１】ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、【雑談１】ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、【雑談１】ボイスチャンネルに参加しているメンバーのみが使用できます。\n\n235botはスラッシュコマンド（**/**）にも対応しています。スラッシュコマンドを使用することで、テキストの読み上げ機能などを利用することが出来ます。',
+        );
 
         setTimeout(() => {
-          message.delete()
+          message
+            .delete()
             .then(() => console.log('message deleting.'))
             .catch(() => console.log('message is deleted.'));
         }, this.setTimeoutSec);
         break;
 
       default:
-        message.reply('235botは以下のようなコマンドを使用することが出来ます。\n\n・235roomdivision\n【雑談１】ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、【雑談１】ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、【雑談１】ボイスチャンネルに参加しているメンバーのみが使用できます。\n\n235botはスラッシュコマンド（**/**）にも対応しています。スラッシュコマンドを使用することで、テキストの読み上げ機能などを利用することが出来ます。');
+        message.reply(
+          '235botは以下のようなコマンドを使用することが出来ます。\n\n・235roomdivision\n【雑談１】ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、【雑談１】ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、【雑談１】ボイスチャンネルに参加しているメンバーのみが使用できます。\n\n235botはスラッシュコマンド（**/**）にも対応しています。スラッシュコマンドを使用することで、テキストの読み上げ機能などを利用することが出来ます。',
+        );
 
         setTimeout(() => {
-          message.delete()
+          message
+            .delete()
             .then(() => console.log('message deleting.'))
             .catch(() => console.log('message is deleted.'));
         }, this.setTimeoutSec);
@@ -315,14 +342,18 @@ export default class MessageCreate {
     message: typeof Message,
     commandName: string,
     commandList: string[],
-  ): Promise < void > {
-    if ((commandName !== 'birthday') || (message.author.id !== this.discordBot.userIdForUtatane)) return;
+  ): Promise<void> {
+    if (commandName !== 'birthday' || message.author.id !== this.discordBot.userIdForUtatane)
+      return;
 
-    if ((commandList.length < 3) || (commandList.length > 4)) {
-      message.reply('235birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n任意のテキストを追加したい場合は、3つ入力した後に、追加したいテキストを入力してください。\n※半角スペースで区切るのを忘れずに！！\n\n235birthday 8 15 21');
+    if (commandList.length < 3 || commandList.length > 4) {
+      message.reply(
+        '235birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n任意のテキストを追加したい場合は、3つ入力した後に、追加したいテキストを入力してください。\n※半角スペースで区切るのを忘れずに！！\n\n235birthday 8 15 21',
+      );
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -345,10 +376,13 @@ export default class MessageCreate {
     }
 
     if (!isAllInt) {
-      message.reply('半角数字以外が含まれています！\n月、日、時間は全て**半角数字のみ**で入力してください！');
+      message.reply(
+        '半角数字以外が含まれています！\n月、日、時間は全て**半角数字のみ**で入力してください！',
+      );
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -356,11 +390,12 @@ export default class MessageCreate {
       return;
     }
 
-    if ((Number(commandList[0]) < 1) || (Number(commandList[0]) > 12)) {
+    if (Number(commandList[0]) < 1 || Number(commandList[0]) > 12) {
       message.reply('月は1～12の間で入力してください！');
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -373,11 +408,12 @@ export default class MessageCreate {
     // 今月末日を取得
     const lastDate = lastDateTime.getDate();
 
-    if ((Number(commandList[1]) < 1) || (Number(commandList[1]) > lastDate)) {
+    if (Number(commandList[1]) < 1 || Number(commandList[1]) > lastDate) {
       message.reply(`日は1～${lastDate}の間で入力してください！`);
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -385,11 +421,12 @@ export default class MessageCreate {
       return;
     }
 
-    if ((Number(commandList[2]) < 0) || (Number(commandList[2]) > 23)) {
+    if (Number(commandList[2]) < 0 || Number(commandList[2]) > 23) {
       message.reply('時間は0～23の間で入力してください！');
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -406,15 +443,7 @@ export default class MessageCreate {
     );
     const eventDay = eventDateTime.getDay();
 
-    const week = [
-      '日曜日',
-      '月曜日',
-      '火曜日',
-      '水曜日',
-      '木曜日',
-      '金曜日',
-      '土曜日',
-    ];
+    const week = ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'];
 
     const textList = [
       [
@@ -449,14 +478,16 @@ export default class MessageCreate {
 
     let eventText: string = `@everyone\n${textList[0][Math.floor(Math.random() * textList[0].length)]}`;
 
-    BirthdayFor235Member.getThisMonthBirthdayMember(commandList[0])
-      .then((birthdayMemberList: {
-        name: string,
-        user_id: string,
-        month: number,
-        date: number,
-        speaker_id: number,
-      }[]) => {
+    BirthdayFor235MemberRepository.getThisMonthBirthdayMember(commandList[0]).then(
+      (
+        birthdayMemberList: {
+          name: string;
+          user_id: string;
+          month: number;
+          date: number;
+          speaker_id: number;
+        }[],
+      ) => {
         birthdayMemberList.forEach((birthdayMember) => {
           eventText += `**${birthdayMember.date}日...${birthdayMember.name}さん**\n`;
         });
@@ -472,7 +503,8 @@ export default class MessageCreate {
         }
 
         message.channel.send(eventText);
-      });
+      },
+    );
 
     const description = commandList[3] ?? 'ラウンジDiscordに集まってオンラインでやる飲み会だよ！';
 
@@ -483,10 +515,17 @@ export default class MessageCreate {
       this.discordBot.voiceChannelIdFor235ChatPlace,
     );
 
-    setTimeout(() => message.reply(`うたたねさん、今回もお疲れ様です！\n\n【${commandList[0]}月期ラウンジオンライン飲み会】のイベントを作成しました！\nhttps://discord.com/events/${this.discordBot.serverIdFor235}/${eventId}\n\nいつもありがとうございます♪`), 6_000);
+    setTimeout(
+      () =>
+        message.reply(
+          `うたたねさん、今回もお疲れ様です！\n\n【${commandList[0]}月期ラウンジオンライン飲み会】のイベントを作成しました！\nhttps://discord.com/events/${this.discordBot.serverIdFor235}/${eventId}\n\nいつもありがとうございます♪`,
+        ),
+      6_000,
+    );
 
     setTimeout(() => {
-      message.delete()
+      message
+        .delete()
         .then(() => console.log('message deleting.'))
         .catch(() => console.log('message is deleted.'));
     }, this.setTimeoutSec);
@@ -506,13 +545,16 @@ export default class MessageCreate {
     commandName: string,
     commandList: string[],
   ): void {
-    if ((commandName !== 'men') || (message.author.id !== this.discordBot.userIdForUtatane)) return;
+    if (commandName !== 'men' || message.author.id !== this.discordBot.userIdForUtatane) return;
 
-    if ((commandList.length < 1) || (commandList.length > 10)) {
-      message.reply('235menコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**2～10個まで**です！\n\n235men 8 12 15 21');
+    if (commandList.length < 1 || commandList.length > 10) {
+      message.reply(
+        '235menコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**2～10個まで**です！\n\n235men 8 12 15 21',
+      );
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -520,13 +562,14 @@ export default class MessageCreate {
       return;
     }
 
-    const isAllInt: boolean = commandList.every((date) => (Number.isInteger(Number(date))));
+    const isAllInt: boolean = commandList.every((date) => Number.isInteger(Number(date)));
 
     if (!isAllInt) {
       message.reply('半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！');
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -538,7 +581,8 @@ export default class MessageCreate {
       message.reply('同じ日程が入力されています！');
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -552,14 +596,15 @@ export default class MessageCreate {
     const lastDate = lastDateTime.getDate();
 
     const isValidDate: boolean = commandList.every(
-      (date) => ((Number(date) >= 1) && (Number(date) <= lastDate)),
+      (date) => Number(date) >= 1 && Number(date) <= lastDate,
     );
 
     if (!isValidDate) {
       message.reply(`日は1～${lastDate}の間で入力してください！`);
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -571,19 +616,11 @@ export default class MessageCreate {
 
     const todayYear = today.getFullYear();
     const todayMonth = today.getMonth() + 1;
-    const eventDayList = commandList.map(
-      (date) => new Date(todayYear, todayMonth - 1, Number(date)).getDay(),
+    const eventDayList = commandList.map((date) =>
+      new Date(todayYear, todayMonth - 1, Number(date)).getDay(),
     );
 
-    const week = [
-      '日曜日',
-      '月曜日',
-      '火曜日',
-      '水曜日',
-      '木曜日',
-      '金曜日',
-      '土曜日',
-    ];
+    const week = ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'];
 
     const textList = [
       [
@@ -608,10 +645,14 @@ export default class MessageCreate {
 
     this.discordBot.usedMaleEventCommandReactionCount = commandList.length;
 
-    setTimeout(() => message.reply('うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪'), 6_000);
+    setTimeout(
+      () => message.reply('うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪'),
+      6_000,
+    );
 
     setTimeout(() => {
-      message.delete()
+      message
+        .delete()
         .then(() => console.log('message deleting.'))
         .catch(() => console.log('message is deleted.'));
     }, this.setTimeoutSec);
@@ -634,12 +675,11 @@ export default class MessageCreate {
     if (commandName !== 'roomdivision') return;
 
     let participatingVoiceChannelMemberList: {
-      userName: string,
-      userId: string,
-    }[] = client.voice.client.channels.cache.get(
-      this.discordBot.voiceChannelIdFor235ChatPlace,
-    ).members
-      .filter((member: typeof GuildMember) => member.user.bot === false)
+      userName: string;
+      userId: string;
+    }[] = client.voice.client.channels.cache
+      .get(this.discordBot.voiceChannelIdFor235ChatPlace)
+      .members.filter((member: typeof GuildMember) => member.user.bot === false)
       .map((member: typeof GuildMember) => {
         return {
           userName: member.user.globalName,
@@ -647,17 +687,20 @@ export default class MessageCreate {
         };
       });
 
-    const isParticipateVoiceChannelUsedCommandMember: boolean = participatingVoiceChannelMemberList
-      .some((participatingVoiceChannelMember: {
-        userName: string,
-        userId: string,
-      }) => participatingVoiceChannelMember.userId === message.author.id);
+    const isParticipateVoiceChannelUsedCommandMember: boolean =
+      participatingVoiceChannelMemberList.some(
+        (participatingVoiceChannelMember: { userName: string; userId: string }) =>
+          participatingVoiceChannelMember.userId === message.author.id,
+      );
 
     if (!isParticipateVoiceChannelUsedCommandMember) {
-      message.reply('235roomdivision コマンドは、【雑談１】ボイスチャンネルに参加しているメンバーが使用できるコマンドです。');
+      message.reply(
+        '235roomdivision コマンドは、【雑談１】ボイスチャンネルに参加しているメンバーが使用できるコマンドです。',
+      );
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -666,10 +709,13 @@ export default class MessageCreate {
     }
 
     if (participatingVoiceChannelMemberList.length < 10) {
-      message.reply('【雑談１】ボイスチャンネルに参加しているメンバーの人数が10人未満のため、分けることが出来ません！');
+      message.reply(
+        '【雑談１】ボイスチャンネルに参加しているメンバーの人数が10人未満のため、分けることが出来ません！',
+      );
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -692,8 +738,8 @@ export default class MessageCreate {
     }
 
     let duplicationCount: number = 100;
-    let halfMemberList: { userName: string, userId: string }[] = [];
-    let halfMemberList2: { userName: string, userId: string }[] = [];
+    let halfMemberList: { userName: string; userId: string }[] = [];
+    let halfMemberList2: { userName: string; userId: string }[] = [];
 
     while (duplicationCount >= 3) {
       // 初期化
@@ -713,35 +759,37 @@ export default class MessageCreate {
       }
 
       // 3人以上被ってないかチェック
-      duplicationCount = halfMemberList2.filter((participatingVoiceChannelMember: {
-        userName: string,
-        userId: string,
-      }) => {
-        return this.discordBot.dividedUserIdList.indexOf(
-          participatingVoiceChannelMember.userId,
-        ) !== -1;
-      }).length;
+      duplicationCount = halfMemberList2.filter(
+        (participatingVoiceChannelMember: { userName: string; userId: string }) => {
+          return (
+            this.discordBot.dividedUserIdList.indexOf(participatingVoiceChannelMember.userId) !== -1
+          );
+        },
+      ).length;
     }
 
     // 2個目の配列のメンバーを雑談２ボイスチャンネルに移動
-    const dividedUserNameList = halfMemberList.map((dividedMember: {
-      userName: string,
-      userId: string,
-    }) => dividedMember.userName);
+    const dividedUserNameList = halfMemberList.map(
+      (dividedMember: { userName: string; userId: string }) => dividedMember.userName,
+    );
 
-    const dividedUserNameList2 = halfMemberList2.map((dividedMember: {
-      userName: string,
-      userId: string,
-    }) => dividedMember.userName);
+    const dividedUserNameList2 = halfMemberList2.map(
+      (dividedMember: { userName: string; userId: string }) => dividedMember.userName,
+    );
 
-    const dividedUserIdList2 = halfMemberList2.map((dividedMember: {
-      userName: string,
-      userId: string,
-    }) => dividedMember.userId);
+    const dividedUserIdList2 = halfMemberList2.map(
+      (dividedMember: { userName: string; userId: string }) => dividedMember.userId,
+    );
 
     this.discordBot.dividedUserIdList = dividedUserIdList2;
 
-    setTimeout(() => message.reply(`このような結果になりました！\n\n**【雑談１】**\n------------------------------------------------------------\n${dividedUserNameList.join('\n')}\n------------------------------------------------------------\n\n**【雑談２】**\n------------------------------------------------------------\n${dividedUserNameList2.join('\n')}\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。`), 2_000);
+    setTimeout(
+      () =>
+        message.reply(
+          `このような結果になりました！\n\n**【雑談１】**\n------------------------------------------------------------\n${dividedUserNameList.join('\n')}\n------------------------------------------------------------\n\n**【雑談２】**\n------------------------------------------------------------\n${dividedUserNameList2.join('\n')}\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。`,
+        ),
+      2_000,
+    );
 
     setTimeout(() => {
       let divisionCount: number = 0;
@@ -749,18 +797,20 @@ export default class MessageCreate {
       const roomDivideTimer = setInterval(() => {
         switch (divisionCount) {
           case halfMemberList2.length:
-            message.delete()
+            message
+              .delete()
               .then(() => console.log('message deleting.'))
               .catch(() => console.log('message is deleted.'));
             clearInterval(roomDivideTimer);
             break;
 
           default:
-            client.guilds.cache.get(this.discordBot.serverIdFor235).members
-              .fetch(dividedUserIdList2[divisionCount])
-              .then((member: typeof GuildMember) => member.voice.setChannel(
-                this.discordBot.voiceChannelIdFor235ChatPlace2,
-              ));
+            client.guilds.cache
+              .get(this.discordBot.serverIdFor235)
+              .members.fetch(dividedUserIdList2[divisionCount])
+              .then((member: typeof GuildMember) =>
+                member.voice.setChannel(this.discordBot.voiceChannelIdFor235ChatPlace2),
+              );
 
             divisionCount += 1;
             break;
@@ -789,8 +839,8 @@ export default class MessageCreate {
     const memberJoinVoiceChannel = usedCommandMember.voice.channel;
 
     if (
-      (client.connection !== undefined)
-      && (client.connection.joinConfig.channelId === memberJoinVoiceChannel.id)
+      client.connection !== undefined &&
+      client.connection.joinConfig.channelId === memberJoinVoiceChannel.id
     ) {
       const embed = new EmbedBuilder()
         .setTitle('既に接続されています！')
@@ -801,7 +851,8 @@ export default class MessageCreate {
       message.reply({ embeds: [embed] });
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -810,10 +861,13 @@ export default class MessageCreate {
     }
 
     if (memberJoinVoiceChannel === null) {
-      message.reply('235joinコマンドを使用することで、使用したメンバーが参加しているボイスチャンネルに235botが参加して、そのボイスチャンネルの聞き専チャンネルに投稿されたテキストを読み上げます！\nボイスチャンネルに参加してから再度このスラッシュコマンドを使用していただくか、もしくはテキストで「235join」と入力していただければボイスチャンネルに参加します！');
+      message.reply(
+        '235joinコマンドを使用することで、使用したメンバーが参加しているボイスチャンネルに235botが参加して、そのボイスチャンネルの聞き専チャンネルに投稿されたテキストを読み上げます！\nボイスチャンネルに参加してから再度このスラッシュコマンドを使用していただくか、もしくはテキストで「235join」と入力していただければボイスチャンネルに参加します！',
+      );
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -822,10 +876,13 @@ export default class MessageCreate {
     }
 
     if (!memberJoinVoiceChannel.joinable || !memberJoinVoiceChannel.speakable) {
-      message.reply('参加先のボイスチャンネルに接続できなかったか、もしくは参加先のボイスチャンネルで音声を再生する権限がありませんでした；；');
+      message.reply(
+        '参加先のボイスチャンネルに接続できなかったか、もしくは参加先のボイスチャンネルで音声を再生する権限がありませんでした；；',
+      );
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -841,9 +898,8 @@ export default class MessageCreate {
       selfDeaf: true,
     });
 
-    const connectVoice = client.connectVoiceList[
-      Math.floor(Math.random() * client.connectVoiceList.length)
-    ];
+    const connectVoice =
+      client.connectVoiceList[Math.floor(Math.random() * client.connectVoiceList.length)];
 
     const filePath = './data/voice';
     const wavFile = `${filePath}/${usedCommandMember.user.id}.wav`;
@@ -862,7 +918,8 @@ export default class MessageCreate {
     message.reply({ embeds: [embed] });
 
     setTimeout(() => {
-      message.delete()
+      message
+        .delete()
         .then(() => console.log('message deleting.'))
         .catch(() => console.log('message is deleted.'));
     }, this.setTimeoutSec);
@@ -891,7 +948,8 @@ export default class MessageCreate {
       message.reply({ embeds: [embed] });
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -900,18 +958,21 @@ export default class MessageCreate {
     }
 
     if (
-      (memberJoinVoiceChannel === null)
-      || (this.discordBot.connection.joinConfig.channelId !== memberJoinVoiceChannel.id)
+      memberJoinVoiceChannel === null ||
+      this.discordBot.connection.joinConfig.channelId !== memberJoinVoiceChannel.id
     ) {
       const embed = new EmbedBuilder()
-        .setTitle('切断できるのは235botが入っているボイスチャンネルに参加しているメンバーだけです！')
+        .setTitle(
+          '切断できるのは235botが入っているボイスチャンネルに参加しているメンバーだけです！',
+        )
         .setColor('#FFCC00')
         .setTimestamp();
 
       message.reply({ embeds: [embed] });
 
       setTimeout(() => {
-        message.delete()
+        message
+          .delete()
           .then(() => console.log('message deleting.'))
           .catch(() => console.log('message is deleted.'));
       }, this.setTimeoutSec);
@@ -931,7 +992,8 @@ export default class MessageCreate {
     message.reply({ embeds: [embed] });
 
     setTimeout(() => {
-      message.delete()
+      message
+        .delete()
         .then(() => console.log('message deleting.'))
         .catch(() => console.log('message is deleted.'));
     }, this.setTimeoutSec);
@@ -947,45 +1009,67 @@ export default class MessageCreate {
    * @return {void}
    */
   private testCommand(message: typeof Message, commandName: string, commandList: string[]): void {
-    if ((commandName !== 'test') || (message.author.id !== this.discordBot.userIdForMaki) || (commandList.length === 0)) return;
+    if (
+      commandName !== 'test' ||
+      message.author.id !== this.discordBot.userIdForMaki ||
+      commandList.length === 0
+    )
+      return;
 
     switch (commandList[0]) {
       case 'birthday_for_235_members':
-        BirthdayFor235Member.findAll({ raw: true }).then((member: {
-          name: string,
-          user_id: string,
-          month: number,
-          date: number,
-        }[]) => console.log(member));
+        BirthdayFor235Member.findAll({ raw: true }).then(
+          (
+            member: {
+              name: string;
+              user_id: string;
+              month: number;
+              date: number;
+            }[],
+          ) => console.log(member),
+        );
 
         break;
       case 'birthday_for_million_members':
-        BirthdayForMillionMember.findAll({ raw: true }).then((member: {
-          name: string,
-          month: number,
-          date: number,
-          img: string,
-        }[]) => console.log(member));
+        BirthdayForMillionMember.findAll({ raw: true }).then(
+          (
+            member: {
+              name: string;
+              month: number;
+              date: number;
+              img: string;
+            }[],
+          ) => console.log(member),
+        );
 
         break;
       case 'delete_messages':
-        DeleteMessage.findAll({ raw: true }).then((data: {
-          message_id: string,
-          date: number,
-        }[]) => console.log(data));
+        DeleteMessage.findAll({ raw: true }).then(
+          (
+            data: {
+              message_id: string;
+              date: number;
+            }[],
+          ) => console.log(data),
+        );
 
         break;
       case 'dict_words':
-        DictWord.findAll({ raw: true }).then((data: {
-          word: string,
-          how_to_read: string,
-        }[]) => console.log(data));
+        DictWord.findAll({ raw: true }).then(
+          (
+            data: {
+              word: string;
+              how_to_read: string;
+            }[],
+          ) => console.log(data),
+        );
 
         break;
     }
 
     setTimeout(() => {
-      message.delete()
+      message
+        .delete()
         .then(() => console.log('message deleting.'))
         .catch(() => console.log('message is deleted.'));
     }, this.setTimeoutSec);
@@ -1008,7 +1092,7 @@ export default class MessageCreate {
     scheduledStartTime: Date,
     channelId: string,
     image: string | null = null,
-  ): Promise < string > {
+  ): Promise<string> {
     const guild = this.discordBot.guilds.cache.get(this.discordBot.serverIdFor235);
     const eventManager = new GuildScheduledEventManager(guild);
 

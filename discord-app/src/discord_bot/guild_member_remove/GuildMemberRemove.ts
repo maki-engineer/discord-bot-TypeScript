@@ -1,6 +1,7 @@
 const { Client, Member } = require('discord.js');
 const DiscordBot = require('../DiscordBot').default;
-const { BirthdayFor235Member } = require('../../../models/index').default;
+const BirthdayFor235MemberRepository =
+  require('../../../repositories/BirthdayFor235MemberRepository').default;
 
 /**
  * サーバーから誰かが退出した時に行う処理クラス
@@ -34,10 +35,17 @@ export default class GuildMemberRemove {
   private static delete235MemberBirthday(member: typeof Member, client: typeof Client): void {
     if (member.user.bot) return;
 
-    BirthdayFor235Member.delete235MemberBirthday(member.user.id)
-      .then(() => {
-        client.users.cache.get(client.userIdForMaki).send(`${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！`);
-        client.users.cache.get(client.userIdForUtatane).send(`${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！\nもし間違いがあった場合は報告をお願いします！`);
-      });
+    BirthdayFor235MemberRepository.delete235MemberBirthday(member.user.id).then(() => {
+      client.users.cache
+        .get(client.userIdForMaki)
+        .send(
+          `${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！`,
+        );
+      client.users.cache
+        .get(client.userIdForUtatane)
+        .send(
+          `${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！\nもし間違いがあった場合は報告をお願いします！`,
+        );
+    });
   }
 }

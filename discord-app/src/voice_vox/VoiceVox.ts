@@ -8,7 +8,7 @@ const {
   StreamType,
 } = require('@discordjs/voice');
 
-const { DictWord } = require('../../models/index').default;
+const DictWordRepository = require('../../repositories/DictWordRepository').default;
 
 /**
  * voicevoxを使って読み上げとかを行う処理クラス
@@ -112,7 +112,7 @@ export default class VoiceVox {
     const dictWordList: {
       word: string;
       how_to_read: string;
-    }[] = await DictWord.getDictWordList();
+    }[] = await DictWordRepository.getDictWordList();
 
     dictWordList.forEach((dictWordData: { word: string; how_to_read: string }) => {
       formattedMessageContent = formattedMessageContent.replace(
