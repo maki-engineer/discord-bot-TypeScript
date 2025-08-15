@@ -2,6 +2,7 @@ const fs = require('fs');
 const { default: axios } = require('axios');
 
 const {
+  AudioPlayerStatus,
   createAudioPlayer,
   createAudioResource,
   NoSubscriberBehavior,
@@ -67,6 +68,31 @@ export default class VoiceVox {
     player.play(resource);
 
     connection.subscribe(player);
+  }
+
+  /**
+   * 退出アナウンスを完全に読み上げた後にボイスチャンネルから切断
+   *
+   * @param {string} wavFile 生成したwavファイル
+   * @param {any} connection ボイスチャンネルオブジェクト
+   *
+   * @return {void}
+   */
+  static playDisconnectAnnounce(wavFile: string, connection: any): void {
+    const resource = createAudioResource(wavFile, { inputType: StreamType.Arbitrary });
+    const player = createAudioPlayer({
+      behaviors: {
+        noSubscriber: NoSubscriberBehavior.Pause,
+      },
+    });
+
+    player.play(resource);
+
+    connection.subscribe(player);
+
+    player.once(AudioPlayerStatus.Idle, () => {
+      connection.destroy();
+    });
   }
 
   /**

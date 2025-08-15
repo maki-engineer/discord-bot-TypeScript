@@ -550,12 +550,8 @@ export default class Ready {
     if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
 
     await VoiceVox.generateAudioFile(disconnectVoice, wavFile, client.speakerId);
-    VoiceVox.play(wavFile, client.connection);
-
-    setTimeout(() => {
-      client.connection.destroy();
-      this.discordBot.connection = undefined;
-    }, 15_000);
+    VoiceVox.playDisconnectAnnounce(wavFile, client.connection);
+    this.discordBot.connection = undefined;
   }
 
   /**
