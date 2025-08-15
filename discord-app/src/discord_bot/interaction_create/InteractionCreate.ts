@@ -13,10 +13,17 @@ const DictWordRepository = require('../../../repositories/DictWordRepository').d
 export default class InteractionCreate {
   private discordBot: typeof DiscordBot;
 
+  private voiceVox: typeof VoiceVox;
+
   private readonly setTimeoutSec = 180_000;
 
-  constructor(discordBot: typeof DiscordBot) {
+  /**
+   * @param {DiscordBot} discordBot DiscordBotクラス
+   * @param {VoiceVox} voiceVox VoiceVoxクラス
+   */
+  constructor(discordBot: typeof DiscordBot, voiceVox: typeof VoiceVox) {
     this.discordBot = discordBot;
+    this.voiceVox = voiceVox;
   }
 
   /**
@@ -181,6 +188,8 @@ export default class InteractionCreate {
       selfDeaf: true,
     });
 
+    this.discordBot.connection.subscribe(this.discordBot.audioPlayer);
+
     const connectVoice =
       client.connectVoiceList[Math.floor(Math.random() * client.connectVoiceList.length)];
 
@@ -190,7 +199,8 @@ export default class InteractionCreate {
     if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
 
     await VoiceVox.generateAudioFile(connectVoice, wavFile, client.speakerId);
-    VoiceVox.play(wavFile, client.connection);
+
+    this.voiceVox.addWavFileToQueue(wavFile);
 
     const embed = new EmbedBuilder()
       .setTitle('接続されました！')
