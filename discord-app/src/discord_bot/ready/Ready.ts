@@ -118,8 +118,9 @@ export default class Ready {
 
       if (
         this.discordBot.channels.cache.get(this.discordBot.channelIdFor235ChatPlace) === undefined
-      )
+      ) {
         return;
+      }
 
       cron.schedule('0 15 3 * * *', () =>
         Ready.deleteOldMessageFrom235ChatPlaceChannel(this.discordBot),
@@ -128,7 +129,7 @@ export default class Ready {
       cron.schedule('0 30 3 * * *', () => this.celebrateMillionMember(this.discordBot));
       cron.schedule('0 0 4 * * *', () => this.celebrate235ProductionAnniversary(this.discordBot));
       cron.schedule('0 0 4 * * *', () => this.celebrateMillionLiveAnniversary(this.discordBot));
-      cron.schedule('0 15 4 * * *', () => this.send235MemberBirthdayListToUtatane(this.discordBot));
+      cron.schedule('0 15 4 1 * *', () => this.send235MemberBirthdayListToUtatane(this.discordBot));
       cron.schedule('0 50 22,4,10,16 * * *', () => this.disconnectVoiceChannel(this.discordBot));
       cron.schedule('0 55 22,4,10,16 * * *', () => process.exit());
     });
@@ -491,13 +492,9 @@ export default class Ready {
    *
    * @param {Client} client Clientクラス
    *
-   * @return {void}
+   * @return {Promise<void>}
    */
-  private send235MemberBirthdayListToUtatane(client: typeof Client): void {
-    const todayDateList = Ready.getTodayDateList();
-
-    if (todayDateList.todayDate !== 1) return;
-
+  private async send235MemberBirthdayListToUtatane(client: typeof Client): Promise<void> {
     let text: string = '名前,誕生日\n';
     const csvPath = './data/csv';
     const csvFile = `${csvPath}/birthday_for_235_members.csv`;
@@ -506,17 +503,16 @@ export default class Ready {
 
     fs.writeFileSync(csvFile, text);
 
-    BirthdayFor235MemberRepository.get235MemberBirthdayListForCSV().then(
-      (memberList: { name: string; month: number; date: number }[]) => {
-        memberList.forEach((member: { name: string; month: number; date: number }) => {
-          text += `${member.name}さん,${member.month}月${member.date}日\n`;
+    const memberList = await BirthdayFor235MemberRepository.get235MemberBirthdayListForCSV();
 
-          fs.writeFileSync(csvFile, text);
-        });
-      },
-    );
+    memberList.forEach((member: { name: string; month: number; date: number }) => {
+      text += `${member.name}さん,${member.month}月${member.date}日\n`;
+    });
 
-    client.users.cache.get(this.discordBot.userIdForUtatane).send({
+    fs.writeFileSync(csvFile, text);
+
+    const utataneUser = await client.users.fetch(this.discordBot.userIdForUtatane);
+    utataneUser.send({
       content:
         'お疲れ様です！新しい月が始まりましたね！✨\n235プロダクションメンバーの誕生日リストをお送りします！\nもしまだ追加されていないメンバー、もしくはすでに退出されているメンバーがいた場合は報告をお願いします！🙇‍♂️',
       files: [
@@ -527,7 +523,8 @@ export default class Ready {
       ],
     });
 
-    client.users.cache.get(this.discordBot.userIdForMaki).send({
+    const makiUser = await client.users.fetch(this.discordBot.userIdForMaki);
+    makiUser.send({
       content: '235プロダクションメンバーの誕生日リストをうたたねさんに送りました！',
       files: [
         {
