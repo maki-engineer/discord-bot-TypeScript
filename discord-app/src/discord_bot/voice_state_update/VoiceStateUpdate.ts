@@ -9,8 +9,15 @@ const VoiceVox = require('../../voice_vox/VoiceVox').default;
 export default class VoiceStateUpdate {
   private discordBot: typeof DiscordBot;
 
-  constructor(discordBot: typeof DiscordBot) {
+  private voiceVox: typeof VoiceVox;
+
+  /**
+   * @param {DiscordBot} discordBot DiscordBotクラス
+   * @param {VoiceVox} voiceVox VoiceVoxクラス
+   */
+  constructor(discordBot: typeof DiscordBot, voiceVox: typeof VoiceVox) {
     this.discordBot = discordBot;
+    this.voiceVox = voiceVox;
   }
 
   /**
@@ -21,7 +28,7 @@ export default class VoiceStateUpdate {
   public voiceStateUpdateEvent(): void {
     this.discordBot.on('voiceStateUpdate', async (stateMember: typeof VoiceState) => {
       this.disconnectVoiceChannelFor235Bot(this.discordBot, stateMember);
-      await VoiceStateUpdate.announceJoinedVoiceChannelFrom235Member(this.discordBot, stateMember);
+      await this.announceJoinedVoiceChannelFrom235Member(this.discordBot, stateMember);
     });
   }
 
@@ -40,16 +47,16 @@ export default class VoiceStateUpdate {
     if (stateMember.channelId === null) return;
 
     const participatingVoiceChannelMemberList = client.voice.client.channels.cache
-      .get(stateMember.channelId).members
-      .filter((member: typeof GuildMember) => member.user.bot === false)
+      .get(stateMember.channelId)
+      .members.filter((member: typeof GuildMember) => member.user.bot === false)
       .map((member: typeof GuildMember) => member.user.id);
 
     if (client.connection === undefined) return;
 
     // 0人になったチャンネルが235botが参加している場所かどうか
     if (
-      (stateMember.channelId !== client.connection.joinConfig.channelId)
-      || (participatingVoiceChannelMemberList.length > 0)
+      stateMember.channelId !== client.connection.joinConfig.channelId ||
+      participatingVoiceChannelMemberList.length > 0
     ) {
       return;
     }
@@ -67,24 +74,22 @@ export default class VoiceStateUpdate {
    *
    * @return {void}
    */
-  private static async announceJoinedVoiceChannelFrom235Member(
+  private async announceJoinedVoiceChannelFrom235Member(
     client: typeof Client,
     stateMember: typeof VoiceState,
   ) {
     // 退出タイミング or 235botがボイスチャンネルに参加していない場合
-    if (
-      (stateMember.channelId !== null)
-      || (client.connection === undefined)
-    ) return;
+    if (stateMember.channelId !== null || client.connection === undefined) return;
 
     const joinedVoiceChannelMember = await stateMember.guild.members.fetch(stateMember.id);
     const joinedVoiceChannelId = joinedVoiceChannelMember.voice.channel.id;
 
     // 235botがいるボイスチャンネルじゃなかった or botが参加してきた場合
     if (
-      (joinedVoiceChannelMember.user.bot === true)
-      || (joinedVoiceChannelId !== client.connection.joinConfig.channelId)
-    ) return;
+      joinedVoiceChannelMember.user.bot === true ||
+      joinedVoiceChannelId !== client.connection.joinConfig.channelId
+    )
+      return;
 
     const announceVoiceList = [
       `${joinedVoiceChannelMember.user.globalName}さんが来ました！`,
@@ -102,7 +107,9 @@ export default class VoiceStateUpdate {
 
     let readText = VoiceVox.formatMessage(announceVoice);
     readText = await VoiceVox.replaceWord(readText);
+
     await VoiceVox.generateAudioFile(readText, wavFile, client.speakerId);
-    VoiceVox.play(wavFile, client.connection);
+
+    this.voiceVox.addWavFileToQueue(wavFile);
   }
 }

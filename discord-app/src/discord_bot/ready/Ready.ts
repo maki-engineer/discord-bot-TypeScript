@@ -1,6 +1,7 @@
 const { Client, Message } = require('discord.js');
 const fs = require('fs');
 const cron = require('node-cron');
+const { AudioPlayerStatus } = require('@discordjs/voice');
 const BirthdayForMillionMemberRepository =
   require('../../../repositories/BirthdayForMillionMemberRepository').default;
 const BirthdayFor235MemberRepository =
@@ -14,6 +15,8 @@ const VoiceVox = require('../../voice_vox/VoiceVox').default;
  */
 export default class Ready {
   private discordBot: typeof DiscordBot;
+
+  private voiceVox: typeof VoiceVox;
 
   private readonly anniversaryDataFor235Production = {
     name: '『アイドルマスター ミリオンライブ！ シアターデイズ』',
@@ -94,8 +97,13 @@ export default class Ready {
     '二階堂千鶴',
   ];
 
-  constructor(discordBot: typeof DiscordBot) {
+  /**
+   * @param {DiscordBot} discordBot DiscordBotクラス
+   * @param {VoiceVox} voiceVox VoiceVoxクラス
+   */
+  constructor(discordBot: typeof DiscordBot, voiceVox: typeof VoiceVox) {
     this.discordBot = discordBot;
+    this.voiceVox = voiceVox;
   }
 
   /**
@@ -550,8 +558,13 @@ export default class Ready {
     if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
 
     await VoiceVox.generateAudioFile(disconnectVoice, wavFile, client.speakerId);
-    VoiceVox.playDisconnectAnnounce(wavFile, client.connection);
-    this.discordBot.connection = undefined;
+
+    this.voiceVox.playDisconnectAnnounce(wavFile);
+
+    this.discordBot.audioPlayer.once(AudioPlayerStatus.Idle, () => {
+      this.discordBot.connection.destroy();
+      this.discordBot.connection = undefined;
+    });
   }
 
   /**

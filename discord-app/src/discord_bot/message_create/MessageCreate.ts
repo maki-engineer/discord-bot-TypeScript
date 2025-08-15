@@ -25,6 +25,8 @@ const { BirthdayFor235Member, BirthdayForMillionMember, DeleteMessage, DictWord 
 export default class MessageCreate {
   private discordBot: typeof DiscordBot;
 
+  private voiceVox: typeof VoiceVox;
+
   private readonly prefix = '235';
 
   private readonly setTimeoutSec = 15_000;
@@ -47,8 +49,13 @@ export default class MessageCreate {
     '<:__:794969688982552607>',
   ];
 
-  constructor(discordBot: typeof DiscordBot) {
+  /**
+   * @param {DiscordBot} discordBot DiscordBotクラス
+   * @param {VoiceVox} voiceVox VoiceVoxクラス
+   */
+  constructor(discordBot: typeof DiscordBot, voiceVox: typeof VoiceVox) {
     this.discordBot = discordBot;
+    this.voiceVox = voiceVox;
   }
 
   /**
@@ -244,8 +251,10 @@ export default class MessageCreate {
 
     let readText: string = VoiceVox.formatMessage(message.content);
     readText = await VoiceVox.replaceWord(readText);
+
     await VoiceVox.generateAudioFile(readText, wavFile, speakerId);
-    VoiceVox.play(wavFile, client.connection);
+
+    this.voiceVox.addWavFileToQueue(wavFile);
   }
 
   /**
@@ -898,6 +907,8 @@ export default class MessageCreate {
       selfDeaf: true,
     });
 
+    this.discordBot.connection.subscribe(this.discordBot.audioPlayer);
+
     const connectVoice =
       client.connectVoiceList[Math.floor(Math.random() * client.connectVoiceList.length)];
 
@@ -907,7 +918,8 @@ export default class MessageCreate {
     if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
 
     await VoiceVox.generateAudioFile(connectVoice, wavFile, client.speakerId);
-    VoiceVox.play(wavFile, client.connection);
+
+    this.voiceVox.addWavFileToQueue(wavFile);
 
     const embed = new EmbedBuilder()
       .setTitle('接続されました！')
