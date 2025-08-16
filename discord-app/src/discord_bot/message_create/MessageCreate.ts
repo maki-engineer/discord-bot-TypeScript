@@ -11,6 +11,7 @@ const {
 const { joinVoiceChannel } = require('@discordjs/voice');
 const fs = require('fs');
 const DiscordBot = require('../DiscordBot').default;
+const Gemini = require('../../gemini/Gemini').default;
 const VoiceVox = require('../../voice_vox/VoiceVox').default;
 const BirthdayFor235MemberRepository =
   require('../../../repositories/BirthdayFor235MemberRepository').default;
@@ -19,13 +20,19 @@ const DeleteMessageRepository = require('../../../repositories/DeleteMessageRepo
 const { BirthdayFor235Member, BirthdayForMillionMember, DeleteMessage, DictWord } =
   require('../../../models/index').default;
 
+require('dotenv').config();
+
 /**
  * メッセージが送信された時に行う処理クラス
  */
 export default class MessageCreate {
   private discordBot: typeof DiscordBot;
 
+  private gemini: typeof Gemini;
+
   private voiceVox: typeof VoiceVox;
+
+  private readonly userIdFor235Bot = process.env.USER_ID_FOR_235_BOT;
 
   private readonly prefix = '235';
 
@@ -56,6 +63,8 @@ export default class MessageCreate {
   constructor(discordBot: typeof DiscordBot, voiceVox: typeof VoiceVox) {
     this.discordBot = discordBot;
     this.voiceVox = voiceVox;
+
+    this.gemini = new Gemini();
   }
 
   /**
@@ -79,7 +88,7 @@ export default class MessageCreate {
       // botからのメッセージは無視
       if (message.author.bot) return;
 
-      // chatgpt用
+      await this.generateResponseForGemini(message, this.discordBot);
 
       await this.readTextForVoiceVox(this.discordBot, message);
 
@@ -193,6 +202,45 @@ export default class MessageCreate {
     const storeDate = today.getDate();
 
     await DeleteMessageRepository.storeMessage(message.id, storeDate);
+  }
+
+  /**
+   * geminiを使って235bot宛に来た質問に対して回答文を生成
+   *
+   * @param {Message} message Messageクラス
+   * @param {Client} client Clientクラス
+   *
+   * @return {Promise<void>}
+   */
+  private async generateResponseForGemini(
+    message: typeof Message,
+    client: typeof Client,
+  ): Promise<void> {
+    if (!message.mentions.has(this.userIdFor235Bot)) return;
+
+    let formattedMessage = message.content.replace(/<@!?(\d+)>/g, '').trim();
+    formattedMessage = formattedMessage.replace(VoiceVox.emojiRegex(), '');
+
+    const introductionDataList = await client.channels.cache
+      .get(client.channelIdFor235Introduction)
+      .messages.fetch();
+    const introductionData = introductionDataList.map((m: any) => m.content).join('\n');
+
+    message.channel.sendTyping();
+
+    const response = await this.gemini.generateResponseForGemini(
+      formattedMessage,
+      introductionData,
+    );
+
+    message.reply(response);
+
+    setTimeout(() => {
+      message
+        .delete()
+        .then(() => console.log('message deleting.'))
+        .catch(() => console.log('message is deleted.'));
+    }, this.setTimeoutSec);
   }
 
   /**
