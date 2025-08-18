@@ -239,7 +239,7 @@ export default class MessageCreate {
     let formattedMessageText = '';
 
     responseList.forEach((text: string) => {
-      if (formattedMessageText.length + text.length > 2000) {
+      if (formattedMessageText.length + text.length > 1996) {
         formattedMessageList.push(formattedMessageText);
         formattedMessageText = `${text}\n\n`;
       } else {
