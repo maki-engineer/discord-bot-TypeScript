@@ -228,19 +228,48 @@ export default class MessageCreate {
 
     message.channel.sendTyping();
 
-    const response = await this.gemini.generateResponseForGemini(
+    const response: string = await this.gemini.generateResponseForGemini(
       formattedMessage,
       introductionData,
     );
 
-    message.reply(response);
+    const responseList = response.split('\n\n');
 
-    setTimeout(() => {
-      message
-        .delete()
-        .then(() => console.log('message deleting.'))
-        .catch(() => console.log('message is deleted.'));
-    }, this.setTimeoutSec);
+    const formattedMessageList: string[] = [];
+    let formattedMessageText = '';
+
+    responseList.forEach((text: string) => {
+      if (formattedMessageText.length + text.length > 2000) {
+        formattedMessageList.push(formattedMessageText);
+        formattedMessageText = `${text}\n\n`;
+      } else {
+        formattedMessageText += `${text}\n\n`;
+      }
+    });
+
+    if (formattedMessageText.length > 0) {
+      formattedMessageList.push(formattedMessageText);
+    }
+
+    let geminiReplyIndex = 0;
+
+    const geminiReplyTimer = setInterval(() => {
+      if (geminiReplyIndex === formattedMessageList.length) {
+        clearInterval(geminiReplyTimer);
+
+        setTimeout(() => {
+          message
+            .delete()
+            .then(() => console.log('message deleting.'))
+            .catch(() => console.log('message is deleted.'));
+        }, this.setTimeoutSec);
+
+        return;
+      }
+
+      message.reply(formattedMessageList[geminiReplyIndex]);
+      geminiReplyIndex += 1;
+    }, 4_000);
   }
 
   /**
