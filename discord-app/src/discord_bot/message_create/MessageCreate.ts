@@ -239,11 +239,13 @@ export default class MessageCreate {
     let formattedMessageText = '';
 
     responseList.forEach((text: string) => {
-      if (formattedMessageText.length + text.length > 1996) {
+      const textWithBreak = `${text}\n\n`;
+
+      if (formattedMessageText.length + textWithBreak.length > 2000) {
         formattedMessageList.push(formattedMessageText);
-        formattedMessageText = `${text}\n\n`;
+        formattedMessageText = textWithBreak;
       } else {
-        formattedMessageText += `${text}\n\n`;
+        formattedMessageText += textWithBreak;
       }
     });
 
