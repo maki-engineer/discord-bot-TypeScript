@@ -1,4 +1,5 @@
-const { BirthdayForMillionMember } = require('../models/index').default;
+import { Transaction } from 'sequelize';
+import db from '../models/index';
 
 export default class BirthdayForMillionMemberRepository {
   /**
@@ -6,15 +7,19 @@ export default class BirthdayForMillionMemberRepository {
    *
    * @param {number} month 月
    * @param {number} date 日
-   * @param {any | null} transaction ユニットテストをする時に指定
+   * @param {Transaction | null} transaction ユニットテストをする時に指定
    *
-   * @return {object}
+   * @return {Promise<BirthdayForMillionMember[]>}
    */
-  static async getMillionMemberBirthdayList(month: number, date: number, transaction = null) {
+  static async getMillionMemberBirthdayList(
+    month: number,
+    date: number,
+    transaction: Transaction | null = null,
+  ) {
     const options: {
       where: { month: number; date: number };
       raw: boolean;
-      transaction?: any;
+      transaction?: Transaction;
     } = {
       where: {
         month,
@@ -27,6 +32,6 @@ export default class BirthdayForMillionMemberRepository {
       options.transaction = transaction;
     }
 
-    return await BirthdayForMillionMember.findAll(options);
+    return db.BirthdayForMillionMember.findAll(options);
   }
 }

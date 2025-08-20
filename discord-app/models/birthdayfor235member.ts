@@ -1,4 +1,4 @@
-const { Sequelize, Model, DataTypes } = require('sequelize');
+import { Sequelize, Model, DataTypes } from 'sequelize';
 
 export default class BirthdayFor235Member extends Model {
   public name!: string;
@@ -11,7 +11,7 @@ export default class BirthdayFor235Member extends Model {
 
   public speaker_id!: number;
 
-  static initialize(sequelize: typeof Sequelize) {
+  static initialize(sequelize: Sequelize) {
     this.init(
       {
         name: {

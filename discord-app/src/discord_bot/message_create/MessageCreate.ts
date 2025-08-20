@@ -20,8 +20,6 @@ const DeleteMessageRepository = require('../../../repositories/DeleteMessageRepo
 const { BirthdayFor235Member, BirthdayForMillionMember, DeleteMessage, DictWord } =
   require('../../../models/index').default;
 
-require('dotenv').config();
-
 /**
  * メッセージが送信された時に行う処理クラス
  */

@@ -1,5 +1,5 @@
-const { Sequelize } = require('sequelize');
-const { BirthdayFor235Member } = require('../models/index').default;
+import { Op, Transaction, WhereOptions } from 'sequelize';
+import db from '../models/index';
 
 export default class BirthdayFor235MemberRepository {
   /**
@@ -8,24 +8,24 @@ export default class BirthdayFor235MemberRepository {
    * @param {string} userId ユーザーID
    * @param {number} month 月
    * @param {number} date 日
-   * @param {any | null} transaction ユニットテストをする時に指定
+   * @param {Transaction | null} transaction ユニットテストをする時に指定
    *
-   * @return {object}
+   * @return {Promise<BirthdayFor235Member[]>}
    */
   static async get235MemberBirthdayList(
     userId: string,
     month: number,
     date: number,
-    transaction = null,
+    transaction: Transaction | null = null,
   ) {
     const options: {
-      where: { user_id: { [x: number]: string }; month: number; date: number };
+      where: WhereOptions;
       raw: boolean;
-      transaction?: any;
+      transaction?: Transaction;
     } = {
       where: {
         user_id: {
-          [Sequelize.Op.ne]: userId,
+          [Op.ne]: userId,
         },
         month,
         date,
@@ -37,28 +37,31 @@ export default class BirthdayFor235MemberRepository {
       options.transaction = transaction;
     }
 
-    return await BirthdayFor235Member.findAll(options);
+    return db.BirthdayFor235Member.findAll(options);
   }
 
   /**
    * 今月誕生日の235プロダクションメンバーを昇順で取得
    *
    * @param {number} month 月
-   * @param {any | null} transaction ユニットテストをする時に指定
+   * @param {Transaction | null} transaction ユニットテストをする時に指定
    *
-   * @return {object}
+   * @return {Promise<BirthdayFor235Member[]>}
    */
-  static async getThisMonthBirthdayMember(month: number, transaction = null) {
+  static async getThisMonthBirthdayMember(month: number, transaction: Transaction | null = null) {
     const options: {
       where: { month: number };
-      order: [string[], string[]];
+      order: [string, 'ASC' | 'DESC'][];
       raw: boolean;
-      transaction?: any;
+      transaction?: Transaction;
     } = {
       where: {
         month,
       },
-      order: [['month'], ['date']],
+      order: [
+        ['month', 'ASC'],
+        ['date', 'ASC'],
+      ],
       raw: true,
     };
 
@@ -66,25 +69,28 @@ export default class BirthdayFor235MemberRepository {
       options.transaction = transaction;
     }
 
-    return await BirthdayFor235Member.findAll(options);
+    return db.BirthdayFor235Member.findAll(options);
   }
 
   /**
    * CSVファイルに出力するための235メンバーの誕生日リストを取得
    *
-   * @param {any | null} transaction ユニットテストをする時に指定
+   * @param {Transaction | null} transaction ユニットテストをする時に指定
    *
-   * @return {object}
+   * @return {Promise<BirthdayFor235Member[]>}
    */
-  static async get235MemberBirthdayListForCSV(transaction = null) {
+  static async get235MemberBirthdayListForCSV(transaction: Transaction | null = null) {
     const options: {
       attributes: string[];
-      order: [string[], string[]];
+      order: [string, 'ASC' | 'DESC'][];
       raw: boolean;
-      transaction?: any;
+      transaction?: Transaction;
     } = {
       attributes: ['name', 'month', 'date'],
-      order: [['month'], ['date']],
+      order: [
+        ['month', 'ASC'],
+        ['date', 'ASC'],
+      ],
       raw: true,
     };
 
@@ -92,21 +98,24 @@ export default class BirthdayFor235MemberRepository {
       options.transaction = transaction;
     }
 
-    return await BirthdayFor235Member.findAll(options);
+    return db.BirthdayFor235Member.findAll(options);
   }
 
   /**
    * テキストを読み上げる対象のチャンネルにテキストを入力した235プロダクションメンバーの speaker_id を取得
    *
    * @param {string} userId メンバーのユーザーID
-   * @param {any | null} transaction ユニットテストをする時に指定
+   * @param {Transaction | null} transaction ユニットテストをする時に指定
    *
-   * @param {string | null}
+   * @param {Promise<string | null>}
    */
-  static async getSpeakerIdFromMessageSender(userId: string, transaction = null) {
+  static async getSpeakerIdFromMessageSender(
+    userId: string,
+    transaction: Transaction | null = null,
+  ) {
     const options: {
       where: { user_id: string };
-      transaction?: any;
+      transaction?: Transaction;
     } = {
       where: { user_id: userId },
     };
@@ -115,7 +124,7 @@ export default class BirthdayFor235MemberRepository {
       options.transaction = transaction;
     }
 
-    const foundData = await BirthdayFor235Member.findOne(options);
+    const foundData = await db.BirthdayFor235Member.findOne(options);
 
     if (foundData === null) {
       return null;
@@ -131,14 +140,16 @@ export default class BirthdayFor235MemberRepository {
    * @param {string} userId ユーザーID
    * @param {number} month 月
    * @param {number} date 日
-   * @param {any | null} transaction ユニットテストをする時に指定
+   * @param {Transaction | null} transaction ユニットテストをする時に指定
+   *
+   * @return {Promise<BirthdayFor235Member>}
    */
   static async registNew235MemberBirthday(
     userName: string,
     userId: string,
     month: number,
     date: number,
-    transaction = null,
+    transaction: Transaction | null = null,
   ) {
     const insertData = {
       name: userName,
@@ -148,10 +159,10 @@ export default class BirthdayFor235MemberRepository {
     };
 
     if (transaction) {
-      return await BirthdayFor235Member.create(insertData, { transaction });
+      return db.BirthdayFor235Member.create(insertData, { transaction });
     }
 
-    return await BirthdayFor235Member.create(insertData);
+    return db.BirthdayFor235Member.create(insertData);
   }
 
   /**
@@ -159,12 +170,14 @@ export default class BirthdayFor235MemberRepository {
    *
    * @param {string} userId メンバーのユーザーID
    * @param {number} speakerId セットするVOICEVOXの speaker_id
-   * @param {any | null} transaction ユニットテストをする時に指定
-   *
-   * @return {void}
+   * @param {Transaction | null} transaction ユニットテストをする時に指定
    */
-  static async setSpeakerId(userId: string, speakerId: number, transaction = null) {
-    const updateData: { where: { user_id: string }; transaction?: any } = {
+  static async setSpeakerId(
+    userId: string,
+    speakerId: number,
+    transaction: Transaction | null = null,
+  ) {
+    const updateData: { where: { user_id: string }; transaction?: Transaction } = {
       where: {
         user_id: userId,
       },
@@ -174,19 +187,19 @@ export default class BirthdayFor235MemberRepository {
       updateData.transaction = transaction;
     }
 
-    await BirthdayFor235Member.update({ speaker_id: speakerId }, updateData);
+    await db.BirthdayFor235Member.update({ speaker_id: speakerId }, updateData);
   }
 
   /**
    * 指定された235プロダクションメンバーの誕生日を削除
    *
    * @param {string} userId メンバーのユーザーID
-   * @param {any | null} transaction ユニットテストをする時に指定
+   * @param {Transaction | null} transaction ユニットテストをする時に指定
    *
-   * @return {number}
+   * @return {Promise<number>}
    */
-  static async delete235MemberBirthday(userId: string, transaction = null) {
-    const deleteData: { where: { user_id: string }; transaction?: any } = {
+  static async delete235MemberBirthday(userId: string, transaction: Transaction | null = null) {
+    const deleteData: { where: { user_id: string }; transaction?: Transaction } = {
       where: {
         user_id: userId,
       },
@@ -196,6 +209,6 @@ export default class BirthdayFor235MemberRepository {
       deleteData.transaction = transaction;
     }
 
-    return await BirthdayFor235Member.destroy(deleteData);
+    return db.BirthdayFor235Member.destroy(deleteData);
   }
 }

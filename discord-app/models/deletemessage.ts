@@ -1,11 +1,11 @@
-const { Sequelize, Model, DataTypes } = require('sequelize');
+import { Sequelize, Model, DataTypes } from 'sequelize';
 
 export default class DeleteMessage extends Model {
   public message_id!: string;
 
   public date!: number;
 
-  static initialize(sequelize: typeof Sequelize) {
+  static initialize(sequelize: Sequelize) {
     this.init(
       {
         message_id: {

@@ -1,12 +1,17 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-require('dotenv').config();
+type ErrorProps = {
+  response: {
+    status: number;
+  };
+  message: string;
+};
 
 /**
  * Geminiを使ってチャット機能を実装するためのクラス
  */
 export default class Gemini {
-  private readonly geminiApiKey = process.env.GEMINI_API_KEY;
+  private readonly geminiApiKey = process.env.GEMINI_API_KEY!;
 
   private genAI;
 
@@ -42,8 +47,10 @@ export default class Gemini {
       const result = await this.model.generateContent(prompt);
 
       return result.response.text();
-    } catch (error: any) {
-      if (error.response?.status === 429) {
+    } catch (err) {
+      const error = err as ErrorProps;
+
+      if (error.response.status === 429) {
         return 'Gemini APIの利用上限に達してしまいました...orz\nしばらく時間を置いてから再度お試しください！';
       }
 

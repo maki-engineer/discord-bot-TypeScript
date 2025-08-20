@@ -1,44 +1,44 @@
-const { Client, GatewayIntentBits } = require('discord.js');
-const { createAudioPlayer, NoSubscriberBehavior } = require('@discordjs/voice');
-const Ready = require('./ready/Ready').default;
-const InteractionCreate = require('./interaction_create/InteractionCreate').default;
-const MessageCreate = require('./message_create/MessageCreate').default;
-const GuildMemberRemove = require('./guild_member_remove/GuildMemberRemove').default;
-const VoiceStateUpdate = require('./voice_state_update/VoiceStateUpdate').default;
-const VoiceVox = require('../voice_vox/VoiceVox').default;
+import type { VoiceConnection as VoiceConnectionType } from '@discordjs/voice';
 
-require('dotenv').config();
+import { createAudioPlayer, NoSubscriberBehavior } from '@discordjs/voice';
+import { Client, GatewayIntentBits } from 'discord.js';
+import Ready from './ready/Ready';
+import InteractionCreate from './interaction_create/InteractionCreate';
+import MessageCreate from './message_create/MessageCreate';
+import GuildMemberRemove from './guild_member_remove/GuildMemberRemove';
+import VoiceStateUpdate from './voice_state_update/VoiceStateUpdate';
+import VoiceVox from '../voice_vox/VoiceVox';
 
 /**
  * 235botクラス
  * ここには主に235botを動かすための基本的な初期設定や起動させるためのメソッドなどが書いてある。
  */
 export default class DiscordBot extends Client {
-  private _celebrateMillionMemberReactionEmoji: string = '';
+  celebrateMillionMemberReactionEmoji: string = '';
 
-  private _isReactionCelebrate235MemberMessage: boolean = true;
+  isReactionCelebrate235MemberMessage: boolean = true;
 
-  private _usedMaleEventCommandReactionCount: number = 0;
+  usedMaleEventCommandReactionCount: number = 0;
 
-  private _dividedUserIdList: string[] = [];
+  dividedUserIdList: string[] = [];
 
-  private _connection: any;
+  connection: VoiceConnectionType | undefined;
 
-  private _speakerId: string = '62';
+  speakerId: string = '62';
 
-  private _wavFileQueue: string[] = [];
+  wavFileQueue: string[] = [];
 
-  private _isPlaying = false;
+  isPlaying = false;
 
-  private readonly discordToken = process.env.DISCORD_TOKEN;
+  readonly discordToken = process.env.DISCORD_TOKEN!;
 
-  private readonly _audioPlayer = createAudioPlayer({
+  readonly audioPlayer = createAudioPlayer({
     behaviors: {
       noSubscriber: NoSubscriberBehavior.Pause,
     },
   });
 
-  private readonly _connectVoiceList = [
+  readonly connectVoiceList = [
     '接続されました！',
     '私が...来た...！！',
     'ふみこボットの登場だ～！！',
@@ -46,7 +46,7 @@ export default class DiscordBot extends Client {
     'ふふ...私の出番が来たようですね...',
   ];
 
-  private readonly _commandList = [
+  readonly commandList = [
     {
       name: '235birthday',
       description:
@@ -122,28 +122,27 @@ export default class DiscordBot extends Client {
     },
   ];
 
-  private readonly _serverIdFor235 = process.env.SERVER_ID_FOR_235;
+  readonly serverIdFor235 = process.env.SERVER_ID_FOR_235!;
 
-  private readonly _channelIdFor235ChatPlace = process.env.CHANNEL_ID_FOR_235_CHAT_PLACE;
+  readonly channelIdFor235ChatPlace = process.env.CHANNEL_ID_FOR_235_CHAT_PLACE!;
 
-  private readonly _channelIdFor235Introduction = process.env.CHANNEL_ID_FOR_235_INTRODUCTION;
+  readonly channelIdFor235Introduction = process.env.CHANNEL_ID_FOR_235_INTRODUCTION!;
 
-  private readonly _channelIdFor235ListenOnly = process.env.CHANNEL_ID_FOR_235_LISTEN_ONLY;
+  readonly channelIdFor235ListenOnly = process.env.CHANNEL_ID_FOR_235_LISTEN_ONLY!;
 
-  private readonly _channelIdFor235ListenOnly2 = process.env.CHANNEL_ID_FOR_235_LISTEN_ONLY_2;
+  readonly channelIdFor235ListenOnly2 = process.env.CHANNEL_ID_FOR_235_LISTEN_ONLY_2!;
 
-  private readonly _channelIdForGameListenOnly = process.env.CHANNEL_ID_FOR_GAME_LISTEN_ONLY;
+  readonly channelIdForGameListenOnly = process.env.CHANNEL_ID_FOR_GAME_LISTEN_ONLY!;
 
-  private readonly _voiceChannelIdFor235ChatPlace = process.env.VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE;
+  readonly voiceChannelIdFor235ChatPlace = process.env.VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE!;
 
-  private readonly _voiceChannelIdFor235ChatPlace2 =
-    process.env.VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE_2;
+  readonly voiceChannelIdFor235ChatPlace2 = process.env.VOICE_CHANNEL_ID_FOR_235_CHAT_PLACE_2!;
 
-  private readonly _voiceChannelIdForGame = process.env.VOICE_CHANNEL_ID_FOR_GAME;
+  readonly voiceChannelIdForGame = process.env.VOICE_CHANNEL_ID_FOR_GAME!;
 
-  private readonly _userIdForUtatane = process.env.USER_ID_FOR_UTATANE;
+  readonly userIdForUtatane = process.env.USER_ID_FOR_UTATANE!;
 
-  private readonly _userIdForMaki = process.env.USER_ID_FOR_MAKI;
+  readonly userIdForMaki = process.env.USER_ID_FOR_MAKI!;
 
   constructor() {
     super({
@@ -169,129 +168,11 @@ export default class DiscordBot extends Client {
     });
   }
 
-  get celebrateMillionMemberReactionEmoji(): string {
-    return this._celebrateMillionMemberReactionEmoji;
-  }
-
-  set celebrateMillionMemberReactionEmoji(celebrateMillionMemberReactionEmoji: string) {
-    this._celebrateMillionMemberReactionEmoji = celebrateMillionMemberReactionEmoji;
-  }
-
-  get isReactionCelebrate235MemberMessage(): boolean {
-    return this._isReactionCelebrate235MemberMessage;
-  }
-
-  set isReactionCelebrate235MemberMessage(isReactionCelebrate235MemberMessage: boolean) {
-    this._isReactionCelebrate235MemberMessage = isReactionCelebrate235MemberMessage;
-  }
-
-  get usedMaleEventCommandReactionCount(): number {
-    return this._usedMaleEventCommandReactionCount;
-  }
-
-  set usedMaleEventCommandReactionCount(usedMaleEventCommandReactionCount: number) {
-    this._usedMaleEventCommandReactionCount = usedMaleEventCommandReactionCount;
-  }
-
-  get dividedUserIdList(): string[] {
-    return this._dividedUserIdList;
-  }
-
-  set dividedUserIdList(dividedUserIdList: string[]) {
-    this._dividedUserIdList = dividedUserIdList;
-  }
-
-  get connection(): any {
-    return this._connection;
-  }
-
-  set connection(connection: any) {
-    this._connection = connection;
-  }
-
-  get speakerId(): string {
-    return this._speakerId;
-  }
-
-  set speakerId(speakerId: string) {
-    this._speakerId = speakerId;
-  }
-
-  get wavFileQueue(): string[] {
-    return this._wavFileQueue;
-  }
-
-  get isPlaying(): boolean {
-    return this._isPlaying;
-  }
-
-  set isPlaying(isPlaying: boolean) {
-    this._isPlaying = isPlaying;
-  }
-
-  get audioPlayer() {
-    return this._audioPlayer;
-  }
-
-  get connectVoiceList(): string[] {
-    return this._connectVoiceList;
-  }
-
-  get commandList() {
-    return this._commandList;
-  }
-
-  get serverIdFor235() {
-    return this._serverIdFor235;
-  }
-
-  get channelIdFor235ChatPlace() {
-    return this._channelIdFor235ChatPlace;
-  }
-
-  get channelIdFor235Introduction() {
-    return this._channelIdFor235Introduction;
-  }
-
-  get channelIdFor235ListenOnly() {
-    return this._channelIdFor235ListenOnly;
-  }
-
-  get channelIdFor235ListenOnly2() {
-    return this._channelIdFor235ListenOnly2;
-  }
-
-  get channelIdForGameListenOnly() {
-    return this._channelIdForGameListenOnly;
-  }
-
-  get voiceChannelIdFor235ChatPlace() {
-    return this._voiceChannelIdFor235ChatPlace;
-  }
-
-  get voiceChannelIdFor235ChatPlace2() {
-    return this._voiceChannelIdFor235ChatPlace2;
-  }
-
-  get voiceChannelIdForGame() {
-    return this._voiceChannelIdForGame;
-  }
-
-  get userIdForUtatane() {
-    return this._userIdForUtatane;
-  }
-
-  get userIdForMaki() {
-    return this._userIdForMaki;
-  }
-
   /**
    * 235botを起動させる。
-   *
-   * @return {void}
    */
-  public start(): void {
-    this.login(this.discordToken);
+  public async start() {
+    await this.login(this.discordToken);
 
     // VoiceVox 起動
     const voiceVox = new VoiceVox(this);

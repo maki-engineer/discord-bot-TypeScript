@@ -1,11 +1,11 @@
-const { Sequelize, Model, DataTypes } = require('sequelize');
+import { Sequelize, Model, DataTypes } from 'sequelize';
 
 export default class DictWord extends Model {
   public word!: string;
 
   public how_to_read!: string;
 
-  static initialize(sequelize: typeof Sequelize) {
+  static initialize(sequelize: Sequelize) {
     this.init(
       {
         word: {
