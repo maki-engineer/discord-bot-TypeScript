@@ -107,7 +107,7 @@ export default class BirthdayFor235MemberRepository {
    * @param {string} userId メンバーのユーザーID
    * @param {Transaction | null} transaction ユニットテストをする時に指定
    *
-   * @param {Promise<string | null>}
+   * @return {Promise<number | null>}
    */
   static async getSpeakerIdFromMessageSender(
     userId: string,

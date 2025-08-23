@@ -18,16 +18,31 @@ module.exports = {
     // linter を実行
     taskList.push(`npx eslint ${formatFileList.join(' ')}`);
 
-    const testFileList = formatFileList.filter((file) =>
-      file.startsWith('tests/') ||
-      file.startsWith('models/') ||
-      file.startsWith('repositories/')
-    );
-
-    if (testFileList.length > 0) {
-      // test を実行
-      taskList.push(`npm run test ${testFileList.join(' ')}`);
+    return taskList;
+  },
+  'tests/**/*.ts': (files) => {
+    if (files.length === 0) {
+      return [];
     }
+
+    const formatFileList = files.map((file) => {
+      return path.normalize(path.relative(process.cwd(), file)).replace(/\\/g, '/');
+    });
+
+    const taskList = [];
+
+    taskList.push(`npm run test ${formatFileList.join(' ')}`);
+
+    return taskList;
+  },
+  '{models,repositories}/**/*.ts': (files) => {
+    if (files.length === 0) {
+      return [];
+    }
+
+    const taskList = [];
+
+    taskList.push('npm run test');
 
     return taskList;
   },
