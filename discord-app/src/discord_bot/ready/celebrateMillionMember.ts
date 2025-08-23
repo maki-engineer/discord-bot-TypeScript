@@ -1,23 +1,7 @@
 import { TextChannel } from 'discord.js';
 import { DiscordBotType } from '../DiscordBotType';
 import BirthdayForMillionMemberRepository from '../../../repositories/BirthdayForMillionMemberRepository';
-
-/**
- * 現在日時を取得
- *
- * @return {object}
- */
-const getTodayDateList = () => {
-  const today = new Date();
-
-  return {
-    todayYear: today.getFullYear(),
-    todayMonth: today.getMonth() + 1,
-    todayDate: today.getDate(),
-    todayHour: today.getHours(),
-    todayMin: today.getMinutes(),
-  };
-};
+import getTodayDateList from './getTodayDateList';
 
 /**
  * 誕生日アイドルの絵文字リストの中からアクションを付ける絵文字を取得

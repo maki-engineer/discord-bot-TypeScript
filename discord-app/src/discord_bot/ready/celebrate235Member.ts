@@ -1,23 +1,7 @@
 import { TextChannel } from 'discord.js';
+import getTodayDateList from './getTodayDateList';
 import { DiscordBotType } from '../DiscordBotType';
 import BirthdayFor235MemberRepository from '../../../repositories/BirthdayFor235MemberRepository';
-
-/**
- * 現在日時を取得
- *
- * @return {object}
- */
-const getTodayDateList = () => {
-  const today = new Date();
-
-  return {
-    todayYear: today.getFullYear(),
-    todayMonth: today.getMonth() + 1,
-    todayDate: today.getDate(),
-    todayHour: today.getHours(),
-    todayMin: today.getMinutes(),
-  };
-};
 
 /**
  * 9時に235プロダクションのメンバーの誕生日をお祝い

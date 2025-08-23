@@ -2,23 +2,7 @@ import { AudioPlayerStatus } from '@discordjs/voice';
 import fs from 'fs';
 import VoiceVox from '../../voice_vox/VoiceVox';
 import { DiscordBotType } from '../DiscordBotType';
-
-/**
- * 現在日時を取得
- *
- * @return {object}
- */
-const getTodayDateList = () => {
-  const today = new Date();
-
-  return {
-    todayYear: today.getFullYear(),
-    todayMonth: today.getMonth() + 1,
-    todayDate: today.getDate(),
-    todayHour: today.getHours(),
-    todayMin: today.getMinutes(),
-  };
-};
+import getTodayDateList from './getTodayDateList';
 
 /**
  * 235botが停止する5分前にボイスチャンネルにいた場合はアナウンスして退出する
