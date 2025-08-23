@@ -1,32 +1,29 @@
-import { GuildMember, VoiceState, VoiceChannel } from 'discord.js';
+import { VoiceState, VoiceChannel } from 'discord.js';
 import type { DiscordBotType } from '../DiscordBotType';
 
 /**
  * 235botが入っているボイスチャンネルの人数がbotを除いて0人になったらボイスチャンネルから切断
  *
  * @param {DiscordBotType} client DiscordBotクラス
- * @param {VoiceState} stateMember VoiceStateクラス
+ * @param {VoiceState} oldStateMember VoiceStateクラス
+ * @param {VoiceState} newStateMember VoiceStateクラス
  */
-export default (client: DiscordBotType, stateMember: VoiceState) => {
-  if (stateMember.channelId === null) return;
-
-  const channel = client.voice.client.channels.cache.get(stateMember.channelId) as VoiceChannel;
-
-  const participatingVoiceChannelMemberList: string[] = channel.members
-    .filter((member: GuildMember) => {
-      return !member.user.bot;
-    })
-    .map((member: GuildMember) => member.user.id);
-
+export default (client: DiscordBotType, oldStateMember: VoiceState, newStateMember: VoiceState) => {
+  // 参加タイミングだった場合
+  if (oldStateMember.channelId === null || newStateMember.channelId !== null) return;
+  // 235botがボイスチャンネルに参加していない場合
   if (client.connection === undefined) return;
+  // 235botがいるボイスチャンネルじゃなかった場合
+  if (oldStateMember.channelId !== client.connection.joinConfig.channelId) return;
 
-  // 0人になったチャンネルが235botが参加している場所かどうか
-  if (
-    stateMember.channelId !== client.connection.joinConfig.channelId ||
-    participatingVoiceChannelMemberList.length > 0
-  ) {
-    return;
-  }
+  const channel = oldStateMember.channel as VoiceChannel;
+
+  const participatingVoiceChannelMemberList = channel.members
+    .filter((member) => !member.user.bot)
+    .map((member) => member.user.id);
+
+  // 235bot以外に誰かいる場合
+  if (participatingVoiceChannelMemberList.length > 0) return;
 
   client.connection.destroy();
   client.connection = undefined;

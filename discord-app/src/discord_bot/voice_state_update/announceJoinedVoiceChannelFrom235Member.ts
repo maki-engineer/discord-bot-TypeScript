@@ -9,34 +9,37 @@ import VoiceVox from '../../voice_vox/VoiceVox';
  *
  * @param {DiscordBotType} client DiscordBotクラス
  * @param {VoiceVox} voiceVox VoiceVoxクラス
- * @param {VoiceState} stateMember VoiceStateクラス
+ * @param {VoiceState} oldStateMember VoiceStateクラス
+ * @param {VoiceState} newStateMember VoiceStateクラス
  */
-export default async (client: DiscordBotType, voiceVox: VoiceVox, stateMember: VoiceState) => {
-  // 退出タイミング or 235botがボイスチャンネルに参加していない場合
-  if (stateMember.channelId !== null || client.connection === undefined) return;
+export default async (
+  client: DiscordBotType,
+  voiceVox: VoiceVox,
+  oldStateMember: VoiceState,
+  newStateMember: VoiceState,
+) => {
+  // 退出タイミングだった場合
+  if (oldStateMember.channelId !== null || newStateMember === null) return;
+  // 235botがボイスチャンネルに参加していない場合
+  if (client.connection === undefined) return;
+  // 235botがいるボイスチャンネルじゃなかった場合
+  if (newStateMember.channelId !== client.connection.joinConfig.channelId) return;
+  // botが参加してきた場合
+  if (newStateMember.member!.user.bot) return;
 
-  const joinedVoiceChannelMember = await stateMember.guild.members.fetch(stateMember.id);
-  const joinedVoiceChannelId = joinedVoiceChannelMember.voice.channel!.id;
-
-  // 235botがいるボイスチャンネルじゃなかった or botが参加してきた場合
-  if (
-    joinedVoiceChannelMember.user.bot === true ||
-    joinedVoiceChannelId !== client.connection.joinConfig.channelId
-  ) {
-    return;
-  }
+  const newStateMemberGlobalName = newStateMember.member!.user.globalName!;
 
   const announceVoiceList = [
-    `${joinedVoiceChannelMember.user.globalName!}さんが来ました！`,
-    `${joinedVoiceChannelMember.user.globalName!}さんが現れた！！`,
-    `やっほ～！！${joinedVoiceChannelMember.user.globalName!}さんに挨拶しましょう！`,
-    `${joinedVoiceChannelMember.user.globalName!}さん、どうもです！！`,
+    `${newStateMemberGlobalName}さんが来ました！`,
+    `${newStateMemberGlobalName}さんが現れた！！`,
+    `やっほ～！！${newStateMemberGlobalName}さんに挨拶しましょう！`,
+    `${newStateMemberGlobalName}さん、どうもです！！`,
   ];
 
   const announceVoice = announceVoiceList[Math.floor(Math.random() * announceVoiceList.length)];
 
   const filePath = './data/voice';
-  const wavFile = `${filePath}/${stateMember.id}.wav`;
+  const wavFile = `${filePath}/${newStateMember.id}.wav`;
 
   if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
 

@@ -25,9 +25,17 @@ export default class VoiceStateUpdate {
    * voiceStateUpdate メイン処理
    */
   public voiceStateUpdateEvent() {
-    this.discordBot.on('voiceStateUpdate', async (stateMember: VoiceState) => {
-      disconnectVoiceChannelFor235Bot(this.discordBot, stateMember);
-      await announceJoinedVoiceChannelFrom235Member(this.discordBot, this.voiceVox, stateMember);
-    });
+    this.discordBot.on(
+      'voiceStateUpdate',
+      async (oldStateMember: VoiceState, newStateMember: VoiceState) => {
+        disconnectVoiceChannelFor235Bot(this.discordBot, oldStateMember, newStateMember);
+        await announceJoinedVoiceChannelFrom235Member(
+          this.discordBot,
+          this.voiceVox,
+          oldStateMember,
+          newStateMember,
+        );
+      },
+    );
   }
 }
