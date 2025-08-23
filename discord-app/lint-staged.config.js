@@ -18,7 +18,11 @@ module.exports = {
     // linter を実行
     taskList.push(`npx eslint ${formatFileList.join(' ')}`);
 
-    const testFileList = formatFileList.filter((file) => file.startsWith('tests/'));
+    const testFileList = formatFileList.filter((file) =>
+      file.startsWith('tests/') ||
+      file.startsWith('models/') ||
+      file.startsWith('repositories/')
+    );
 
     if (testFileList.length > 0) {
       // test を実行
