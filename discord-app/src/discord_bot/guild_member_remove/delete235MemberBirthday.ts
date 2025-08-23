@@ -15,16 +15,16 @@ import BirthdayFor235MemberRepository from '../../../repositories/BirthdayFor235
 export default async (member: GuildMemberType | PartialGuildMemberType, client: DiscordBotType) => {
   if (member.user.bot) return;
 
-  await BirthdayFor235MemberRepository.delete235MemberBirthday(member.user.id).then(async () => {
-    await client.users.cache
-      .get(client.userIdForMaki)!
-      .send(
-        `${member.user.globalName!}さんがサーバーから退出されたため、${member.user.globalName!}さんの誕生日を削除しました！`,
-      );
-    await client.users.cache
-      .get(client.userIdForUtatane)!
-      .send(
-        `${member.user.globalName!}さんがサーバーから退出されたため、${member.user.globalName!}さんの誕生日を削除しました！\nもし間違いがあった場合は報告をお願いします！`,
-      );
-  });
+  await BirthdayFor235MemberRepository.delete235MemberBirthday(member.user.id);
+
+  await client.users.cache
+    .get(client.userIdForMaki)!
+    .send(
+      `${member.user.globalName!}さんがサーバーから退出されたため、${member.user.globalName!}さんの誕生日を削除しました！`,
+    );
+  await client.users.cache
+    .get(client.userIdForUtatane)!
+    .send(
+      `${member.user.globalName!}さんがサーバーから退出されたため、${member.user.globalName!}さんの誕生日を削除しました！\nもし間違いがあった場合は報告をお願いします！`,
+    );
 };
