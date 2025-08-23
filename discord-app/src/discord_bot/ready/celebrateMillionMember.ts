@@ -190,6 +190,7 @@ export default (client: DiscordBotType) => {
               default: {
                 targetMessage
                   .send(
+                    // eslint-disable-next-line no-irregular-whitespace
                     `さらに！！　本日は**${birthdayData[birthdayIndex].name}**のお誕生日でもあります！！\nHappy Birthday♪`,
                   )
                   .catch(() => {});

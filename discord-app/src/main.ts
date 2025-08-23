@@ -6,4 +6,4 @@ const discordBot = new DiscordBot();
 // 起動
 (async () => {
   await discordBot.start();
-})().catch(() => console.log('235bot Login Failed.'));
+})().catch(() => {});

@@ -70,6 +70,7 @@ export default async (client: DiscordBotType) => {
             default:
               targetMessage
                 .send(
+                  // eslint-disable-next-line no-irregular-whitespace
                   `さらに！！　本日は**${birthdayData[birthdayIndex].name}さん**のお誕生日でもあります！！\n${birthdayData[birthdayIndex].name}さん、お誕生日おめでとうございます♪`,
                 )
                 .catch(() => {});
