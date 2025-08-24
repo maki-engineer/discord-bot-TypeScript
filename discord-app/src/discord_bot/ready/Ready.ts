@@ -32,7 +32,7 @@ export default class Ready {
    * ready メイン処理
    */
   public readyEvent() {
-    this.discordBot.on('ready', async () => {
+    this.discordBot.on('clientReady', async () => {
       await setCommand(this.discordBot);
       setStatus(this.discordBot);
 

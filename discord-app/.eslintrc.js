@@ -31,6 +31,7 @@ module.exports = {
     'no-useless-escape': 'off',
     'no-param-reassign': 'off',
     'default-case': 'off',
+    '@typescript-eslint/no-misused-promises': 'off',
     '@typescript-eslint/no-unsafe-assignment': 'warn',
     '@typescript-eslint/no-unsafe-member-access': 'warn',
     '@typescript-eslint/no-unsafe-call': 'warn',

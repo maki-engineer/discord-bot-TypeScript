@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { ChatInputCommandInteraction, EmbedBuilder, VoiceChannel } from 'discord.js';
-import { joinVoiceChannel } from '@discordjs/voice';
+import { joinVoiceChannel, DiscordGatewayAdapterCreator } from '@discordjs/voice';
 import { DiscordBotType } from '../DiscordBotType';
 import VoiceVox from '../../voice_vox/VoiceVox';
 
@@ -60,7 +60,7 @@ export default async (
   client.connection = joinVoiceChannel({
     channelId: memberJoinVoiceChannel.id,
     guildId: interaction.guild!.id,
-    adapterCreator: interaction.guild!.voiceAdapterCreator,
+    adapterCreator: interaction.guild!.voiceAdapterCreator as DiscordGatewayAdapterCreator,
     selfMute: false,
     selfDeaf: true,
   });
