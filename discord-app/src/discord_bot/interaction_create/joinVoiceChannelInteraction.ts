@@ -22,13 +22,21 @@ export default async (
   const usedCommandMember = await interaction.guild!.members.fetch(interaction.user.id);
   const memberJoinVoiceChannel = usedCommandMember.voice.channel;
 
+  if (memberJoinVoiceChannel === null) {
+    await interaction.reply(
+      '235joinコマンドを使用することで、使用したメンバーが参加しているボイスチャンネルに235botが参加して、そのボイスチャンネルの聞き専チャンネルに投稿されたテキストを読み上げます！\nボイスチャンネルに参加してから再度このスラッシュコマンドを使用していただくか、もしくはテキストで「235join」と入力していただければボイスチャンネルに参加します！',
+    );
+
+    return;
+  }
+
   if (
     client.connection !== undefined &&
-    client.connection.joinConfig.channelId === memberJoinVoiceChannel!.id
+    client.connection.joinConfig.channelId === memberJoinVoiceChannel.id
   ) {
     const embed = new EmbedBuilder()
       .setTitle('既に接続されています！')
-      .setFields({ name: 'ボイスチャンネル名', value: memberJoinVoiceChannel!.name })
+      .setFields({ name: 'ボイスチャンネル名', value: memberJoinVoiceChannel.name })
       .setColor('#FF0000')
       .setTimestamp();
 
@@ -37,14 +45,6 @@ export default async (
     setTimeout(() => {
       interaction.deleteReply().catch(() => {});
     }, setTimeoutSec);
-
-    return;
-  }
-
-  if (memberJoinVoiceChannel === null) {
-    await interaction.reply(
-      '235joinコマンドを使用することで、使用したメンバーが参加しているボイスチャンネルに235botが参加して、そのボイスチャンネルの聞き専チャンネルに投稿されたテキストを読み上げます！\nボイスチャンネルに参加してから再度このスラッシュコマンドを使用していただくか、もしくはテキストで「235join」と入力していただければボイスチャンネルに参加します！',
-    );
 
     return;
   }
