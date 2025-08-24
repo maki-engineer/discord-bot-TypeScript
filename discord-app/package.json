@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "cross-env NODE_ENV=unittest jest",
     "build": "npx tsc",
     "build:watch": "npx tsc --watch",
     "start": "npx ts-node src/main.ts",
@@ -48,6 +48,7 @@
     "typescript": "^5.1.6"
   },
   "devDependencies": {
+    "cross-env": "^10.0.0",
     "eslint-config-prettier": "^10.1.1",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.0",
