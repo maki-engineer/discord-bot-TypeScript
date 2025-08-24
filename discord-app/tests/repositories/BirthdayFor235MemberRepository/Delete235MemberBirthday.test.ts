@@ -1,27 +1,27 @@
-process.env.NODE_ENV = 'unittest';
+import { Transaction } from 'sequelize';
+import BirthdayFor235MemberRepository from '../../../repositories/BirthdayFor235MemberRepository';
+import db from '../../../models/index';
 
-const BirthdayFor235MemberRepository =
-  require('../../../repositories/BirthdayFor235MemberRepository').default;
-const { BirthdayFor235Member, sequelize } = require('../../../models/index').default;
+const { BirthdayFor235Member, sequelize } = db;
 
-describe('正常系（delete235MemberBirthday）', (): void => {
-  let transaction: any;
+describe('正常系（delete235MemberBirthday）', () => {
+  let transaction: Transaction;
 
-  beforeEach(async (): Promise<void> => {
-    transaction = await sequelize.transaction();
+  beforeEach(async () => {
+    transaction = await sequelize!.transaction();
   });
 
-  afterEach(async (): Promise<void> => {
+  afterEach(async () => {
     if (transaction) {
       await transaction.rollback();
     }
   });
 
-  afterAll(async (): Promise<void> => {
-    await sequelize.close();
+  afterAll(async () => {
+    await sequelize!.close();
   });
 
-  test('235プロダクションから退出したメンバーの誕生日が削除された場合は、削除された数が返ること', async (): Promise<void> => {
+  test('235プロダクションから退出したメンバーの誕生日が削除された場合は、削除された数が返ること', async () => {
     const deleteUserId = '123456789';
 
     await BirthdayFor235Member.create(
@@ -36,12 +36,7 @@ describe('正常系（delete235MemberBirthday）', (): void => {
       },
     );
 
-    let birthdayFor235MemberData: {
-      name: string;
-      user_id: string;
-      month: number;
-      date: number;
-    }[] = await BirthdayFor235Member.findAll({
+    let birthdayFor235MemberData = await BirthdayFor235Member.findAll({
       raw: true,
       transaction,
     });

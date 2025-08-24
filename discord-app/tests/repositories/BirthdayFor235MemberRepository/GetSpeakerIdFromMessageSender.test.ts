@@ -1,28 +1,28 @@
-process.env.NODE_ENV = 'unittest';
+import { Transaction } from 'sequelize';
+import BirthdayFor235MemberRepository from '../../../repositories/BirthdayFor235MemberRepository';
+import db from '../../../models/index';
 
-const BirthdayFor235MemberRepository =
-  require('../../../repositories/BirthdayFor235MemberRepository').default;
-const { BirthdayFor235Member, sequelize } = require('../../../models/index').default;
+const { BirthdayFor235Member, sequelize } = db;
 
-describe('正常系（getSpeakerIdFromMessageSender）', (): void => {
-  let transaction: any;
+describe('正常系（getSpeakerIdFromMessageSender）', () => {
+  let transaction: Transaction;
   const targetUserId = '123456789';
 
-  beforeEach(async (): Promise<void> => {
-    transaction = await sequelize.transaction();
+  beforeEach(async () => {
+    transaction = await sequelize!.transaction();
   });
 
-  afterEach(async (): Promise<void> => {
+  afterEach(async () => {
     if (transaction) {
       await transaction.rollback();
     }
   });
 
-  afterAll(async (): Promise<void> => {
-    await sequelize.close();
+  afterAll(async () => {
+    await sequelize!.close();
   });
 
-  test('テキストを読み上げる対象のチャンネルにテキストを入力した235プロダクションメンバーの speaker_id が返ること', async (): Promise<void> => {
+  test('テキストを読み上げる対象のチャンネルにテキストを入力した235プロダクションメンバーの speaker_id が返ること', async () => {
     const targetSpeakerId = 62;
 
     const dummyData = [
@@ -51,7 +51,7 @@ describe('正常系（getSpeakerIdFromMessageSender）', (): void => {
 
     await BirthdayFor235Member.bulkCreate(dummyData, { transaction });
 
-    const result: string = await BirthdayFor235MemberRepository.getSpeakerIdFromMessageSender(
+    const result = await BirthdayFor235MemberRepository.getSpeakerIdFromMessageSender(
       targetUserId,
       transaction,
     );
@@ -59,8 +59,8 @@ describe('正常系（getSpeakerIdFromMessageSender）', (): void => {
     expect(result).toBe(targetSpeakerId);
   });
 
-  test('もし入力したメンバーの user_id が登録されていなくて見つからなかった場合は null が返ること', async (): Promise<void> => {
-    const result: null = await BirthdayFor235MemberRepository.getSpeakerIdFromMessageSender(
+  test('もし入力したメンバーの user_id が登録されていなくて見つからなかった場合は null が返ること', async () => {
+    const result = await BirthdayFor235MemberRepository.getSpeakerIdFromMessageSender(
       targetUserId,
       transaction,
     );

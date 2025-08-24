@@ -1,32 +1,30 @@
-process.env.NODE_ENV = 'unittest';
+import { Transaction } from 'sequelize';
+import BirthdayFor235MemberRepository from '../../../repositories/BirthdayFor235MemberRepository';
+import db from '../../../models/index';
 
-require('dotenv').config();
+const { BirthdayFor235Member, sequelize } = db;
 
-const BirthdayFor235MemberRepository =
-  require('../../../repositories/BirthdayFor235MemberRepository').default;
-const { BirthdayFor235Member, sequelize } = require('../../../models/index').default;
-
-describe('正常系（get235MemberBirthdayList）', (): void => {
-  let transaction: any;
-  const exclusionUserId = process.env.USER_ID_FOR_MAKI;
+describe('正常系（get235MemberBirthdayList）', () => {
+  let transaction: Transaction;
+  const exclusionUserId = process.env.USER_ID_FOR_MAKI!;
   const targetMonth = 4;
   const targetDate = 3;
 
-  beforeEach(async (): Promise<void> => {
-    transaction = await sequelize.transaction();
+  beforeEach(async () => {
+    transaction = await sequelize!.transaction();
   });
 
-  afterEach(async (): Promise<void> => {
+  afterEach(async () => {
     if (transaction) {
       await transaction.rollback();
     }
   });
 
-  afterAll(async (): Promise<void> => {
-    await sequelize.close();
+  afterAll(async () => {
+    await sequelize!.close();
   });
 
-  test('当日誕生日の235プロダクションメンバー一覧が配列で返ること', async (): Promise<void> => {
+  test('当日誕生日の235プロダクションメンバー一覧が配列で返ること', async () => {
     const dummyData = [
       {
         name: 'テスト太郎',
@@ -53,13 +51,7 @@ describe('正常系（get235MemberBirthdayList）', (): void => {
 
     await BirthdayFor235Member.bulkCreate(dummyData, { transaction });
 
-    const result: {
-      name: string;
-      user_id: string;
-      month: number;
-      date: number;
-      speaker_id: number;
-    }[] = await BirthdayFor235MemberRepository.get235MemberBirthdayList(
+    const result = await BirthdayFor235MemberRepository.get235MemberBirthdayList(
       exclusionUserId,
       targetMonth,
       targetDate,
@@ -76,7 +68,7 @@ describe('正常系（get235MemberBirthdayList）', (): void => {
     expect(result).toEqual([dummyData[0], dummyData[1]]);
   });
 
-  test('特定のメンバーの誕生日は取得されないこと', async (): Promise<void> => {
+  test('特定のメンバーの誕生日は取得されないこと', async () => {
     await BirthdayFor235Member.create(
       {
         name: 'テスト太郎',
@@ -89,7 +81,7 @@ describe('正常系（get235MemberBirthdayList）', (): void => {
       },
     );
 
-    const result: [] = await BirthdayFor235MemberRepository.get235MemberBirthdayList(
+    const result = await BirthdayFor235MemberRepository.get235MemberBirthdayList(
       exclusionUserId,
       targetMonth,
       targetDate,
@@ -100,8 +92,8 @@ describe('正常系（get235MemberBirthdayList）', (): void => {
     expect(result).toEqual([]);
   });
 
-  test('当日誕生日の235プロダクションメンバーがいなかった場合は、空配列が返ること', async (): Promise<void> => {
-    const result: [] = await BirthdayFor235MemberRepository.get235MemberBirthdayList(
+  test('当日誕生日の235プロダクションメンバーがいなかった場合は、空配列が返ること', async () => {
+    const result = await BirthdayFor235MemberRepository.get235MemberBirthdayList(
       exclusionUserId,
       targetMonth,
       targetDate,

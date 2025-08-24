@@ -1,26 +1,27 @@
-process.env.NODE_ENV = 'unittest';
+import { Transaction } from 'sequelize';
+import DeleteMessageRepository from '../../../repositories/DeleteMessageRepository';
+import db from '../../../models/index';
 
-const DeleteMessageRepository = require('../../../repositories/DeleteMessageRepository').default;
-const { DeleteMessage, sequelize } = require('../../../models/index').default;
+const { DeleteMessage, sequelize } = db;
 
-describe('正常系（deleteMessage）', (): void => {
-  let transaction: any;
+describe('正常系（deleteMessage）', () => {
+  let transaction: Transaction;
 
-  beforeEach(async (): Promise<void> => {
-    transaction = await sequelize.transaction();
+  beforeEach(async () => {
+    transaction = await sequelize!.transaction();
   });
 
-  afterEach(async (): Promise<void> => {
+  afterEach(async () => {
     if (transaction) {
       await transaction.rollback();
     }
   });
 
-  afterAll(async (): Promise<void> => {
-    await sequelize.close();
+  afterAll(async () => {
+    await sequelize!.close();
   });
 
-  test('雑談場（通話外）チャンネルで投稿された1週間前のメッセージが削除された場合は、削除された数が返ること', async (): Promise<void> => {
+  test('雑談場（通話外）チャンネルで投稿された1週間前のメッセージが削除された場合は、削除された数が返ること', async () => {
     const deleteMessageId = '123456789';
 
     await DeleteMessage.create(
@@ -33,10 +34,7 @@ describe('正常系（deleteMessage）', (): void => {
       },
     );
 
-    let deleteMessageData: {
-      message_id: string;
-      date: number;
-    }[] = await DeleteMessage.findAll({
+    let deleteMessageData = await DeleteMessage.findAll({
       raw: true,
       transaction,
     });
@@ -44,10 +42,7 @@ describe('正常系（deleteMessage）', (): void => {
     expect(deleteMessageData).toHaveLength(1);
     expect(deleteMessageData[0].message_id).toBe(deleteMessageId);
 
-    const result: number = await DeleteMessageRepository.deleteMessage(
-      deleteMessageId,
-      transaction,
-    );
+    const result = await DeleteMessageRepository.deleteMessage(deleteMessageId, transaction);
 
     deleteMessageData = await DeleteMessage.findAll({
       raw: true,

@@ -1,28 +1,28 @@
-process.env.NODE_ENV = 'unittest';
+import { Transaction } from 'sequelize';
+import BirthdayFor235MemberRepository from '../../../repositories/BirthdayFor235MemberRepository';
+import db from '../../../models/index';
 
-const BirthdayFor235MemberRepository =
-  require('../../../repositories/BirthdayFor235MemberRepository').default;
-const { BirthdayFor235Member, sequelize } = require('../../../models/index').default;
+const { BirthdayFor235Member, sequelize } = db;
 
-describe('正常系（getThisMonthBirthdayMember）', (): void => {
-  let transaction: any;
+describe('正常系（getThisMonthBirthdayMember）', () => {
+  let transaction: Transaction;
   const targetMonth = 4;
 
-  beforeEach(async (): Promise<void> => {
-    transaction = await sequelize.transaction();
+  beforeEach(async () => {
+    transaction = await sequelize!.transaction();
   });
 
-  afterEach(async (): Promise<void> => {
+  afterEach(async () => {
     if (transaction) {
       await transaction.rollback();
     }
   });
 
-  afterAll(async (): Promise<void> => {
-    await sequelize.close();
+  afterAll(async () => {
+    await sequelize!.close();
   });
 
-  test('今月誕生日の235プロダクションメンバー一覧が配列で返ること', async (): Promise<void> => {
+  test('今月誕生日の235プロダクションメンバー一覧が配列で返ること', async () => {
     const dummyData = [
       {
         name: 'テスト太郎',
@@ -49,13 +49,10 @@ describe('正常系（getThisMonthBirthdayMember）', (): void => {
 
     await BirthdayFor235Member.bulkCreate(dummyData, { transaction });
 
-    const result: {
-      name: string;
-      user_id: string;
-      month: number;
-      date: number;
-      speaker_id: number;
-    }[] = await BirthdayFor235MemberRepository.getThisMonthBirthdayMember(targetMonth, transaction);
+    const result = await BirthdayFor235MemberRepository.getThisMonthBirthdayMember(
+      targetMonth,
+      transaction,
+    );
 
     expect(result).toHaveLength(2);
     expect(result).toBeInstanceOf(Array);
@@ -65,7 +62,7 @@ describe('正常系（getThisMonthBirthdayMember）', (): void => {
     expect(result).toEqual([dummyData[0], dummyData[1]]);
   });
 
-  test('今月誕生日の235プロダクションメンバー一覧が昇順で返ること', async (): Promise<void> => {
+  test('今月誕生日の235プロダクションメンバー一覧が昇順で返ること', async () => {
     const dummyData = [
       {
         name: 'テスト太郎',
@@ -89,12 +86,10 @@ describe('正常系（getThisMonthBirthdayMember）', (): void => {
 
     await BirthdayFor235Member.bulkCreate(dummyData, { transaction });
 
-    const result: {
-      name: string;
-      user_id: string;
-      month: number;
-      date: number;
-    }[] = await BirthdayFor235MemberRepository.getThisMonthBirthdayMember(targetMonth, transaction);
+    const result = await BirthdayFor235MemberRepository.getThisMonthBirthdayMember(
+      targetMonth,
+      transaction,
+    );
 
     expect([result[0].date, result[1].date, result[2].date]).toEqual([
       dummyData[2].date,
@@ -103,8 +98,8 @@ describe('正常系（getThisMonthBirthdayMember）', (): void => {
     ]);
   });
 
-  test('今月誕生日の235プロダクションメンバーがいなかった場合は、空配列が返ること', async (): Promise<void> => {
-    const result: [] = await BirthdayFor235MemberRepository.getThisMonthBirthdayMember(
+  test('今月誕生日の235プロダクションメンバーがいなかった場合は、空配列が返ること', async () => {
+    const result = await BirthdayFor235MemberRepository.getThisMonthBirthdayMember(
       targetMonth,
       transaction,
     );

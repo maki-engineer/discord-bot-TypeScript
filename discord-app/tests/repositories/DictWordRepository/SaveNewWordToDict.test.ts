@@ -1,44 +1,39 @@
-process.env.NODE_ENV = 'unittest';
+import { Transaction } from 'sequelize';
+import DictWordRepository from '../../../repositories/DictWordRepository';
+import db from '../../../models/index';
 
-require('dotenv').config();
+const { DictWord, sequelize } = db;
 
-const DictWordRepository = require('../../../repositories/DictWordRepository').default;
-const { DictWord, sequelize } = require('../../../models/index').default;
+describe('正常系（saveNewWordToDict）', () => {
+  let transaction: Transaction;
 
-describe('正常系（saveNewWordToDict）', (): void => {
-  let transaction: any;
-
-  beforeEach(async (): Promise<void> => {
-    transaction = await sequelize.transaction();
+  beforeEach(async () => {
+    transaction = await sequelize!.transaction();
   });
 
-  afterEach(async (): Promise<void> => {
+  afterEach(async () => {
     if (transaction) {
       await transaction.rollback();
     }
   });
 
-  afterAll(async (): Promise<void> => {
-    await sequelize.close();
+  afterAll(async () => {
+    await sequelize!.close();
   });
 
-  test('入力された単語が正常に単語辞書に追加された場合は、オブジェクトが返ること', async (): Promise<void> => {
+  test('入力された単語が正常に単語辞書に追加された場合は、オブジェクトが返ること', async () => {
     const insertWord = 'test';
     const insertHowToRead = 'テスト';
 
-    let dictWordData:
-      | []
-      | {
-          word: string;
-          how_to_read: string;
-        }[] = await DictWord.findAll({ raw: true, transaction });
+    let dictWordData = await DictWord.findAll({ raw: true, transaction });
 
     expect(dictWordData).toHaveLength(0);
 
-    const result: {
-      word: string;
-      how_to_read: string;
-    } = await DictWordRepository.saveNewWordToDict(insertWord, insertHowToRead, transaction);
+    const result = await DictWordRepository.saveNewWordToDict(
+      insertWord,
+      insertHowToRead,
+      transaction,
+    );
 
     dictWordData = await DictWord.findAll({ raw: true, transaction });
 

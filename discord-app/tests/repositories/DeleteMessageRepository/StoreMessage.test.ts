@@ -1,42 +1,38 @@
-process.env.NODE_ENV = 'unittest';
+import { Transaction } from 'sequelize';
+import DeleteMessageRepository from '../../../repositories/DeleteMessageRepository';
+import db from '../../../models/index';
 
-const DeleteMessageRepository = require('../../../repositories/DeleteMessageRepository').default;
-const { DeleteMessage, sequelize } = require('../../../models/index').default;
+const { DeleteMessage, sequelize } = db;
 
-describe('正常系（storeMessage）', (): void => {
-  let transaction: any;
+describe('正常系（storeMessage）', () => {
+  let transaction: Transaction;
 
-  beforeEach(async (): Promise<void> => {
-    transaction = await sequelize.transaction();
+  beforeEach(async () => {
+    transaction = await sequelize!.transaction();
   });
 
-  afterEach(async (): Promise<void> => {
+  afterEach(async () => {
     if (transaction) {
       await transaction.rollback();
     }
   });
 
-  afterAll(async (): Promise<void> => {
-    await sequelize.close();
+  afterAll(async () => {
+    await sequelize!.close();
   });
 
-  test('雑談場（通話外）チャンネルで投稿されたメッセージが保存された場合は、オブジェクトが返ること', async (): Promise<void> => {
+  test('雑談場（通話外）チャンネルで投稿されたメッセージが保存された場合は、オブジェクトが返ること', async () => {
     const insertMessageId = '123456789';
     const insertDate = 14;
 
-    let deleteMessageData:
-      | []
-      | {
-          message_id: string;
-          date: number;
-        }[] = await DeleteMessage.findAll({
+    let deleteMessageData = await DeleteMessage.findAll({
       raw: true,
       transaction,
     });
 
     expect(deleteMessageData).toHaveLength(0);
 
-    const result: { message_id: string; date: number } = await DeleteMessageRepository.storeMessage(
+    const result = await DeleteMessageRepository.storeMessage(
       insertMessageId,
       insertDate,
       transaction,
