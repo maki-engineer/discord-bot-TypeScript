@@ -18,6 +18,9 @@ module.exports = {
     // linter を実行
     taskList.push(`npx eslint ${formatFileList.join(' ')}`);
 
+    // コンパイルを実行
+    taskList.push('npm run compile');
+
     return taskList;
   },
   'tests/**/*.ts': (files) => {

@@ -10,7 +10,7 @@ import type { DiscordBotType } from '../DiscordBotType';
  */
 export default (client: DiscordBotType, oldStateMember: VoiceState, newStateMember: VoiceState) => {
   // 参加タイミングだった場合
-  if (oldStateMember.channelId === null || newStateMember.channelId !== null) return;
+  if (oldStateMember.channelId === null && newStateMember.channelId !== null) return;
   // 235botがボイスチャンネルに参加していない場合
   if (client.connection === undefined) return;
   // 235botがいるボイスチャンネルじゃなかった場合
