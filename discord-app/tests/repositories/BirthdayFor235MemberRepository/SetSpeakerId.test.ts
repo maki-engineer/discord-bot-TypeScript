@@ -1,6 +1,6 @@
 import { Transaction } from 'sequelize';
 import BirthdayFor235MemberRepository from '../../../repositories/BirthdayFor235MemberRepository';
-import db from '../../../models';
+import db from '../../../models/index';
 
 const { BirthdayFor235Member, sequelize } = db;
 
