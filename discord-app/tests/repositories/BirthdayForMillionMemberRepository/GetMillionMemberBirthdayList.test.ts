@@ -1,29 +1,29 @@
-process.env.NODE_ENV = 'unittest';
+import { Transaction } from 'sequelize';
+import BirthdayForMillionMemberRepository from '../../../repositories/BirthdayForMillionMemberRepository';
+import db from '../../../models/index';
 
-const BirthdayForMillionMemberRepository =
-  require('../../../repositories/BirthdayForMillionMemberRepository').default;
-const { BirthdayForMillionMember, sequelize } = require('../../../models/index').default;
+const { BirthdayForMillionMember, sequelize } = db;
 
-describe('正常系（getMillionMemberBirthdayList）', (): void => {
-  let transaction: any;
+describe('正常系（getMillionMemberBirthdayList）', () => {
+  let transaction: Transaction;
   const targetMonth = 5;
   const targetDate = 22;
 
-  beforeEach(async (): Promise<void> => {
-    transaction = await sequelize.transaction();
+  beforeEach(async () => {
+    transaction = await sequelize!.transaction();
   });
 
-  afterEach(async (): Promise<void> => {
+  afterEach(async () => {
     if (transaction) {
       await transaction.rollback();
     }
   });
 
-  afterAll(async (): Promise<void> => {
-    await sequelize.close();
+  afterAll(async () => {
+    await sequelize!.close();
   });
 
-  test('当日誕生日のミリオンメンバー一覧が配列で返ること', async (): Promise<void> => {
+  test('当日誕生日のミリオンメンバー一覧が配列で返ること', async () => {
     const dummyData = [
       {
         name: '双海亜美',
@@ -47,12 +47,7 @@ describe('正常系（getMillionMemberBirthdayList）', (): void => {
 
     await BirthdayForMillionMember.bulkCreate(dummyData, { transaction });
 
-    const result: {
-      name: string;
-      month: number;
-      date: number;
-      img: string;
-    }[] = await BirthdayForMillionMemberRepository.getMillionMemberBirthdayList(
+    const result = await BirthdayForMillionMemberRepository.getMillionMemberBirthdayList(
       targetMonth,
       targetDate,
       transaction,
@@ -70,13 +65,8 @@ describe('正常系（getMillionMemberBirthdayList）', (): void => {
     expect(result).toEqual([dummyData[0], dummyData[1]]);
   });
 
-  test('当日誕生日のミリオンメンバーがいなかった場合は、空配列が返ること', async (): Promise<void> => {
-    const result: {
-      name: string;
-      month: number;
-      date: number;
-      img: string;
-    }[] = await BirthdayForMillionMemberRepository.getMillionMemberBirthdayList(
+  test('当日誕生日のミリオンメンバーがいなかった場合は、空配列が返ること', async () => {
+    const result = await BirthdayForMillionMemberRepository.getMillionMemberBirthdayList(
       targetMonth,
       targetDate,
       transaction,
