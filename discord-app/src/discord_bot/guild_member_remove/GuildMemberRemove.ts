@@ -1,15 +1,18 @@
-const { Client, Member } = require('discord.js');
-const DiscordBot = require('../DiscordBot').default;
-const BirthdayFor235MemberRepository =
-  require('../../../repositories/BirthdayFor235MemberRepository').default;
+import type {
+  GuildMember as GuildMemberType,
+  PartialGuildMember as PartialGuildMemberType,
+} from 'discord.js';
+import type { DiscordBotType } from '../DiscordBotType';
+
+import delete235MemberBirthday from './delete235MemberBirthday';
 
 /**
  * サーバーから誰かが退出した時に行う処理クラス
  */
 export default class GuildMemberRemove {
-  private discordBot: typeof DiscordBot;
+  private discordBot: DiscordBotType;
 
-  constructor(discordBot: typeof DiscordBot) {
+  constructor(discordBot: DiscordBotType) {
     this.discordBot = discordBot;
   }
 
@@ -19,33 +22,11 @@ export default class GuildMemberRemove {
    * @return {void}
    */
   public guildMemberRemoveEvent(): void {
-    this.discordBot.on('guildMemberRemove', (member: typeof Member) => {
-      GuildMemberRemove.delete235MemberBirthday(member, this.discordBot);
-    });
-  }
-
-  /**
-   * 235プロダクションからメンバーが退出したタイミングで235プロダクションメンバーの誕生日テーブルからデータを削除
-   *
-   * @param {Member} member Memberクラス
-   * @param {Client} client Clientクラス
-   *
-   * @return {void}
-   */
-  private static delete235MemberBirthday(member: typeof Member, client: typeof Client): void {
-    if (member.user.bot) return;
-
-    BirthdayFor235MemberRepository.delete235MemberBirthday(member.user.id).then(() => {
-      client.users.cache
-        .get(client.userIdForMaki)
-        .send(
-          `${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！`,
-        );
-      client.users.cache
-        .get(client.userIdForUtatane)
-        .send(
-          `${member.user.globalName}さんがサーバーから退出されたため、${member.user.globalName}さんの誕生日を削除しました！\nもし間違いがあった場合は報告をお願いします！`,
-        );
-    });
+    this.discordBot.on(
+      'guildMemberRemove',
+      async (member: GuildMemberType | PartialGuildMemberType) => {
+        await delete235MemberBirthday(member, this.discordBot);
+      },
+    );
   }
 }

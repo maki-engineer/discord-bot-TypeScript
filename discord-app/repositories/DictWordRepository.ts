@@ -1,24 +1,25 @@
-const { DictWord } = require('../models/index').default;
+import { Transaction } from 'sequelize';
+import db from '../models/index';
 
 export default class DictWordRepository {
   /**
    * 登録されている単語辞書を取得
    *
-   * @param {any | null} transaction ユニットテストをする時に指定
+   * @param {Transaction | null} transaction ユニットテストをする時に指定
    *
-   * @return {object}
+   * @return {Promise<DictWord[]>}
    */
-  static async getDictWordList(transaction = null) {
+  static async getDictWordList(transaction: Transaction | null = null) {
     const options: {
       raw: boolean;
-      transaction?: any;
+      transaction?: Transaction;
     } = { raw: true };
 
     if (transaction) {
       options.transaction = transaction;
     }
 
-    return await DictWord.findAll(options);
+    return db.DictWord.findAll(options);
   }
 
   /**
@@ -26,21 +27,25 @@ export default class DictWordRepository {
    *
    * @param {string} word 登録したい単語
    * @param {string} howToRead 登録したい単語の読み方
-   * @param {any | null} transaction ユニットテストをする時に指定
+   * @param {Transaction | null} transaction ユニットテストをする時に指定
    *
-   * @return {object}
+   * @return {Promise<DictWord>}
    */
-  static async saveNewWordToDict(word: string, howToRead: string, transaction = null) {
+  static async saveNewWordToDict(
+    word: string,
+    howToRead: string,
+    transaction: Transaction | null = null,
+  ) {
     const insertData = {
       word,
       how_to_read: howToRead,
     };
 
     if (transaction) {
-      return await DictWord.create(insertData, { transaction });
+      return db.DictWord.create(insertData, { transaction });
     }
 
-    return await DictWord.create(insertData);
+    return db.DictWord.create(insertData);
   }
 
   /**
@@ -48,12 +53,14 @@ export default class DictWordRepository {
    *
    * @param {string} word 更新したい単語
    * @param {string} howToRead 更新したい単語の読み方
-   * @param {any | null} transaction ユニットテストをする時に指定
-   *
-   * @return {void}
+   * @param {Transaction | null} transaction ユニットテストをする時に指定
    */
-  static async updateReadOfWordToDict(word: string, howToRead: string, transaction = null) {
-    const updateData: { where: { word: string }; transaction?: any } = {
+  static async updateReadOfWordToDict(
+    word: string,
+    howToRead: string,
+    transaction: Transaction | null = null,
+  ) {
+    const updateData: { where: { word: string }; transaction?: Transaction } = {
       where: { word },
     };
 
@@ -61,6 +68,6 @@ export default class DictWordRepository {
       updateData.transaction = transaction;
     }
 
-    await DictWord.update({ how_to_read: howToRead }, updateData);
+    await db.DictWord.update({ how_to_read: howToRead }, updateData);
   }
 }

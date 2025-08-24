@@ -1,20 +1,19 @@
-const fs = require('fs');
-const { default: axios } = require('axios');
-
-const { AudioPlayerStatus, createAudioResource, StreamType } = require('@discordjs/voice');
-
-const DictWordRepository = require('../../repositories/DictWordRepository').default;
+import fs from 'fs';
+import axios from 'axios';
+import { AudioPlayerStatus, createAudioResource, StreamType } from '@discordjs/voice';
+import type { DiscordBotType } from '../discord_bot/DiscordBotType';
+import DictWordRepository from '../../repositories/DictWordRepository';
 
 /**
  * voicevoxを使って読み上げとかを行う処理クラス
  */
 export default class VoiceVox {
-  private discordBot: typeof DiscordBot;
+  private discordBot: DiscordBotType;
 
   /**
-   * @param {DiscordBot} discordBot DiscordBotクラス
+   * @param {DiscordBotType} discordBot DiscordBotクラス
    */
-  constructor(discordBot: typeof DiscordBot) {
+  constructor(discordBot: DiscordBotType) {
     this.discordBot = discordBot;
   }
 
@@ -49,7 +48,10 @@ export default class VoiceVox {
       },
     );
 
-    fs.writeFileSync(wavFile, Buffer.from(synthesis.data), 'binary');
+    const arrayBuffer = synthesis.data as ArrayBuffer;
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    fs.writeFileSync(wavFile, uint8Array);
   }
 
   /**
@@ -81,11 +83,13 @@ export default class VoiceVox {
 
     this.discordBot.isPlaying = true;
 
-    const wavFile = this.discordBot.wavFileQueue.shift();
+    const wavFile = this.discordBot.wavFileQueue.shift()!;
     const resource = createAudioResource(wavFile, { inputType: StreamType.Arbitrary });
 
     this.discordBot.audioPlayer.play(resource);
 
+    // @memo AudioPlayer.once メソッドはあるが、TypeScriptの型定義には存在していないのが原因でESLint によるエラーが起こっているため、ここだけ型チェックを無視
+    // @ts-ignore
     this.discordBot.audioPlayer.once(AudioPlayerStatus.Idle, () => {
       this.playNext();
     });
@@ -137,10 +141,7 @@ export default class VoiceVox {
   static async replaceWord(messageContent: string) {
     let formattedMessageContent: string = messageContent;
 
-    const dictWordList: {
-      word: string;
-      how_to_read: string;
-    }[] = await DictWordRepository.getDictWordList();
+    const dictWordList = await DictWordRepository.getDictWordList();
 
     dictWordList.forEach((dictWordData: { word: string; how_to_read: string }) => {
       formattedMessageContent = formattedMessageContent.replace(

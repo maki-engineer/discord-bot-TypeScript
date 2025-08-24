@@ -8,7 +8,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  ignorePatterns: ['build', 'jest.config.ts', 'config/config.ts', 'migrations', 'seeders'],
+  ignorePatterns: ['build', 'jest.config.ts', 'config/config.ts', 'migrations', 'seeders', 'lint-staged.config.js'],
   extends: [
     'airbnb-base',
     'airbnb-typescript/base',
@@ -29,7 +29,9 @@ module.exports = {
     'arrow-body-style': 'off',
     'no-misleading-character-class': 'off',
     'no-useless-escape': 'off',
+    'no-param-reassign': 'off',
     'default-case': 'off',
+    '@typescript-eslint/no-misused-promises': 'off',
     '@typescript-eslint/no-unsafe-assignment': 'warn',
     '@typescript-eslint/no-unsafe-member-access': 'warn',
     '@typescript-eslint/no-unsafe-call': 'warn',
