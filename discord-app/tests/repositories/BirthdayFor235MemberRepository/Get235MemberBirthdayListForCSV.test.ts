@@ -1,29 +1,27 @@
-process.env.NODE_ENV = 'unittest';
+import { Transaction } from 'sequelize';
+import BirthdayFor235MemberRepository from '../../../repositories/BirthdayFor235MemberRepository';
+import db from '../../../models/index';
 
-require('dotenv').config();
+const { BirthdayFor235Member, sequelize } = db;
 
-const BirthdayFor235MemberRepository =
-  require('../../../repositories/BirthdayFor235MemberRepository').default;
-const { BirthdayFor235Member, sequelize } = require('../../../models/index').default;
+describe('正常系（get235MemberBirthdayListForCSV）', () => {
+  let transaction: Transaction;
 
-describe('正常系（get235MemberBirthdayListForCSV）', (): void => {
-  let transaction: any;
-
-  beforeEach(async (): Promise<void> => {
-    transaction = await sequelize.transaction();
+  beforeEach(async () => {
+    transaction = await sequelize!.transaction();
   });
 
-  afterEach(async (): Promise<void> => {
+  afterEach(async () => {
     if (transaction) {
       await transaction.rollback();
     }
   });
 
-  afterAll(async (): Promise<void> => {
-    await sequelize.close();
+  afterAll(async () => {
+    await sequelize!.close();
   });
 
-  test('CSV出力用の235プロダクションメンバー一覧が配列で返ること', async (): Promise<void> => {
+  test('CSV出力用の235プロダクションメンバー一覧が配列で返ること', async () => {
     const dummyData = [
       {
         name: 'テスト太郎',
@@ -47,11 +45,7 @@ describe('正常系（get235MemberBirthdayListForCSV）', (): void => {
 
     await BirthdayFor235Member.bulkCreate(dummyData, { transaction });
 
-    const result: {
-      name: string;
-      month: number;
-      date: number;
-    }[] = await BirthdayFor235MemberRepository.get235MemberBirthdayListForCSV(transaction);
+    const result = await BirthdayFor235MemberRepository.get235MemberBirthdayListForCSV(transaction);
 
     expect(result).toHaveLength(3);
     expect(result).toBeInstanceOf(Array);
@@ -59,7 +53,7 @@ describe('正常系（get235MemberBirthdayListForCSV）', (): void => {
     expect(Object.keys(result[0])).toEqual(['name', 'month', 'date']);
   });
 
-  test('CSV出力用の235プロダクションメンバー一覧が昇順で返ること', async (): Promise<void> => {
+  test('CSV出力用の235プロダクションメンバー一覧が昇順で返ること', async () => {
     const dummyData = [
       {
         name: 'テスト太郎',
@@ -83,11 +77,7 @@ describe('正常系（get235MemberBirthdayListForCSV）', (): void => {
 
     await BirthdayFor235Member.bulkCreate(dummyData, { transaction });
 
-    const result: {
-      name: string;
-      month: number;
-      date: number;
-    }[] = await BirthdayFor235MemberRepository.get235MemberBirthdayListForCSV(transaction);
+    const result = await BirthdayFor235MemberRepository.get235MemberBirthdayListForCSV(transaction);
 
     expect([
       [result[0].month, result[0].date],
@@ -100,9 +90,8 @@ describe('正常系（get235MemberBirthdayListForCSV）', (): void => {
     ]);
   });
 
-  test('235プロダクションメンバーの誕生日リストのデータがない場合は、空配列が返ること', async (): Promise<void> => {
-    const result: [] =
-      await BirthdayFor235MemberRepository.get235MemberBirthdayListForCSV(transaction);
+  test('235プロダクションメンバーの誕生日リストのデータがない場合は、空配列が返ること', async () => {
+    const result = await BirthdayFor235MemberRepository.get235MemberBirthdayListForCSV(transaction);
 
     expect(result).toHaveLength(0);
     expect(result).toEqual([]);

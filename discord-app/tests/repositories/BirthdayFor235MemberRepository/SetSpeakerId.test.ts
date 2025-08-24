@@ -1,29 +1,29 @@
-process.env.NODE_ENV = 'unittest';
+import { Transaction } from 'sequelize';
+import BirthdayFor235MemberRepository from '../../../repositories/BirthdayFor235MemberRepository';
+import db from '../../../models';
 
-const BirthdayFor235MemberRepository =
-  require('../../../repositories/BirthdayFor235MemberRepository').default;
-const { BirthdayFor235Member, sequelize } = require('../../../models/index').default;
+const { BirthdayFor235Member, sequelize } = db;
 
-describe('正常系（setSpeakerId）', (): void => {
-  let transaction: any;
+describe('正常系（setSpeakerId）', () => {
+  let transaction: Transaction;
   const targetUserId = '123456789';
-  const setSpeakerId = '34';
+  const setSpeakerId = 34;
 
-  beforeEach(async (): Promise<void> => {
-    transaction = await sequelize.transaction();
+  beforeEach(async () => {
+    transaction = await sequelize!.transaction();
   });
 
-  afterEach(async (): Promise<void> => {
+  afterEach(async () => {
     if (transaction) {
       await transaction.rollback();
     }
   });
 
-  afterAll(async (): Promise<void> => {
-    await sequelize.close();
+  afterAll(async () => {
+    await sequelize!.close();
   });
 
-  test('入力したメンバーの user_id が登録されていた場合は speaker_id が正常に更新されること', async (): Promise<void> => {
+  test('入力したメンバーの user_id が登録されていた場合は speaker_id が正常に更新されること', async () => {
     const dummyData = {
       name: 'テスト太郎',
       user_id: targetUserId,
@@ -50,7 +50,7 @@ describe('正常系（setSpeakerId）', (): void => {
     expect(createData[0].speaker_id).toBe(Number(setSpeakerId));
   });
 
-  test('もし入力したメンバーの user_id が登録されていなかった場合は更新されないこと', async (): Promise<void> => {
+  test('もし入力したメンバーの user_id が登録されていなかった場合は更新されないこと', async () => {
     const dummyData = {
       name: 'テスト太郎',
       user_id: '987654321',

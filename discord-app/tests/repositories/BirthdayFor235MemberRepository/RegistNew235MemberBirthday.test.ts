@@ -1,52 +1,40 @@
-process.env.NODE_ENV = 'unittest';
+import { Transaction } from 'sequelize';
+import BirthdayFor235MemberRepository from '../../../repositories/BirthdayFor235MemberRepository';
+import db from '../../../models/index';
 
-const BirthdayFor235MemberRepository =
-  require('../../../repositories/BirthdayFor235MemberRepository').default;
-const { BirthdayFor235Member, sequelize } = require('../../../models/index').default;
+const { BirthdayFor235Member, sequelize } = db;
 
-describe('正常系（registNew235MemberBirthday）', (): void => {
-  let transaction: any;
+describe('正常系（registNew235MemberBirthday）', () => {
+  let transaction: Transaction;
 
-  beforeEach(async (): Promise<void> => {
-    transaction = await sequelize.transaction();
+  beforeEach(async () => {
+    transaction = await sequelize!.transaction();
   });
 
-  afterEach(async (): Promise<void> => {
+  afterEach(async () => {
     if (transaction) {
       await transaction.rollback();
     }
   });
 
-  afterAll(async (): Promise<void> => {
-    await sequelize.close();
+  afterAll(async () => {
+    await sequelize!.close();
   });
 
-  test('新しく235プロダクションに参加したメンバーの誕生日が保存された場合は、オブジェクトが返ること', async (): Promise<void> => {
+  test('新しく235プロダクションに参加したメンバーの誕生日が保存された場合は、オブジェクトが返ること', async () => {
     const insertUserName = 'テスト太郎';
     const insertUserId = '123456789';
     const insertMonth = 4;
     const insertDate = 3;
 
-    let birthdayFor235MemberData:
-      | []
-      | {
-          name: string;
-          user_id: string;
-          month: number;
-          date: number;
-        }[] = await BirthdayFor235Member.findAll({
+    let birthdayFor235MemberData = await BirthdayFor235Member.findAll({
       raw: true,
       transaction,
     });
 
     expect(birthdayFor235MemberData).toHaveLength(0);
 
-    const result: {
-      name: string;
-      user_id: string;
-      month: number;
-      date: number;
-    } = await BirthdayFor235MemberRepository.registNew235MemberBirthday(
+    const result = await BirthdayFor235MemberRepository.registNew235MemberBirthday(
       insertUserName,
       insertUserId,
       insertMonth,
