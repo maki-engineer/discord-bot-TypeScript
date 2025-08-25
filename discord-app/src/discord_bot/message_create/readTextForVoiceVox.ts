@@ -60,7 +60,7 @@ export default async (message: Message, voiceVox: VoiceVox, client: DiscordBotTy
   let readText: string = VoiceVox.formatMessage(message.content);
   readText = await VoiceVox.replaceWord(readText);
 
-  await VoiceVox.generateAudioFile(readText, wavFile, speakerId as string);
+  await VoiceVox.generateAudioFile(readText, wavFile, String(speakerId));
 
   voiceVox.addWavFileToQueue(wavFile);
 };

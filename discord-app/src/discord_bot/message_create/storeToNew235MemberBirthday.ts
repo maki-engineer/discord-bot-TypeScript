@@ -23,7 +23,7 @@ export default async (message: Message, client: DiscordBotType) => {
 
   const birthdayList = messageList[foundIndex + 1]
     .split(/年|月|\//)
-    .map((data) => data.match(/\d+/g)![0].replace(/^0+/, ''));
+    .flatMap((data) => (data.match(/\d+/g) || []).map((d) => d.replace(/^0+/, '')));
 
   if (birthdayList.length === 3) {
     birthdayList.shift();
