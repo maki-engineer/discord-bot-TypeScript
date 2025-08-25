@@ -35,10 +35,10 @@ export default async (message: Message, client: DiscordBotType) => {
   const utataneUser = client.users.cache.get(client.userIdForUtatane)!;
 
   await makiUser.send(
-    `${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`,
+    `${message.author.globalName!}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`,
   );
 
   await utataneUser.send(
-    `${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`,
+    `${message.author.globalName!}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`,
   );
 };
