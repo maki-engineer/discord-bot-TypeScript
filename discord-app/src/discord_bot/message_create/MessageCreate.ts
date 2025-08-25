@@ -1,5 +1,10 @@
 import deleteReplyMessage from './deleteReplyMessage';
+import generateResponseForGemini from './generateResponseForGemini';
+import greetToNew235Member from './greetToNew235Member';
+import helpCommand from './helpCommand';
 import storeMessage from './storeMessage';
+import storeToNew235MemberBirthday from './storeToNew235MemberBirthday';
+import readTextForVoiceVox from './readTextForVoiceVox';
 import reactToBirthday235MemberMessage from './reactToBirthday235MemberMessage';
 import reactToBirthdayMillionMemberMessage from './reactToBirthdayMillionMemberMessage';
 import reactToUsedMaleEventCommandMessage from './reactToUsedMaleEventCommandMessage';
@@ -35,8 +40,6 @@ export default class MessageCreate {
 
   private voiceVox: typeof VoiceVox;
 
-  private readonly userIdFor235Bot = process.env.USER_ID_FOR_235_BOT;
-
   private readonly prefix = '235';
 
   private readonly setTimeoutSec = 15_000;
@@ -67,8 +70,6 @@ export default class MessageCreate {
 
   /**
    * messageCreate メイン処理
-   *
-   * @return {void}
    */
   public messageCreateEvent(): void {
     this.discordBot.on('messageCreate', async (message: typeof Message) => {
@@ -81,28 +82,10 @@ export default class MessageCreate {
       // botからのメッセージは無視
       if (message.author.bot) return;
 
-      await this.generateResponseForGemini(message, this.discordBot);
-
-      await this.readTextForVoiceVox(this.discordBot, message);
-
-      // 自己紹介チャンネルから新しく入ったメンバーの誕生日を登録する＆挨拶をする
-      if (
-        this.discordBot.channels.cache.get(this.discordBot.channelIdFor235Introduction) !==
-          undefined &&
-        message.channelId === this.discordBot.channelIdFor235Introduction
-      ) {
-        // 誕生日を登録
-        MessageCreate.registNew235MemberBirthday(message, this.discordBot);
-
-        // 挨拶
-        message.react('<:_Stmp_Tsubasa:794969154817753088>');
-        message.reply(
-          `${message.author.globalName}さん、235プロダクションへようこそ！\nこれからもよろしくおねがいします♪`,
-        );
-        this.discordBot.users.cache
-          .get(this.discordBot.userIdForMaki)
-          .send(`${message.author.globalName}さんが新しく235プロダクションに参加されました！`);
-      }
+      await generateResponseForGemini(message, this.gemini, this.discordBot);
+      await readTextForVoiceVox(message, this.voiceVox, this.discordBot);
+      await storeToNew235MemberBirthday(message, this.discordBot);
+      await greetToNew235Member(message, this.discordBot);
 
       // コマンドメッセージ以外は無視
       if (!message.content.startsWith(this.prefix)) return;
@@ -117,7 +100,7 @@ export default class MessageCreate {
       // コマンドを取得
       const commandName: string = commandList.shift()!.toLowerCase();
 
-      this.helpCommand(message, commandName);
+      await helpCommand(message, this.discordBot, commandName);
       await this.birthdayEventCommand(message, commandName, commandList);
       this.menEventCommand(message, commandName, commandList);
       this.roomDivisionCommand(this.discordBot, message, commandName);
@@ -125,219 +108,6 @@ export default class MessageCreate {
       await this.disconnectVoiceChannelCommand(message, commandName);
       this.testCommand(message, commandName, commandList);
     });
-  }
-
-  /**
-   * geminiを使って235bot宛に来た質問に対して回答文を生成
-   *
-   * @param {Message} message Messageクラス
-   * @param {Client} client Clientクラス
-   *
-   * @return {Promise<void>}
-   */
-  private async generateResponseForGemini(
-    message: typeof Message,
-    client: typeof Client,
-  ): Promise<void> {
-    if (!message.mentions.has(this.userIdFor235Bot)) return;
-
-    let formattedMessage = message.content.replace(/<@!?(\d+)>/g, '').trim();
-    formattedMessage = formattedMessage.replace(VoiceVox.emojiRegex(), '');
-
-    const introductionDataList = await client.channels.cache
-      .get(client.channelIdFor235Introduction)
-      .messages.fetch();
-    const introductionData = introductionDataList.map((m: any) => m.content).join('\n');
-
-    message.channel.sendTyping();
-
-    const response: string = await this.gemini.generateResponseForGemini(
-      formattedMessage,
-      introductionData,
-    );
-
-    const responseList = response.split('\n\n');
-
-    const formattedMessageList: string[] = [];
-    let formattedMessageText = '';
-
-    responseList.forEach((text: string) => {
-      const textWithBreak = `${text}\n\n`;
-
-      if (formattedMessageText.length + textWithBreak.length > 2000) {
-        formattedMessageList.push(formattedMessageText);
-        formattedMessageText = textWithBreak;
-      } else {
-        formattedMessageText += textWithBreak;
-      }
-    });
-
-    if (formattedMessageText.length > 0) {
-      formattedMessageList.push(formattedMessageText);
-    }
-
-    let geminiReplyIndex = 0;
-
-    const geminiReplyTimer = setInterval(() => {
-      if (geminiReplyIndex === formattedMessageList.length) {
-        clearInterval(geminiReplyTimer);
-
-        setTimeout(() => {
-          message
-            .delete()
-            .then(() => console.log('message deleting.'))
-            .catch(() => console.log('message is deleted.'));
-        }, this.setTimeoutSec);
-
-        return;
-      }
-
-      message.reply(formattedMessageList[geminiReplyIndex]);
-      geminiReplyIndex += 1;
-    }, 4_000);
-  }
-
-  /**
-   * テキストを読み上げる
-   *
-   * @param {Client} client Clientクラス
-   * @param {Message} message Messageクラス
-   *
-   * @return {void}
-   */
-  private async readTextForVoiceVox(client: typeof Client, message: typeof Message) {
-    if (client.connection === undefined) return;
-
-    const formatMessageList: string[] = message.content.split(' ');
-    const commandList = client.commandList.map((command: any) => command.name);
-
-    if (commandList.includes(formatMessageList[0])) return;
-
-    const readChannelIdList = [client.connection.joinConfig.channelId];
-
-    const readTextChannelList = [
-      {
-        voiceChannelId: this.discordBot.voiceChannelIdFor235ChatPlace,
-        channelId: this.discordBot.channelIdFor235ListenOnly,
-      },
-      {
-        voiceChannelId: this.discordBot.voiceChannelIdFor235ChatPlace2,
-        channelId: this.discordBot.channelIdFor235ListenOnly2,
-      },
-      {
-        voiceChannelId: this.discordBot.voiceChannelIdForGame,
-        channelId: this.discordBot.channelIdForGameListenOnly,
-      },
-    ];
-
-    const sentChannelId = readTextChannelList.find((data) => {
-      return data.voiceChannelId === client.connection.joinConfig.channelId;
-    });
-
-    if (sentChannelId !== undefined) {
-      readChannelIdList.push(sentChannelId.channelId);
-    }
-
-    if (!readChannelIdList.includes(message.channelId)) return;
-
-    const filePath = './data/voice';
-    const wavFile = `${filePath}/${message.author.id}.wav`;
-
-    if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true });
-
-    const speakerIdExists = await BirthdayFor235MemberRepository.getSpeakerIdFromMessageSender(
-      message.author.id,
-    );
-
-    const speakerId = speakerIdExists ?? client.speakerId;
-
-    let readText: string = VoiceVox.formatMessage(message.content);
-    readText = await VoiceVox.replaceWord(readText);
-
-    await VoiceVox.generateAudioFile(readText, wavFile, speakerId);
-
-    this.voiceVox.addWavFileToQueue(wavFile);
-  }
-
-  /**
-   * 235プロダクションに新しく入ってきた方の誕生日を登録
-   *
-   * @param {Message} message Messageクラス
-   * @param {Client} client Clientクラス
-   *
-   * @return {void}
-   */
-  private static registNew235MemberBirthday(message: typeof Message, client: typeof Client): void {
-    const messageList: string[] = message.content.replace(/\r?\n/g, '').split(/：|・/);
-    const foundIndex: number = messageList.indexOf('生年月日');
-
-    if (foundIndex === -1) return;
-
-    const birthdayList: string[] = messageList[foundIndex + 1]
-      .split(/年|月|\//)
-      .map((data) => data.match(/\d+/g)![0].replace(/^0+/, ''));
-
-    if (birthdayList.length === 3) {
-      birthdayList.shift();
-    }
-
-    BirthdayFor235MemberRepository.registNew235MemberBirthday(
-      message.author.globalName,
-      message.author.id,
-      birthdayList[0],
-      birthdayList[1],
-    ).then(() => {
-      client.users.cache
-        .get(client.userIdForMaki)
-        .send(
-          `${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日`,
-        );
-      client.users.cache
-        .get(client.userIdForUtatane)
-        .send(
-          `${message.author.globalName}さんの誕生日を新しく登録しました！\n${birthdayList[0]}月${birthdayList[1]}日\nもし間違いがあった場合は報告をお願いします！`,
-        );
-    });
-  }
-
-  /**
-   * 235helpコマンド 235botの機能一覧を教える
-   *
-   * @param {Message} message Messageクラス
-   * @param {string} commandName 入力されたコマンド名
-   *
-   * @return {void}
-   */
-  private helpCommand(message: typeof Message, commandName: string): void {
-    if (commandName !== 'help') return;
-
-    switch (message.author.id) {
-      case this.discordBot.userIdForUtatane:
-        message.reply(
-          '235botは以下のようなコマンドを使用することが出来ます。\n\n・235birthday\n毎月開催されるオンライン飲み会の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい月、日程、時間の**3つ**を**半角数字のみ**、**半角スペースで区切って**入力してください。\n\n235birthday 12 14 21\n\n・235men\n毎月開催される235士官学校🌹の日程を決める文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**2～10個**、**半角数字のみ**で入力してください。\n\n235men 12 14 16 17\n\n・235roomdivision\n【雑談１】ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、【雑談１】ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、【雑談１】ボイスチャンネルに参加しているメンバーのみが使用できます。\n\n235botはスラッシュコマンド（**/**）にも対応しています。スラッシュコマンドを使用することで、テキストの読み上げ機能などを利用することが出来ます。',
-        );
-
-        setTimeout(() => {
-          message
-            .delete()
-            .then(() => console.log('message deleting.'))
-            .catch(() => console.log('message is deleted.'));
-        }, this.setTimeoutSec);
-        break;
-
-      default:
-        message.reply(
-          '235botは以下のようなコマンドを使用することが出来ます。\n\n・235roomdivision\n【雑談１】ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、【雑談１】ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、【雑談１】ボイスチャンネルに参加しているメンバーのみが使用できます。\n\n235botはスラッシュコマンド（**/**）にも対応しています。スラッシュコマンドを使用することで、テキストの読み上げ機能などを利用することが出来ます。',
-        );
-
-        setTimeout(() => {
-          message
-            .delete()
-            .then(() => console.log('message deleting.'))
-            .catch(() => console.log('message is deleted.'));
-        }, this.setTimeoutSec);
-        break;
-    }
   }
 
   /**
