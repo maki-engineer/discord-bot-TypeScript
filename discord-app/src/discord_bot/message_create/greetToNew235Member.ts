@@ -8,12 +8,7 @@ import { DiscordBotType } from '../DiscordBotType';
  * @param {DiscordBotType} client DiscordBotクラス
  */
 export default async (message: Message, client: DiscordBotType) => {
-  if (
-    client.channels.cache.get(client.channelIdFor235Introduction) === undefined ||
-    message.channelId !== client.channelIdFor235Introduction
-  ) {
-    return;
-  }
+  if (message.channelId !== client.channelIdFor235Introduction) return;
 
   const makiUser = client.users.cache.get(client.userIdForMaki)!;
 

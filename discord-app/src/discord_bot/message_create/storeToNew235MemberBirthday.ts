@@ -9,12 +9,7 @@ import BirthdayFor235MemberRepository from '../../../repositories/BirthdayFor235
  * @param {DiscordBotType} client DiscordBotクラス
  */
 export default async (message: Message, client: DiscordBotType) => {
-  if (
-    client.channels.cache.get(client.channelIdFor235Introduction) === undefined ||
-    message.channelId !== client.channelIdFor235Introduction
-  ) {
-    return;
-  }
+  if (message.channelId !== client.channelIdFor235Introduction) return;
 
   const messageList = message.content.replace(/\r?\n/g, '').split(/：|・/);
   const foundIndex = messageList.indexOf('生年月日');
