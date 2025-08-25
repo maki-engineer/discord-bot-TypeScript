@@ -23,7 +23,17 @@ export default async (
   const setTimeoutSec = 15_000;
 
   const usedCommandMember = await message.guild!.members.fetch(message.author.id);
-  const memberJoinVoiceChannel = usedCommandMember.voice.channel! as VoiceChannel;
+  const memberJoinVoiceChannel = usedCommandMember.voice.channel as VoiceChannel;
+
+  if (memberJoinVoiceChannel === null) {
+    await message.reply(
+      '235joinコマンドを使用することで、使用したメンバーが参加しているボイスチャンネルに235botが参加して、そのボイスチャンネルの聞き専チャンネルに投稿されたテキストを読み上げます！\nボイスチャンネルに参加してから再度このスラッシュコマンドを使用していただくか、もしくはテキストで「235join」と入力していただければボイスチャンネルに参加します！',
+    );
+
+    setTimeout(() => message.delete().catch(() => {}), setTimeoutSec);
+
+    return;
+  }
 
   if (
     client.connection !== undefined &&
@@ -36,16 +46,6 @@ export default async (
       .setTimestamp();
 
     await message.reply({ embeds: [embed] });
-
-    setTimeout(() => message.delete().catch(() => {}), setTimeoutSec);
-
-    return;
-  }
-
-  if (memberJoinVoiceChannel === null) {
-    await message.reply(
-      '235joinコマンドを使用することで、使用したメンバーが参加しているボイスチャンネルに235botが参加して、そのボイスチャンネルの聞き専チャンネルに投稿されたテキストを読み上げます！\nボイスチャンネルに参加してから再度このスラッシュコマンドを使用していただくか、もしくはテキストで「235join」と入力していただければボイスチャンネルに参加します！',
-    );
 
     setTimeout(() => message.delete().catch(() => {}), setTimeoutSec);
 

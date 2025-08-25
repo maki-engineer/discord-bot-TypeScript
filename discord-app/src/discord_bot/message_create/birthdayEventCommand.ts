@@ -72,19 +72,7 @@ export default async (
     return;
   }
 
-  let isAllInt = true;
-
-  for (let i = 0; i < commandList.length; i += 1) {
-    // 追加文章はバリデーションチェックしない
-    if (i === 3) {
-      break;
-    }
-
-    if (!Number.isInteger(Number(commandList[i]))) {
-      isAllInt = false;
-      break;
-    }
-  }
+  const isAllInt = commandList.slice(0, 3).every((arg) => Number.isInteger(Number(arg)));
 
   if (!isAllInt) {
     await message.reply(
