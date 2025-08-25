@@ -9,8 +9,8 @@ import DeleteMessageRepository from '../../../repositories/DeleteMessageReposito
  * @param {DiscordBotType} client DiscordBotクラス
  */
 export default async (message: Message, client: DiscordBotType) => {
-  if (client.channels.cache.get(client.channelIdFor235ChatPlace) === undefined) return;
   if (
+    client.channels.cache.get(client.channelIdFor235ChatPlace) === undefined ||
     message.channelId !== client.channelIdFor235ChatPlace ||
     !message.author.bot ||
     message.mentions.repliedUser !== null

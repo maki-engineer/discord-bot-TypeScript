@@ -6,7 +6,7 @@ import { Message } from 'discord.js';
  * @param {Message} message Messageクラス
  */
 export default (message: Message) => {
-  if (!message.author.bot || !message.mentions.repliedUser) return;
-
-  setTimeout(() => message.delete(), 60_000);
+  if (message.author.bot && message.mentions.repliedUser) {
+    setTimeout(() => message.delete(), 60_000);
+  }
 };
