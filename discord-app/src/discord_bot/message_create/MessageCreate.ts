@@ -1,3 +1,9 @@
+import deleteReplyMessage from './deleteReplyMessage';
+import storeMessage from './storeMessage';
+import reactToBirthday235MemberMessage from './reactToBirthday235MemberMessage';
+import reactToBirthdayMillionMemberMessage from './reactToBirthdayMillionMemberMessage';
+import reactToUsedMaleEventCommandMessage from './reactToUsedMaleEventCommandMessage';
+
 const {
   Client,
   EmbedBuilder,
@@ -15,7 +21,6 @@ const Gemini = require('../../gemini/Gemini').default;
 const VoiceVox = require('../../voice_vox/VoiceVox').default;
 const BirthdayFor235MemberRepository =
   require('../../../repositories/BirthdayFor235MemberRepository').default;
-const DeleteMessageRepository = require('../../../repositories/DeleteMessageRepository').default;
 
 const { BirthdayFor235Member, BirthdayForMillionMember, DeleteMessage, DictWord } =
   require('../../../models/index').default;
@@ -49,11 +54,6 @@ export default class MessageCreate {
     '🔟',
   ];
 
-  private readonly birthday235MemberEmojiList = [
-    '<:__:794969172630044674>',
-    '<:__:794969688982552607>',
-  ];
-
   /**
    * @param {DiscordBot} discordBot DiscordBotクラス
    * @param {VoiceVox} voiceVox VoiceVoxクラス
@@ -72,16 +72,11 @@ export default class MessageCreate {
    */
   public messageCreateEvent(): void {
     this.discordBot.on('messageCreate', async (message: typeof Message) => {
-      this.reactToUsedMaleEventCommandMessage(message);
-      this.reactToBirthday235MemberMessage(message);
-      this.reactToBirthdayMillionMemberMessage(message);
-
-      // 235botのメッセージがリプライだった場合、1分後に削除
-      if (message.author.bot && message.mentions.repliedUser) {
-        setTimeout(() => message.delete(), 60_000);
-      }
-
-      await MessageCreate.storeMessage(message, this.discordBot);
+      reactToUsedMaleEventCommandMessage(message, this.discordBot);
+      reactToBirthday235MemberMessage(message, this.discordBot);
+      await reactToBirthdayMillionMemberMessage(message, this.discordBot);
+      deleteReplyMessage(message);
+      await storeMessage(message, this.discordBot);
 
       // botからのメッセージは無視
       if (message.author.bot) return;
@@ -130,76 +125,6 @@ export default class MessageCreate {
       await this.disconnectVoiceChannelCommand(message, commandName);
       this.testCommand(message, commandName, commandList);
     });
-  }
-
-  /**
-   * イベント企画で作成した文章にアクション
-   *
-   * @param {Message} message Messageクラス
-   *
-   * @return {void}
-   */
-  private reactToUsedMaleEventCommandMessage(message: typeof Message): void {
-    if (this.discordBot.usedMaleEventCommandReactionCount === 0) return;
-
-    for (let i = 0; i < this.discordBot.usedMaleEventCommandReactionCount; i += 1) {
-      message.react(this.maleEventEmojiList[i]);
-    }
-
-    this.discordBot.usedMaleEventCommandReactionCount = 0;
-  }
-
-  /**
-   * 235メンバーの誕生日をお祝いしてるメッセージにアクション
-   *
-   * @param {Message} message Messageクラス
-   *
-   * @return {void}
-   */
-  private reactToBirthday235MemberMessage(message: typeof Message): void {
-    if (this.discordBot.isReactionCelebrate235MemberMessage) return;
-
-    this.birthday235MemberEmojiList.forEach((emoji: string) => message.react(emoji));
-
-    this.discordBot.isReactionCelebrate235MemberMessage = true;
-  }
-
-  /**
-   * ミリオンメンバーの誕生日をお祝いしてるメッセージにアクション
-   *
-   * @param {Message} message Messageクラス
-   *
-   * @return {void}
-   */
-  private reactToBirthdayMillionMemberMessage(message: typeof Message): void {
-    if (this.discordBot.celebrateMillionMemberReactionEmoji === '') return;
-
-    message.react(this.discordBot.celebrateMillionMemberReactionEmoji);
-
-    this.discordBot.celebrateMillionMemberReactionEmoji = '';
-  }
-
-  /**
-   * 雑談場（通話外）の235botのリプライじゃないメッセージを保存（１週間後に消すため）
-   *
-   * @param {Message} message Messageクラス
-   * @param {Client} client Clientクラス
-   *
-   * @return {void}
-   */
-  private static async storeMessage(message: typeof Message, client: typeof Client) {
-    if (client.channels.cache.get(client.channelIdFor235ChatPlace) === undefined) return;
-    if (
-      message.channelId !== client.channelIdFor235ChatPlace ||
-      !message.author.bot ||
-      message.mentions.repliedUser !== null
-    )
-      return;
-
-    const today = new Date();
-    const storeDate = today.getDate();
-
-    await DeleteMessageRepository.storeMessage(message.id, storeDate);
   }
 
   /**
