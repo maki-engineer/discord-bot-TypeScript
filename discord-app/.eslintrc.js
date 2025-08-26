@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'sonarjs'],
   env: {
     browser: true,
     commonjs: true,
@@ -42,5 +42,6 @@ module.exports = {
     '@typescript-eslint/no-loop-func': 'warn',
     'no-irregular-whitespace': 'warn',
     'no-underscore-dangle': ['error', { allowAfterThis: true }],
+    'complexity': ["error", 10],
   },
 };
