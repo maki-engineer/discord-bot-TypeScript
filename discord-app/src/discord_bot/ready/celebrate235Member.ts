@@ -18,6 +18,7 @@ export default async (client: DiscordBotType) => {
   ).then((birthdayData) => {
     if (birthdayData.length === 0) return;
 
+    const birthday235MemberEmojiList = ['<:__:794969172630044674>', '<:__:794969688982552607>'];
     const targetMessage = client.channels.cache.get(client.channelIdFor235ChatPlace) as TextChannel;
 
     switch (birthdayData.length) {
@@ -26,9 +27,11 @@ export default async (client: DiscordBotType) => {
           .send(
             `本日${todayDateList.todayMonth}月${todayDateList.todayDate}日は**${birthdayData[0].name}さん**のお誕生日です！！\n${birthdayData[0].name}さん、お誕生日おめでとうございます♪`,
           )
+          .then((birthdayMessage) =>
+            birthday235MemberEmojiList.map((emoji) => birthdayMessage.react(emoji)),
+          )
           .catch(() => {});
 
-        client.isReactionCelebrate235MemberMessage = false;
         break;
 
       default: {
@@ -45,9 +48,11 @@ export default async (client: DiscordBotType) => {
                 .send(
                   `本日${todayDateList.todayMonth}月${todayDateList.todayDate}日は**${birthdayData[birthdayIndex].name}さん**のお誕生日です！！\n${birthdayData[birthdayIndex].name}さん、お誕生日おめでとうございます♪`,
                 )
+                .then((birthdayMessage) =>
+                  birthday235MemberEmojiList.map((emoji) => birthdayMessage.react(emoji)),
+                )
                 .catch(() => {});
 
-              client.isReactionCelebrate235MemberMessage = false;
               birthdayIndex += 1;
               break;
 
@@ -57,9 +62,11 @@ export default async (client: DiscordBotType) => {
                   // eslint-disable-next-line no-irregular-whitespace
                   `さらに！！　本日は**${birthdayData[birthdayIndex].name}さん**のお誕生日でもあります！！\n${birthdayData[birthdayIndex].name}さん、お誕生日おめでとうございます♪`,
                 )
+                .then((birthdayMessage) =>
+                  birthday235MemberEmojiList.map((emoji) => birthdayMessage.react(emoji)),
+                )
                 .catch(() => {});
 
-              client.isReactionCelebrate235MemberMessage = false;
               birthdayIndex += 1;
               break;
           }

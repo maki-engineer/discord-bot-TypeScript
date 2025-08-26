@@ -14,12 +14,6 @@ import VoiceVox from '../voice_vox/VoiceVox';
  * ここには主に235botを動かすための基本的な初期設定や起動させるためのメソッドなどが書いてある。
  */
 export default class DiscordBot extends Client {
-  celebrateMillionMemberReactionEmoji: string = '';
-
-  isReactionCelebrate235MemberMessage: boolean = true;
-
-  usedMaleEventCommandReactionCount: number = 0;
-
   dividedUserIdList: string[] = [];
 
   connection: VoiceConnectionType | undefined;
