@@ -7,12 +7,14 @@ import { DiscordBotType } from '../DiscordBotType';
  * @param {Message} message Messageクラス
  * @param {DiscordBotType} client DiscordBotクラス
  */
-export default (message: Message, client: DiscordBotType) => {
+export default async (message: Message, client: DiscordBotType) => {
   if (client.isReactionCelebrate235MemberMessage) return;
 
   const birthday235MemberEmojiList = ['<:__:794969172630044674>', '<:__:794969688982552607>'];
 
-  birthday235MemberEmojiList.forEach((emoji: string) => message.react(emoji));
+  await Promise.all(
+    birthday235MemberEmojiList.map((emoji) => message.react(emoji).catch(() => {})),
+  );
 
   client.isReactionCelebrate235MemberMessage = true;
 };
