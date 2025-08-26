@@ -4,20 +4,6 @@ import BirthdayForMillionMemberRepository from '../../../repositories/BirthdayFo
 import getTodayDateList from './getTodayDateList';
 
 /**
- * 誕生日アイドルの絵文字リストの中からアクションを付ける絵文字を取得
- *
- * @param {{ name: string, emoji: string }[]} emojiList 誕生日アイドルの絵文字リスト
- * @param {string} idolName 誕生日のアイドル名
- *
- * @return {string} アクションする絵文字
- */
-const getTargetEmoji = (emojiList: { name: string; emoji: string }[], idolName: string) => {
-  const targetEmoji = emojiList.find((data) => data.name === idolName);
-
-  return targetEmoji!.emoji;
-};
-
-/**
  * 9時半にミリオンメンバーの誕生日をお祝い
  *
  * @param {DiscordBotType} client DiscordBotクラス
@@ -144,8 +130,6 @@ export default (client: DiscordBotType) => {
           let birthdayIndex = 0;
 
           const birthdayTimer = setInterval(() => {
-            const reactEmoji = getTargetEmoji(targetEmojiList, birthdayData[birthdayIndex].name);
-
             switch (birthdayIndex) {
               case birthdayData.length:
                 clearInterval(birthdayTimer);
@@ -161,7 +145,13 @@ export default (client: DiscordBotType) => {
                 setTimeout(() => {
                   targetMessage
                     .send(birthdayData[birthdayIndex].img)
-                    .then((birthdayMessage) => birthdayMessage.react(reactEmoji))
+                    .then((birthdayMessage) =>
+                      birthdayMessage.react(
+                        targetEmojiList.find(
+                          (emoji) => emoji.name === birthdayData[birthdayIndex].name,
+                        )!.emoji,
+                      ),
+                    )
                     .catch(() => {});
 
                   birthdayIndex += 1;
@@ -180,7 +170,13 @@ export default (client: DiscordBotType) => {
                 setTimeout(() => {
                   targetMessage
                     .send(birthdayData[birthdayIndex].img)
-                    .then((birthdayMessage) => birthdayMessage.react(reactEmoji))
+                    .then((birthdayMessage) =>
+                      birthdayMessage.react(
+                        targetEmojiList.find(
+                          (emoji) => emoji.name === birthdayData[birthdayIndex].name,
+                        )!.emoji,
+                      ),
+                    )
                     .catch(() => {});
 
                   birthdayIndex += 1;

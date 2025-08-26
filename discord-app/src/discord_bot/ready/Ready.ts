@@ -42,6 +42,8 @@ export default class Ready {
         return;
       }
 
+      celebrateMillionMember(this.discordBot);
+
       cron.schedule('0 15 3 * * *', () => deleteOldMessageFrom235ChatPlaceChannel(this.discordBot));
       cron.schedule('0 0 3 * * *', () => {
         celebrate235Member(this.discordBot).catch(() => {});
