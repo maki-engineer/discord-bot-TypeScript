@@ -46,14 +46,11 @@ export default class MessageCreate {
    */
   public messageCreateEvent(): void {
     this.discordBot.on('messageCreate', async (message: Message) => {
-      await Promise.all([
-        reactToUsedMaleEventCommandMessage(message, this.discordBot),
-        reactToBirthday235MemberMessage(message, this.discordBot),
-        reactToBirthdayMillionMemberMessage(message, this.discordBot),
-        storeMessage(message, this.discordBot),
-      ]);
-
+      reactToUsedMaleEventCommandMessage(message, this.discordBot);
+      reactToBirthday235MemberMessage(message, this.discordBot);
+      await reactToBirthdayMillionMemberMessage(message, this.discordBot);
       deleteReplyMessage(message);
+      await storeMessage(message, this.discordBot);
 
       // botからのメッセージは無視
       if (message.author.bot) return;
