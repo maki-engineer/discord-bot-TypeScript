@@ -12,7 +12,6 @@ import roomDivisionCommand from './roomDivisionCommand';
 import storeMessage from './storeMessage';
 import storeToNew235MemberBirthday from './storeToNew235MemberBirthday';
 import readTextForVoiceVox from './readTextForVoiceVox';
-import reactToBirthday235MemberMessage from './reactToBirthday235MemberMessage';
 import reactToBirthdayMillionMemberMessage from './reactToBirthdayMillionMemberMessage';
 import VoiceVox from '../../voice_vox/VoiceVox';
 import { DiscordBotType } from '../DiscordBotType';
@@ -45,7 +44,6 @@ export default class MessageCreate {
    */
   public messageCreateEvent(): void {
     this.discordBot.on('messageCreate', async (message: Message) => {
-      reactToBirthday235MemberMessage(message, this.discordBot);
       await reactToBirthdayMillionMemberMessage(message, this.discordBot);
       deleteReplyMessage(message);
       await storeMessage(message, this.discordBot);

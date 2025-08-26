@@ -16,8 +16,6 @@ import VoiceVox from '../voice_vox/VoiceVox';
 export default class DiscordBot extends Client {
   celebrateMillionMemberReactionEmoji: string = '';
 
-  isReactionCelebrate235MemberMessage: boolean = true;
-
   dividedUserIdList: string[] = [];
 
   connection: VoiceConnectionType | undefined;
