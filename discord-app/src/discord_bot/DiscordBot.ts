@@ -18,8 +18,6 @@ export default class DiscordBot extends Client {
 
   isReactionCelebrate235MemberMessage: boolean = true;
 
-  usedMaleEventCommandReactionCount: number = 0;
-
   dividedUserIdList: string[] = [];
 
   connection: VoiceConnectionType | undefined;

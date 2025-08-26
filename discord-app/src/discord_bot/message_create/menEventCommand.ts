@@ -109,9 +109,10 @@ export default async (
 
   eventText += textList[1][Math.floor(Math.random() * textList[1].length)];
 
-  await (message.channel as TextChannel).send(eventText);
+  const eventMessage = await (message.channel as TextChannel).send(eventText);
+  const reactEmojiList = maleEventEmojiList.slice(0, commandList.length);
 
-  client.usedMaleEventCommandReactionCount = commandList.length;
+  await Promise.all(reactEmojiList.map((emoji) => eventMessage.react(emoji)));
 
   setTimeout(
     () => message.reply('うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪'),

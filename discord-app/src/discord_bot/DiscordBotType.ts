@@ -7,7 +7,6 @@ import type {
 export interface DiscordBotType extends ClientType {
   celebrateMillionMemberReactionEmoji: string;
   isReactionCelebrate235MemberMessage: boolean;
-  usedMaleEventCommandReactionCount: number;
   dividedUserIdList: string[];
   connection: VoiceConnectionType | undefined;
   speakerId: string;
