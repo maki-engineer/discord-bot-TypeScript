@@ -5,7 +5,6 @@ import type {
 } from '@discordjs/voice';
 
 export interface DiscordBotType extends ClientType {
-  celebrateMillionMemberReactionEmoji: string;
   dividedUserIdList: string[];
   connection: VoiceConnectionType | undefined;
   speakerId: string;

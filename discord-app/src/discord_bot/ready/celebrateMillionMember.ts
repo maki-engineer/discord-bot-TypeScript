@@ -101,7 +101,7 @@ export default (client: DiscordBotType) => {
           // 絵文字探索
           const targetEmoji = millionMemberEmojiList.find(
             (millionMember) => millionMember.name === birthdayData[0].name,
-          );
+          )!;
 
           if (checkMillionMemberList.includes(birthdayData[0].name)) {
             targetMessage
@@ -111,11 +111,10 @@ export default (client: DiscordBotType) => {
               .catch(() => {});
 
             setTimeout(() => {
-              targetMessage.send(birthdayData[0].img).catch(() => {});
-
-              if (targetEmoji !== undefined) {
-                client.celebrateMillionMemberReactionEmoji = targetEmoji.emoji;
-              }
+              targetMessage
+                .send(birthdayData[0].img)
+                .then((birthdayMessage) => birthdayMessage.react(targetEmoji.emoji))
+                .catch(() => {});
             }, 1_000);
           } else {
             targetMessage
@@ -125,11 +124,10 @@ export default (client: DiscordBotType) => {
               .catch(() => {});
 
             setTimeout(() => {
-              targetMessage.send(birthdayData[0].img).catch(() => {});
-
-              if (targetEmoji !== undefined) {
-                client.celebrateMillionMemberReactionEmoji = targetEmoji.emoji;
-              }
+              targetMessage
+                .send(birthdayData[0].img)
+                .then((birthdayMessage) => birthdayMessage.react(targetEmoji.emoji))
+                .catch(() => {});
             }, 1_000);
           }
           break;
@@ -146,6 +144,8 @@ export default (client: DiscordBotType) => {
           let birthdayIndex = 0;
 
           const birthdayTimer = setInterval(() => {
+            const reactEmoji = getTargetEmoji(targetEmojiList, birthdayData[birthdayIndex].name);
+
             switch (birthdayIndex) {
               case birthdayData.length:
                 clearInterval(birthdayTimer);
@@ -159,12 +159,10 @@ export default (client: DiscordBotType) => {
                   .catch(() => {});
 
                 setTimeout(() => {
-                  targetMessage.send(birthdayData[birthdayIndex].img).catch(() => {});
-
-                  client.celebrateMillionMemberReactionEmoji = getTargetEmoji(
-                    targetEmojiList,
-                    birthdayData[birthdayIndex].name,
-                  );
+                  targetMessage
+                    .send(birthdayData[birthdayIndex].img)
+                    .then((birthdayMessage) => birthdayMessage.react(reactEmoji))
+                    .catch(() => {});
 
                   birthdayIndex += 1;
                 }, 1_000);
@@ -180,12 +178,10 @@ export default (client: DiscordBotType) => {
                   .catch(() => {});
 
                 setTimeout(() => {
-                  targetMessage.send(birthdayData[birthdayIndex].img).catch(() => {});
-
-                  client.celebrateMillionMemberReactionEmoji = getTargetEmoji(
-                    targetEmojiList,
-                    birthdayData[birthdayIndex].name,
-                  );
+                  targetMessage
+                    .send(birthdayData[birthdayIndex].img)
+                    .then((birthdayMessage) => birthdayMessage.react(reactEmoji))
+                    .catch(() => {});
 
                   birthdayIndex += 1;
                 }, 1_000);
