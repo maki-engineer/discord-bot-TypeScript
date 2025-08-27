@@ -7,6 +7,7 @@ import celebrateMillionLiveAnniversary from './celebrateMillionLiveAnniversary';
 import disconnectVoiceChannel from './disconnectVoiceChannel';
 import setCommand from './setCommand';
 import setStatus from './setStatus';
+import sendToEventBorderData from './sendToEventBorderData';
 import send235MemberBirthdayListToUtatane from './send235MemberBirthdayListToUtatane';
 import { DiscordBotType } from '../DiscordBotType';
 import VoiceVox from '../../voice_vox/VoiceVox';
@@ -18,6 +19,8 @@ export default class Ready {
   private discordBot: DiscordBotType;
 
   private voiceVox: VoiceVox;
+
+  private readonly channelIdForEventBorderNotice = process.env.CHANNEL_ID_FOR_EVENT_BORDER_NOTICE!;
 
   /**
    * @param {DiscordBotType} discordBot DiscordBotクラス
@@ -42,6 +45,9 @@ export default class Ready {
         return;
       }
 
+      cron.schedule('* * * * *', () =>
+        sendToEventBorderData(this.discordBot, this.channelIdForEventBorderNotice),
+      );
       cron.schedule('0 15 3 * * *', () => deleteOldMessageFrom235ChatPlaceChannel(this.discordBot));
       cron.schedule('0 0 3 * * *', () => {
         celebrate235Member(this.discordBot).catch(() => {});
