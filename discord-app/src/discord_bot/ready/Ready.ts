@@ -7,6 +7,7 @@ import celebrateMillionLiveAnniversary from './celebrateMillionLiveAnniversary';
 import disconnectVoiceChannel from './disconnectVoiceChannel';
 import setCommand from './setCommand';
 import setStatus from './setStatus';
+import sendToEventEnd from './sendToEventEnd';
 import sendToEventBorderData from './sendToEventBorderData';
 import send235MemberBirthdayListToUtatane from './send235MemberBirthdayListToUtatane';
 import { DiscordBotType } from '../DiscordBotType';
@@ -58,6 +59,9 @@ export default class Ready {
       cron.schedule('0 15 4 1 * *', () => {
         send235MemberBirthdayListToUtatane(this.discordBot).catch(() => {});
       });
+      cron.schedule('0 59 11 * * *', () =>
+        sendToEventEnd(this.discordBot, this.channelIdForEventBorderNotice),
+      );
       cron.schedule('0 50 22,4,10,16 * * *', () => {
         disconnectVoiceChannel(this.discordBot, this.voiceVox).catch(() => {});
       });
