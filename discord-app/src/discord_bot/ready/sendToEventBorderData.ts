@@ -103,5 +103,7 @@ export default async (client: DiscordBotType, channelId: string) => {
     Matsurihime.borderScoreFor2500 = targetBorderScore.score;
   } catch (e) {
     // リクエスト上限に達した場合は何もしない
+    // TODO: 動作確認が一通り終わったら↓↓は削除する
+    console.error(e);
   }
 };
