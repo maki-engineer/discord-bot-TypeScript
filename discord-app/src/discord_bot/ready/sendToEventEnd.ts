@@ -41,7 +41,10 @@ export default async (client: DiscordBotType, channelId: string) => {
         })
         .addFields({ name: '\u200B', value: '\u200B' })
         .addFields({ name: 'イベント名', value: `**${latestEventSummary.name}**` })
-        .setColor(embedColor);
+        .addFields({ name: '\u200B', value: '\u200B' })
+        .setColor(embedColor)
+        .setFooter({ text: '『アイドルマスター ミリオンライブ! シアターデイズ』ボーダー情報' })
+        .setTimestamp();
 
       await targetChannel.send({ embeds: [embed] });
     }
