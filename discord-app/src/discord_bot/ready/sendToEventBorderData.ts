@@ -28,6 +28,9 @@ export default async (client: DiscordBotType, channelId: string) => {
       return;
 
     const eventBorderScoreData = await Matsurihime.getLatestEventBorderScore(latestEventSummary.id);
+
+    if (!eventBorderScoreData.eventPoint) return;
+
     const targetBorderScore = eventBorderScoreData.eventPoint.scores.find(
       (score) => score.rank === 2500,
     )!;
@@ -39,8 +42,6 @@ export default async (client: DiscordBotType, channelId: string) => {
           return { name: `**${border.rank}位**`, value: `${border.score}pt`, inline: true };
         });
 
-    let embedColor = '#00FF99';
-
     eventBorderScoreData.eventPoint.scores.forEach((border) => {
       if (String(border.rank).length > 2) {
         eventPointBorderFieldList.push({ name: '\u200B', value: '\u200B' });
@@ -51,17 +52,13 @@ export default async (client: DiscordBotType, channelId: string) => {
       }
     });
 
-    switch (latestEventSummary.appealType) {
-      case 1:
-        embedColor = '#FF69B4';
-        break;
-      case 2:
-        embedColor = '#0000FF';
-        break;
-      case 3:
-        embedColor = '#FFFF00';
-        break;
-    }
+    const embedColorMap: { [key: number]: ColorResolvable } = {
+      1: '#FF69B4',
+      2: '#0000FF',
+      3: '#FFFF00',
+    };
+
+    const embedColor = embedColorMap[latestEventSummary.appealType] ?? '#00FF99';
 
     const targetChannel = client.channels.cache.get(channelId) as TextChannel;
     const paddingMonth = String(jstDateNow.getMonth() + 1).padStart(2, '0');
@@ -80,7 +77,7 @@ export default async (client: DiscordBotType, channelId: string) => {
       .addFields({ name: '\u200B', value: '\u200B' })
       .addFields(eventPointBorderFieldList)
       .addFields({ name: '\u200B', value: '\u200B' })
-      .setColor(embedColor as ColorResolvable)
+      .setColor(embedColor)
       .setFooter({
         text: `${paddingMonth}/${paddingDate} ${paddingHour}:${paddingMin} 更新`,
         iconURL: 'https://drive.google.com/uc?export=view&id=1IUcUJNF0js2tC0P4wh9ZK1vLJR5c0_MI',

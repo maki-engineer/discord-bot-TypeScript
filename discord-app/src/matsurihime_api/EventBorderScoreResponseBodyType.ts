@@ -4,7 +4,7 @@
  * @link https://api.matsurihi.me/api/mltd/v2/events/:eventId/rankings/borderPoints
  */
 export type EventBorderScoreResponseBodyType = {
-  eventPoint: {
+  eventPoint?: {
     scores: {
       rank: number;
       score: number;
@@ -13,7 +13,7 @@ export type EventBorderScoreResponseBodyType = {
     updatedAt: Date;
     count: number;
   };
-  idolPoint: [
+  idolPoint?: [
     {
       idolId: number;
       scores: {
