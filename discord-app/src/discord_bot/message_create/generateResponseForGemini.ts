@@ -13,9 +13,7 @@ import Gemini from '../../gemini/Gemini';
 export default async (message: Message, gemini: Gemini, client: DiscordBotType) => {
   const userIdFor235Bot = process.env.USER_ID_FOR_235_BOT!;
 
-  if (!message.mentions.has(userIdFor235Bot)) return;
-
-  const setTimeoutSec = 15_000;
+  if (message.mentions.everyone || !message.mentions.has(userIdFor235Bot)) return;
 
   let formattedMessage = message.content.replace(/<@!?(\d+)>/g, '').trim();
   formattedMessage = VoiceVox.formatMessage(formattedMessage);
@@ -59,8 +57,6 @@ export default async (message: Message, gemini: Gemini, client: DiscordBotType) 
   const geminiReplyTimer = setInterval(() => {
     if (geminiReplyIndex === formattedMessageList.length) {
       clearInterval(geminiReplyTimer);
-
-      setTimeout(() => message.delete().catch(() => {}), setTimeoutSec);
 
       return;
     }
