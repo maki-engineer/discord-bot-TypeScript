@@ -23,19 +23,13 @@ export default async (client: DiscordBotType, channelId: string) => {
       jstDateNow.getHours() === eventBeginAt.getHours() &&
       jstDateNow.getMinutes() === eventBeginAt.getMinutes()
     ) {
-      let embedColor = '#00FF99';
+      const embedColorMap: { [key: number]: ColorResolvable } = {
+        1: '#FF69B4',
+        2: '#0000FF',
+        3: '#FFFF00',
+      };
 
-      switch (latestEventSummary.appealType) {
-        case 1:
-          embedColor = '#FF69B4';
-          break;
-        case 2:
-          embedColor = '#0000FF';
-          break;
-        case 3:
-          embedColor = '#FFFF00';
-          break;
-      }
+      const embedColor = embedColorMap[latestEventSummary.appealType] ?? '#00FF99';
 
       const targetChannel = client.channels.cache.get(channelId) as TextChannel;
 
@@ -47,7 +41,10 @@ export default async (client: DiscordBotType, channelId: string) => {
         })
         .addFields({ name: '\u200B', value: '\u200B' })
         .addFields({ name: 'イベント名', value: `**${latestEventSummary.name}**` })
-        .setColor(embedColor as ColorResolvable);
+        .addFields({ name: '\u200B', value: '\u200B' })
+        .setColor(embedColor)
+        .setFooter({ text: '『アイドルマスター ミリオンライブ! シアターデイズ』ボーダー情報' })
+        .setTimestamp();
 
       await targetChannel.send({ embeds: [embed] });
     }
