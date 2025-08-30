@@ -28,6 +28,9 @@ export default async (client: DiscordBotType, channelId: string) => {
       return;
 
     const eventBorderScoreData = await Matsurihime.getLatestEventBorderScore(latestEventSummary.id);
+
+    if (!eventBorderScoreData.eventPoint) return;
+
     const targetBorderScore = eventBorderScoreData.eventPoint.scores.find(
       (score) => score.rank === 2500,
     )!;
