@@ -5,6 +5,7 @@ import divideVoiceChannelInteraction from './divideVoiceChannelInteraction';
 import disconnectVoiceChannelInteraction from './disconnectVoiceChannelInteraction';
 import joinVoiceChannelInteraction from './joinVoiceChannelInteraction';
 import setVoiceInteraction from './setVoiceInteraction';
+import sendToEventBorderData from './sendToEventBorderData';
 import registWordInDictInteraction from './registWordInDictInteraction';
 import { DiscordBotType } from '../DiscordBotType';
 import VoiceVox from '../../voice_vox/VoiceVox';
@@ -46,6 +47,7 @@ export default class InteractionCreate {
         interaction as ChatInputCommandInteraction,
       );
       await setVoiceInteraction(interaction as ChatInputCommandInteraction);
+      await sendToEventBorderData(interaction as ChatInputCommandInteraction);
       await registWordInDictInteraction(interaction as ChatInputCommandInteraction);
     });
   }
