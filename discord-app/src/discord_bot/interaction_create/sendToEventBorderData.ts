@@ -1,14 +1,17 @@
-import { ColorResolvable, EmbedBuilder, TextChannel } from 'discord.js';
+import { ChatInputCommandInteraction, ColorResolvable, EmbedBuilder } from 'discord.js';
 import Matsurihime from '../../matsurihime_api/Matsurihime';
-import { DiscordBotType } from '../DiscordBotType';
 
 /**
- * 定期的にイベントのボーダースコアを取得して、更新された場合はチャンネルでお知らせ
+ * イベントのボーダースコアをお知らせする
  *
- * @param {DiscordBotType} client DiscordBotクラス
- * @param {string} channelId 送信対象のチャンネルID
+ * @param {ChatInputCommandInteraction} interaction ChatInputCommandInteractionクラス
  */
-export default async (client: DiscordBotType, channelId: string) => {
+export default async (interaction: ChatInputCommandInteraction) => {
+  if (interaction.commandName !== '235eventborder') return;
+
+  const setTimeoutSec = 180_000;
+  const notEventMessage = '現在、ボーダーをお知らせできるイベントは開催されていません！';
+
   try {
     const existsBorderEventList = [3, 4, 5, 10, 11, 12, 13, 16];
     const latestEventSummary = await Matsurihime.getLatestEventSummary(existsBorderEventList);
@@ -24,12 +27,27 @@ export default async (client: DiscordBotType, channelId: string) => {
     if (
       jstDateNow.getTime() <= eventBeginAt.getTime() ||
       jstDateNow.getTime() >= eventEndAt.getTime()
-    )
+    ) {
+      await interaction.reply({ content: notEventMessage, ephemeral: true });
+
+      setTimeout(() => {
+        interaction.deleteReply().catch(() => {});
+      }, setTimeoutSec);
+
       return;
+    }
 
     const eventBorderScoreData = await Matsurihime.getLatestEventBorderScore(latestEventSummary.id);
 
-    if (!eventBorderScoreData.eventPoint) return;
+    if (!eventBorderScoreData.eventPoint) {
+      await interaction.reply({ content: notEventMessage, ephemeral: true });
+
+      setTimeout(() => {
+        interaction.deleteReply().catch(() => {});
+      }, setTimeoutSec);
+
+      return;
+    }
 
     const targetBorderScore = eventBorderScoreData.eventPoint.scores.find(
       (score) => score.rank === 2500,
@@ -60,11 +78,10 @@ export default async (client: DiscordBotType, channelId: string) => {
 
     const embedColor = embedColorMap[latestEventSummary.appealType] ?? '#00FF99';
 
-    const targetChannel = client.channels.cache.get(channelId) as TextChannel;
     const paddingMonth = String(jstDateNow.getMonth() + 1).padStart(2, '0');
     const paddingDate = String(jstDateNow.getDate()).padStart(2, '0');
     const paddingHour = String(jstDateNow.getHours()).padStart(2, '0');
-    const paddingMin = String(Math.round(jstDateNow.getMinutes() / 30) * 30).padStart(2, '0');
+    const paddingMin = String(jstDateNow.getMinutes() < 30 ? 0 : 30).padStart(2, '0');
 
     const embed = new EmbedBuilder()
       .setTitle('現在のボーダーをお知らせします！')
@@ -85,7 +102,11 @@ export default async (client: DiscordBotType, channelId: string) => {
 
     // まだボーダースコアがセットされてなかったら初回はお知らせする
     if (!Matsurihime.borderScoreFor2500) {
-      await targetChannel.send({ embeds: [embed] });
+      await interaction.reply({ embeds: [embed], ephemeral: true });
+
+      setTimeout(() => {
+        interaction.deleteReply().catch(() => {});
+      }, setTimeoutSec);
 
       Matsurihime.borderScoreFor2500 = targetBorderScore.score;
 
@@ -95,12 +116,14 @@ export default async (client: DiscordBotType, channelId: string) => {
     // まだボーダーが更新されていなかった場合
     if (Matsurihime.borderScoreFor2500 === targetBorderScore.score) return;
 
-    await targetChannel.send({ embeds: [embed] });
+    await interaction.reply({ embeds: [embed], ephemeral: true });
+
+    setTimeout(() => {
+      interaction.deleteReply().catch(() => {});
+    }, setTimeoutSec);
 
     Matsurihime.borderScoreFor2500 = targetBorderScore.score;
   } catch (e) {
     // リクエスト上限に達した場合は何もしない
-    // TODO: 動作確認が一通り終わったら↓↓は削除する
-    console.error(e);
   }
 };

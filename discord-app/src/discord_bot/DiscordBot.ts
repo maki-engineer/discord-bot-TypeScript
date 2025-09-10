@@ -114,6 +114,10 @@ export default class DiscordBot extends Client {
         },
       ],
     },
+    {
+      name: '235eventborder',
+      description: '開催中のイベントの各順位のボーダースコアをお知らせします！',
+    },
   ];
 
   readonly serverIdFor235 = process.env.SERVER_ID_FOR_235!;

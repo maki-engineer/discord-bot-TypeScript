@@ -19,8 +19,6 @@ export default class Ready {
 
   private voiceVox: VoiceVox;
 
-  private readonly channelIdForEventBorderNotice = process.env.CHANNEL_ID_FOR_EVENT_BORDER_NOTICE!;
-
   /**
    * @param {DiscordBotType} discordBot DiscordBotクラス
    * @param {VoiceVox} voiceVox VoiceVoxクラス
